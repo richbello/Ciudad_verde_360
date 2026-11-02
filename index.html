@@ -762,7 +762,11 @@ button,input,select,textarea{font-family:inherit}
 /* ganchos sociales */
 .hero h1.gancho{min-height:2.2em;display:flex;align-items:flex-end}
 @media(max-width:520px){.hero h1.gancho{min-height:3.3em}}
-#ganQ{background:linear-gradient(90deg,#fff 0%,#b9f0e6 50%,#5fd4c0 100%);-webkit-background-clip:text;background-clip:text;color:transparent;transition:opacity .45s,transform .45s;display:inline-block}
+/* titular rotativo: colores vivos que se desplazan y brillan */
+@keyframes titulo{to{background-position:220% 0}}
+@keyframes brillaT{0%,100%{filter:drop-shadow(0 0 0 rgba(253,224,71,0))}50%{filter:drop-shadow(0 0 18px rgba(253,224,71,.45))}}
+@media (prefers-reduced-motion:reduce){#ganQ{animation:none}}
+#ganQ{background:linear-gradient(90deg,#fde047 0%,#fbbf24 25%,#5eead4 55%,#fde047 80%,#fbbf24 100%);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:titulo 6s linear infinite,brillaT 2.6s ease-in-out infinite;transition:opacity .45s,transform .45s;display:inline-block}
 #ganQ.out{opacity:0;transform:translateY(12px)}
 .ganchos{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:22px;max-width:1080px}
 @media(max-width:900px){.ganchos{grid-template-columns:repeat(2,1fr)}}

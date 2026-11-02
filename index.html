@@ -858,6 +858,13 @@ section.blk{padding:42px 0 8px}
 .f p{color:var(--mute);font-size:.92rem;margin:0 0 14px}
 .f a{font-weight:600;color:var(--g1);text-decoration:none}
 [data-theme="dark"] .f a{color:var(--g2)}
+.portal-in{margin:4px 0 12px;padding:12px;border-radius:12px;background:color-mix(in srgb,var(--g2) 9%,var(--card));border:1px solid var(--line)}
+.portal-in label{display:block;font-weight:700;font-size:.86rem;margin-bottom:6px}
+.portal-row{display:flex;gap:8px}
+.portal-row select{flex:1;min-width:0;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:9px;font-size:.88rem}
+.portal-btn{background:var(--g1);color:#fff!important;font-weight:700;padding:9px 14px;border-radius:10px;text-decoration:none;white-space:nowrap}
+.portal-in small{display:block;margin-top:6px;color:var(--mute);font-size:.76rem}
+.tportal{font-size:.7rem;font-weight:800;color:var(--g1);background:color-mix(in srgb,var(--g2) 14%,var(--card));padding:2px 8px;border-radius:999px;margin-left:6px}
 .mock{border-radius:12px;border:1px solid var(--line);padding:10px;font-size:.8rem;background:var(--bg);margin-bottom:14px}
 .mock .row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed var(--line)}
 .mock .row:last-child{border:0}
@@ -1133,6 +1140,7 @@ footer{padding:34px 0 90px;color:var(--mute);font-size:.84rem;text-align:center}
       <a href="#rapidos">🛍️ Comprar y contratar</a>
       <a href="#alertas">🛡️ Convivir</a>
       <a href="#muevete">🚌 Moverse</a>
+      <a href="#portal">🏢 Mi conjunto</a>
       <a href="#planes">Planes</a>
     </nav>
     <button class="ico" id="menuBtn" aria-label="Menú">☰</button>
@@ -1427,7 +1435,12 @@ footer{padding:34px 0 90px;color:var(--mute);font-size:.84rem;text-align:center}
           <div class="row"><span>Solicitud: fuga en zona común</span><span>En trámite</span></div>
           <div class="row"><span>Comunicado: asamblea</span><span>Nuevo</span></div>
         </div>
-        <a href="#" class="js-wa" data-msg="Hola, quiero una demo del Portal del Conjunto de Verde360.">Pedir demo para mi conjunto →</a>
+        <div class="portal-in" id="portal">
+          <label for="portalSel">Ingresar al portal de mi conjunto</label>
+          <div class="portal-row"><select id="portalSel"></select><a id="portalIr" class="portal-btn" href="#" target="_blank" rel="noopener">Ingresar →</a></div>
+          <small>Propietarios, residentes y administración ingresan con su usuario y contraseña.</small>
+        </div>
+        <a href="#" class="js-wa" data-msg="Hola, administro un conjunto en Ciudad Verde y quiero el Portal del Conjunto de Verde360.">¿Tu conjunto no aparece? Pide el portal →</a>
       </div>
       <div class="f">
         <div class="ic">🛡️</div>
@@ -1482,7 +1495,7 @@ footer{padding:34px 0 90px;color:var(--mute);font-size:.84rem;text-align:center}
     <h3 style="margin-bottom:12px">Verde360</h3>
     <div class="grp"><h4>🏠 Vivir</h4><div>
       <a href="#explorar" data-ir="casas">🏠 Inmuebles</a><a href="#seguro">🔍 Arrienda seguro</a>
-      <a href="#explorar" data-ir="conjuntos">📍 Conjuntos</a><a href="#servicios">🏢 Portal del Conjunto</a></div></div>
+      <a href="#explorar" data-ir="conjuntos">📍 Conjuntos</a><a href="#portal">🏢 Portal del Conjunto</a></div></div>
     <div class="grp"><h4>🛍️ Comprar y contratar</h4><div>
       <a href="#explorar" data-ir="negocios">🏪 Negocios</a><a href="#rapidos">🛻 Servicios 24 h</a>
       <a href="#talentos">🧵 Talento Verde</a><a href="#planes">💰 Planes</a></div></div>
@@ -1569,6 +1582,11 @@ footer{padding:34px 0 90px;color:var(--mute);font-size:.84rem;text-align:center}
    ========================================================= */
 const WHATSAPP = "573208303847";        // tu WhatsApp, formato 57XXXXXXXXXX
 const CENTRO   = [4.6060, -74.2205];
+// Conjuntos con Portal del Conjunto: cada uno tiene su propio enlace (el enlace directo sigue funcionando igual)
+const PORTALES = [
+  {conjunto:"Avellana", nombre:"Conjunto Avellana Ciudad Verde", url:"https://portal-avellana.onrender.com/"}
+];
+const urlPortal = p => p.url + (p.url.includes("?") ? "&" : "?") + "origen=verde360";
 // Backend gratuito (Google Sheets + Apps Script). Pega aquí la URL de la app web (ver backend/LEEME.md).
 // Mientras esté vacío, «Publicar un evento» envía la solicitud por WhatsApp.
 const API_URL = "https://script.google.com/macros/s/AKfycbwO3T2zIKko1_0s8_EziOlTa0lFzn6y1GZqW4VVHSyz7nhkMiJf4IXHRfGEuXe9r2i4IA/exec";
@@ -1840,11 +1858,12 @@ function tarjetaNeg(n){const i=NEGOCIOS.indexOf(n),o=abierto(n);
 function tarjetaConj(c){const i=CONJUNTOS.indexOf(c);
   return `<article class="card conj" data-k="conjuntos" data-i="${i}">
     <div class="av">🏘️</div>
-    <div><h3>Conjunto ${c.nombre}</h3>
+    <div><h3>Conjunto ${c.nombre}${PORTALES.some(p=>p.conjunto===c.nombre)?'<span class="tportal">🏢 Portal</span>':""}</h3>
       <div class="meta">${c.sector}${c.torres?` · ${c.torres} torres`:""}<br>🚪 ${c.porteria}</div>
       <div class="aprox">Ubicación aproximada · por verificar en terreno</div>
       <div class="acc"><a class="wa" href="${ruta(c)}" target="_blank" rel="noopener">Cómo llegar</a>
-        <a href="${wa("","Te comparto cómo llegar al Conjunto "+c.nombre+" en Ciudad Verde: "+ruta(c))}" target="_blank" rel="noopener">Compartir ubicación</a></div>
+        <a href="${wa("","Te comparto cómo llegar al Conjunto "+c.nombre+" en Ciudad Verde: "+ruta(c))}" target="_blank" rel="noopener">Compartir ubicación</a>
+        ${(p=>p?`<a href="${urlPortal(p)}" target="_blank" rel="noopener">🏢 Portal</a>`:"")(PORTALES.find(p=>p.conjunto===c.nombre))}</div>
     </div></article>`;}
 const hace=m=>m<1?"un momento":m<60?`${m} min`:`${Math.floor(m/60)} h ${m%60?m%60+" min":""}`.trim();
 
@@ -2215,6 +2234,9 @@ function responder(txt){
     return decir("🚨 Si hay peligro o alguien herido, <b>llama ya a la línea 123</b> (Policía, ambulancia y bomberos).\nDespués puedes alertar a los conjuntos vecinos.",`<br><button class="lnk r" data-sos2="1">Abrir emergencias →</button>`);
   if(/^(hola|buen|hey|que tal|saludos)/.test(t)&&t.length<25)
     return decir("¡Hola! 😊 Pregúntame lo que necesites de Ciudad Verde: arriendos, negocios, servicios de confianza, busetas, eventos o cómo llegar a un conjunto.");
+  if(/portal|estado de cuenta|paz y salvo|administraci[oó]n del conjunto|soy (el |la )?administrador|cuota de administraci/.test(t)){
+    const l=PORTALES.map(p=>`<div class="r1"><b>🏢 ${p.nombre}</b><a class="lnk" href="${urlPortal(p)}" target="_blank" rel="noopener">Ingresar al portal →</a></div>`).join("");
+    return decir("Estos conjuntos ya tienen <b>Portal del Conjunto</b>. Propietarios, residentes y administración ingresan con su usuario:",`<div class="res">${l}</div>`);}
   if(/perd(i|io|ido|ida).*(perro|gato|mascota|perrita|gatita)|(perro|gato|mascota).*(perdid|se (me )?(perdio|escapo))|se me escapo/.test(t))
     return decir("😟 Lo siento mucho. Haz esto ya:\n1. Publícala en <b>Huellitas Verde</b> con foto: aparece en el mapa y llega a las porterías de la Red de Alerta.\n2. Recorre los conjuntos cercanos y pregunta en las porterías.\n3. Revisa la pestaña <b>Encontradas</b>: tal vez alguien ya la tiene.",`<br>${irBtn("#mascotas","Reportar mi mascota →")}`);
   if(/encontre (un|una)? ?(perro|gato|mascota|perrito|gatito)|perro (perdido|abandonado)|gato (perdido|abandonado)/.test(t))
@@ -2414,6 +2436,11 @@ function rotarGancho(){const el=$("#ganQ");el.classList.add("out");
     $$("#ganchos a").forEach(a=>a.classList.toggle("on",+a.dataset.g===gi));},450);}
 $$("#ganchos a")[0].classList.add("on");
 if(!matchMedia("(prefers-reduced-motion: reduce)").matches)setInterval(rotarGancho,3800);
+
+/* Portal del Conjunto: acceso desde Verde360 */
+$("#portalSel").innerHTML=PORTALES.map((p,i)=>`<option value="${i}">${p.nombre}</option>`).join("");
+const irPortal=()=>{const p=PORTALES[+$("#portalSel").value||0];if(p)$("#portalIr").href=urlPortal(p);};
+$("#portalSel").onchange=irPortal; irPortal();
 
 /* inicio */
 iniciarMapa(); precioOpciones(); pintarCats(); cambiarModo("casas"); pintarFeed(); revisarRed(); pintarETAs(); pintarAgenda(); cargarEventos(); pintarPlanes(); pintarTalentos(); pintarPets();

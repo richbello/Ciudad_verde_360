@@ -1119,7 +1119,7 @@ footer{padding:34px 0 90px;color:var(--mute);font-size:.84rem;text-align:center}
 .plan .acc{margin-top:auto}
 
 /* bot */
-.botbtn{position:fixed;right:16px;bottom:92px;z-index:900;height:54px;border-radius:999px;border:0;padding:0 18px 0 14px;display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--g1),#0b5a37);color:#fff;font:700 .92rem Inter,sans-serif;box-shadow:0 10px 30px -8px rgba(6,40,27,.6);cursor:pointer}
+.botbtn{position:fixed;right:16px;bottom:96px;z-index:900;height:54px;border-radius:999px;border:0;padding:0 18px 0 14px;display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--g1),#0b5a37);color:#fff;font:700 .92rem Inter,sans-serif;box-shadow:0 10px 30px -8px rgba(6,40,27,.6);cursor:pointer}
 .botbtn .av2{width:32px;height:32px;border-radius:50%;background:var(--lime);color:var(--dark);display:grid;place-items:center;font-size:1rem}
 @media(max-width:520px){.botbtn{padding:0;width:54px;justify-content:center;font-size:0}.botbtn .av2{width:40px;height:40px;font-size:1.2rem}}
 .chat{position:fixed;right:16px;bottom:16px;z-index:960;width:min(400px,calc(100vw - 24px));height:min(640px,calc(100vh - 90px));background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:22px;box-shadow:0 30px 80px -20px rgba(0,0,0,.5);display:none;flex-direction:column;overflow:hidden}
@@ -1152,7 +1152,8 @@ footer{padding:34px 0 90px;color:var(--mute);font-size:.84rem;text-align:center}
 #mic{background:var(--bg);border:1px solid var(--line)!important;color:var(--ink)}
 #mic.rec{background:#dc2626;color:#fff;animation:apulse 1.4s infinite}
 #enviarB{background:var(--g1);color:#fff}
-.sos{position:fixed;right:16px;bottom:18px;z-index:900;width:62px;height:62px;border-radius:50%;border:0;background:#dc2626;color:#fff;font:800 .9rem Sora,Inter,sans-serif;box-shadow:0 10px 30px -6px #dc2626aa;cursor:pointer;animation:apulse 2.2s infinite}
+.sos{position:fixed;right:16px;bottom:18px;z-index:900;height:64px;padding:0 22px 0 16px;border-radius:999px;border:0;background:#dc2626;color:#fff;font:800 1.05rem Sora,Inter,sans-serif;display:flex;align-items:center;gap:8px;box-shadow:0 10px 30px -6px #dc2626aa;cursor:pointer;animation:apulse 2.2s infinite}
+.sos .sos-i{font-size:1.45rem;line-height:1}
 .sheet{position:fixed;inset:0;z-index:950;background:rgba(0,0,0,.5);display:none;align-items:flex-end;justify-content:center}
 .sheet.on{display:flex}
 .sheet .in{background:var(--card);color:var(--ink);width:100%;max-width:520px;border-radius:24px 24px 0 0;padding:20px 18px 28px;animation:up .25s ease}
@@ -1209,7 +1210,7 @@ img,svg,canvas,video{max-width:100%}
   .list{max-height:calc(100vh - 70px);max-height:calc(100dvh - 70px)}
   .capas{max-height:calc(100% - 24px);overflow:auto}
   /* botones flotantes más pequeños */
-  .sos{width:50px;height:50px;font-size:.78rem}
+  .sos{height:50px;padding:0 16px 0 12px;font-size:.88rem}.sos .sos-i{font-size:1.15rem}
   .botbtn{bottom:76px;height:46px;padding:0;width:46px;justify-content:center;font-size:0}
   .botbtn .av2{width:36px;height:36px}
   /* paneles y ventanas caben en la altura */
@@ -1687,7 +1688,7 @@ img,svg,canvas,video{max-width:100%}
   </form>
 </div>
 
-<button class="sos" id="sosBtn" aria-label="Emergencias">SOS</button>
+<button class="sos" id="sosBtn" aria-label="Emergencias"><span class="sos-i">🚨</span>Emergencias</button>
 <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sosT">
   <div class="in">
     <h3 id="sosT">Emergencias</h3>

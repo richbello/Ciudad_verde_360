@@ -909,6 +909,8 @@ footer{padding:34px 0 90px;color:var(--mute);font-size:.84rem;text-align:center}
 .reportar select,.reportar textarea{width:100%;border:0;border-radius:10px;padding:10px;margin-bottom:8px;font-size:.9rem}
 .reportar .enviar{width:100%;border:0;background:#fff;color:#7f1d1d;font-weight:800;padding:12px;border-radius:12px;cursor:pointer}
 .rshare{display:grid;gap:8px;margin-top:10px}
+.hushare .sh{background:var(--bg);color:var(--ink);border-color:var(--line)}
+.hushare .sh.wa2{background:#25d366;color:#062b16;border-color:#25d366}
 .rshare .sh{display:block;width:100%;text-align:center;text-decoration:none;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.1);color:#fff;font-weight:700;font-size:.88rem;padding:11px;border-radius:12px;cursor:pointer}
 .rshare .sh.wa2{background:#25d366;color:#062b16;border-color:#25d366}
 .rshare .sh.r{background:#fff;color:#7f1d1d}
@@ -1026,6 +1028,7 @@ footer{padding:34px 0 90px;color:var(--mute);font-size:.84rem;text-align:center}
 .qr h3{font-size:1.02rem;margin-bottom:4px}
 .qr p{font-size:.84rem;opacity:.88;margin:0 0 8px}
 .qr .precio-tag{color:#fff;font-size:1.1rem}
+.hpin.mia{width:34px;height:34px;font-size:17px;box-shadow:0 0 0 4px #fff,0 0 0 7px #dc2626aa}
 .hpin{width:26px;height:26px;border-radius:50%;border:3px solid #fff;display:grid;place-items:center;font-size:13px;box-shadow:0 4px 10px rgba(0,0,0,.3)}
 
 /* planes */
@@ -1352,6 +1355,12 @@ footer{padding:34px 0 90px;color:var(--mute);font-size:.84rem;text-align:center}
           <label class="foto-in" id="huFotoL"><span id="huFotoP">📷</span><span>Agregar foto (ayuda muchísimo)</span><input type="file" accept="image/*" id="huFoto" hidden></label>
           <button class="pub" type="submit">Publicar y alertar a la red</button>
           <div class="nota" id="huMsg" role="status"></div>
+          <div id="huShare" class="rshare hushare" hidden>
+            <a id="huWa" class="sh wa2" href="#" target="_blank" rel="noopener">💬 WhatsApp a las porterías</a>
+            <button id="huNative" class="sh" type="button">📲 Compartir en grupos (Facebook y otros)</button>
+            <button id="huFb" class="sh" type="button">📘 Copiar y abrir Facebook</button>
+            <button id="huVer" class="sh" type="button">🗺️ Ver en el mapa</button>
+          </div>
         </form>
         <div class="qr">
           <svg viewBox="0 0 21 21" aria-hidden="true" id="qrSvg"></svg>
@@ -2007,28 +2016,51 @@ function pintarPets(){
     return `<article class="pet" style="animation-delay:${i*50}ms"><div class="ph" style="${m.foto?`background-image:url(${m.foto})`:`background:${m.bg}`}">${m.foto?"":m.e}<span class="est ${m.estado}">${huTxt[m.estado]}</span></div>
       <div class="b"><h3>${m.nombre}</h3><div class="meta">${m.desc}</div><div class="meta">📍 Cerca a ${m.conj} · ${haceH(m.hace)}</div>
       <div class="acc"><a class="wa" href="${wa(WHATSAPP,msg)}" target="_blank" rel="noopener">${m.estado==="perdida"?"¡La vi!":m.estado==="encontrada"?"Es mía":"Adoptar"}</a>
-      <a href="${wa("",`🐾 ${huTxt[m.estado]} en Ciudad Verde: ${m.nombre.replace(/^Ejemplo · /,"")} · ${m.desc} · cerca a ${m.conj}. Ayuda a compartir.`)}" target="_blank" rel="noopener">Compartir</a></div></div></article>`;}).join("")
+      ${m.mia?`<a href="#" data-pet="${MASCOTAS.indexOf(m)}">🗺️ Mapa</a>`:""}<a href="${wa("",`🐾 ${huTxt[m.estado]} en Ciudad Verde: ${m.nombre.replace(/^Ejemplo · /,"")} · ${m.desc} · cerca a ${m.conj}. Ayuda a compartir.`)}" target="_blank" rel="noopener">Compartir</a></div></div></article>`;}).join("")
     :`<div class="vacio">No hay reportes en esta categoría. ¡Buena señal! 🐾</div>`;
+  $$("[data-pet]").forEach(a=>a.onclick=e=>{e.preventDefault();verPetEnMapa(MASCOTAS[+a.dataset.pet]);});
 }
 function pintarPetsMapa(){if(!capaH)return;capaH.clearLayers();
   const col={perdida:"#dc2626",encontrada:"#2563eb",adopcion:"#0f7a4a"};
+  const OFF=[[-.0005,.0004],[.0005,.0006],[-.0003,-.0007],[.0007,-.0004],[-.0009,.0001],[.0001,.0010]], uso={};
   MASCOTAS.forEach(m=>{const c=CONJUNTOS.find(x=>x.nombre===m.conj);if(!c)return;
-    L.marker([c.lat-.0005,c.lng+.0004],{icon:L.divIcon({className:"",html:`<div class="hpin" style="background:${col[m.estado]}">${m.e}</div>`,iconSize:[26,26],iconAnchor:[13,13]}),zIndexOffset:800})
-      .addTo(capaH).bindPopup(`<b>${huTxt[m.estado]} · ${m.nombre}</b><br>${m.desc}<br><small>${haceH(m.hace)}</small>`);});}
+    const k=uso[m.conj]=(uso[m.conj]||0), o=OFF[k%OFF.length]; uso[m.conj]=k+1;   // separa pines del mismo conjunto
+    m._mk=L.marker([c.lat+o[0],c.lng+o[1]],{icon:L.divIcon({className:"",html:`<div class="hpin${m.mia?" mia":""}" style="background:${col[m.estado]}">${m.e}</div>`,iconSize:[26,26],iconAnchor:[13,13]}),zIndexOffset:m.mia?1500:800})
+      .addTo(capaH).bindPopup(`${m.foto?`<img src="${m.foto}" alt="" style="width:120px;height:90px;object-fit:cover;border-radius:8px;display:block;margin-bottom:6px">`:""}<b>${huTxt[m.estado]} · ${m.nombre}</b><br>${m.desc}<br><small>Cerca a ${m.conj} · ${haceH(m.hace)}${m.mia?" · tu reporte":""}</small>`);});}
+function guardarPets(){const mias=MASCOTAS.filter(m=>m.mia).map(({_mk,...m})=>m);
+  try{localStorage.setItem("v360-pets",JSON.stringify(mias))}catch(e){try{localStorage.setItem("v360-pets",JSON.stringify(mias.map(m=>({...m,foto:null}))))}catch(e2){}}}
+try{JSON.parse(localStorage.getItem("v360-pets")||"[]").reverse().forEach(m=>{m.hace=Math.max(0,Math.round((Date.now()-(m.t||Date.now()))/36e5));MASCOTAS.unshift(m);});}catch(e){}
 $$("#huTab button").forEach(b=>b.onclick=()=>{huTab=b.dataset.h;$$("#huTab button").forEach(x=>x.classList.toggle("on",x===b));pintarPets();});
 $("#huConj").innerHTML='<option value="">¿Dónde? (conjunto o zona)</option>'+[...CONJUNTOS].sort((a,b)=>a.nombre.localeCompare(b.nombre,"es")).map(c=>`<option>${c.nombre}</option>`).join("");
 let huFoto=null;
 $("#huFoto").onchange=e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{huFoto=rd.result;$("#huFotoP").innerHTML=`<img src="${huFoto}" alt="Foto de la mascota">`;};rd.readAsDataURL(f);};
+let ultimaPet=null;
+const textoPet=m=>`${huTxt[m.estado]} EN CIUDAD VERDE\n${m.estado==="adopcion"?"Busca hogar":"Mascota"}: ${m.nombre}\nSeñas: ${m.desc}\nCerca a: ${m.conj}\nSi la ves, avisa por Verde360: ${PAGINA}#mascotas`;
+function verPetEnMapa(m){cambiarModo(modo||"casas");$("#capaH").checked=true;if(mapa&&capaH){capaH.addTo(mapa);
+  $("#explorar").scrollIntoView({behavior:"smooth"});setTimeout(()=>{if(m._mk){mapa.flyTo(m._mk.getLatLng(),17,{duration:.7});setTimeout(()=>m._mk.openPopup(),800);}},500);}}
 $("#huF").onsubmit=e=>{e.preventDefault();
   const conj=$("#huConj").value; if(!conj){$("#huMsg").textContent="Elige el conjunto o la zona.";return;}
   const tipo=$("#huTipo").value;
-  MASCOTAS.unshift({estado:tipo,e:$("#huEsp").value,nombre:$("#huNom").value.trim()||"Sin nombre",desc:$("#huDesc").value.trim()||"Sin descripción",conj,hace:0,foto:huFoto,bg:"linear-gradient(135deg,#e5e7eb,#9ca3af)"});
+  const m={estado:tipo,e:$("#huEsp").value,nombre:$("#huNom").value.trim()||"Sin nombre",desc:$("#huDesc").value.trim()||"Sin descripción",conj,hace:0,t:Date.now(),foto:huFoto,mia:true,bg:"linear-gradient(135deg,#e5e7eb,#9ca3af)"};
+  MASCOTAS.unshift(m); ultimaPet=m; guardarPets();
   huTab=tipo; $$("#huTab button").forEach(x=>x.classList.toggle("on",x.dataset.h===tipo));
   pintarPets(); pintarPetsMapa();
-  const alerta=`🐾 ${huTxt[tipo]} en Ciudad Verde\n${MASCOTAS[0].nombre} · ${MASCOTAS[0].desc}\nCerca a: ${conj}`;
-  $("#huMsg").innerHTML=`¡Publicado! Ahora avísale a la red: <a href="${wa(WHATSAPP,alerta)}" target="_blank" rel="noopener"><b>enviar alerta a las porterías →</b></a>`;
+  $("#huWa").href=wa(WHATSAPP,textoPet(m));
+  $("#huShare").hidden=false;
+  $("#huMsg").textContent=`✅ ${m.nombre} quedó publicado en la lista y en el mapa (pin grande con borde). Ahora compártelo:`;
   $("#huF").reset(); huFoto=null; $("#huFotoP").textContent="📷";
 };
+$("#huVer").onclick=()=>ultimaPet&&verPetEnMapa(ultimaPet);
+$("#huNative").onclick=async()=>{if(!ultimaPet)return;const m=ultimaPet,t=limpiar(textoPet(m));
+  if(navigator.share){try{const d={title:"Verde360 · "+huTxt[m.estado],text:t,url:PAGINA+"#mascotas"};
+      if(m.foto&&navigator.canShare){const b=await (await fetch(m.foto)).blob();const f=new File([b],"mascota.jpg",{type:b.type||"image/jpeg"});if(navigator.canShare({files:[f]}))d.files=[f];}
+      await navigator.share(d);return;}catch(e){if(e.name==="AbortError")return;}}
+  $("#huFb").click();};
+$("#huFb").onclick=async()=>{if(!ultimaPet)return;const t=limpiar(textoPet(ultimaPet));let ok=false;
+  try{await navigator.clipboard.writeText(t);ok=true;}catch(e){}
+  const g=GRUPOS_FACEBOOK[0], url=g?g.url:`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(PAGINA+"#mascotas")}`;
+  $("#huMsg").textContent=(ok?"📋 Texto copiado. ":"")+"Pégalo en el grupo de Facebook de tu conjunto y agrega la foto.";
+  const a=document.createElement("a");a.href=url;a.target="_blank";a.rel="noopener";document.body.appendChild(a);a.click();a.remove();};
 /* QR decorativo */
 (function(){let r="";const R=(x,y,w,h)=>r+=`<rect x="${x}" y="${y}" width="${w}" height="${h}"/>`;
   [[0,0],[14,0],[0,14]].forEach(([x,y])=>{R(x,y,7,1);R(x,y+6,7,1);R(x,y,1,7);R(x+6,y,1,7);R(x+2,y+2,3,3);});

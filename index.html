@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Verde360 · Vive y compra en Ciudad Verde, Soacha</title>
 <meta name="description" content="Arriendos, ventas y negocios de Ciudad Verde en un mapa interactivo. Alertas del barrio e inversión pública. Hecho por vecinos.">
-<meta name="theme-color" content="#0b1d26">
+<meta name="theme-color" content="#0b1a30">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -678,7 +678,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
 <style>
 :root{
   --bg:#f4f7f9; --card:#fff; --ink:#0f1c24; --mute:#5d6b76; --line:#dfe6ec;
-  --g1:#0f766e; --g2:#14a090; --lime:#7fe0cf; --gold:#e6a100; --dark:#0b1d26;
+  --g1:#0f766e; --g2:#14a090; --lime:#7fe0cf; --gold:#e6a100; --dark:#0b1a30;
   --casa:#2563eb; --casa-claro:#e8efff;
   --r:18px; --sh:0 10px 30px -12px rgba(11,29,38,.25);
 }
@@ -784,7 +784,7 @@ button,input,select,textarea{font-family:inherit}
 .accesos a:hover span{background:rgba(255,255,255,.2);transform:translateY(-2px)}
 
 /* hero */
-.hero{position:relative;overflow:hidden;background:radial-gradient(1200px 500px at 85% -10%,#14a09055,transparent 60%),radial-gradient(700px 400px at -10% 110%,#2563eb33,transparent 60%),var(--dark);color:#fff;padding:52px 0 40px}
+.hero{position:relative;overflow:hidden;background:radial-gradient(900px 420px at 80% -15%,#f59e0b33,transparent 62%),radial-gradient(700px 380px at -10% 115%,#14a09030,transparent 60%),linear-gradient(160deg,#0a1830 0%,#0f2747 55%,#0b1d3a 100%);color:#fff;padding:52px 0 40px}
 .hero canvas{position:absolute;inset:0;width:100%;height:100%;opacity:.5;pointer-events:none}
 .hero .wrap{position:relative}
 .pill{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);padding:6px 12px;border-radius:999px;font-size:.8rem}
@@ -2541,9 +2541,9 @@ new IntersectionObserver((es,ob)=>es.forEach(x=>{if(x.isIntersecting){$$("[data-
   rs();addEventListener("resize",rs);
   if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;
   (function f(){x.clearRect(0,0,W,H);const m=140*devicePixelRatio;
-    for(const p of P){p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1;x.fillStyle="rgba(127,224,207,.75)";x.beginPath();x.arc(p.x,p.y,1.6*devicePixelRatio,0,7);x.fill();}
+    for(const p of P){p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1;x.fillStyle="rgba(253,224,71,.7)";x.beginPath();x.arc(p.x,p.y,1.6*devicePixelRatio,0,7);x.fill();}
     for(let i=0;i<P.length;i++)for(let j=i+1;j<P.length;j++){const a=P[i],b=P[j],d=Math.hypot(a.x-b.x,a.y-b.y);
-      if(d<m){x.strokeStyle=`rgba(20,160,144,${.35*(1-d/m)})`;x.lineWidth=devicePixelRatio;x.beginPath();x.moveTo(a.x,a.y);x.lineTo(b.x,b.y);x.stroke();}}
+      if(d<m){x.strokeStyle=`rgba(251,191,36,${.28*(1-d/m)})`;x.lineWidth=devicePixelRatio;x.beginPath();x.moveTo(a.x,a.y);x.lineTo(b.x,b.y);x.stroke();}}
     requestAnimationFrame(f);})();})();
 
 const guardado=(()=>{try{return localStorage.getItem("v360-tema")}catch(e){return null}})();

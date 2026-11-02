@@ -1,6 +1,6 @@
 // Verde360 — service worker: instala la app y la deja funcionando sin internet.
 // Guarda la página, la librería del mapa, las fuentes y los pedazos de mapa ya vistos.
-const CACHE = "verde360-v3";
+const CACHE = "verde360-v4";
 const BASE = ["./", "./index.html", "./manifest.json", "./icon.svg",
   "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"];
 const EXTERNOS = ["unpkg.com", "fonts.googleapis.com", "fonts.gstatic.com", "tile.openstreetmap.org"];

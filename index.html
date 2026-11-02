@@ -908,6 +908,13 @@ footer{padding:34px 0 90px;color:var(--mute);font-size:.84rem;text-align:center}
 .tipos button span{display:block;font-size:1.25rem}
 .reportar select,.reportar textarea{width:100%;border:0;border-radius:10px;padding:10px;margin-bottom:8px;font-size:.9rem}
 .reportar .enviar{width:100%;border:0;background:#fff;color:#7f1d1d;font-weight:800;padding:12px;border-radius:12px;cursor:pointer}
+.rshare{display:grid;gap:8px;margin-top:10px}
+.rshare .sh{display:block;width:100%;text-align:center;text-decoration:none;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.1);color:#fff;font-weight:700;font-size:.88rem;padding:11px;border-radius:12px;cursor:pointer}
+.rshare .sh.wa2{background:#25d366;color:#062b16;border-color:#25d366}
+.rshare .sh.r{background:#fff;color:#7f1d1d}
+.offline{position:fixed;left:12px;right:12px;top:68px;z-index:940;max-width:560px;margin:0 auto;background:#7f1d1d;color:#fff;border-radius:14px;padding:10px 14px;font-size:.86rem;display:none;box-shadow:var(--sh)}
+.offline.on{display:block}
+.offline button{margin-left:8px;border:0;background:#fff;color:#7f1d1d;font-weight:800;border-radius:9px;padding:5px 10px;cursor:pointer}
 .reportar .aviso{font-size:.74rem;opacity:.7;margin-top:10px}
 
 .mov{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
@@ -1307,7 +1314,13 @@ footer{padding:34px 0 90px;color:var(--mute);font-size:.84rem;text-align:center}
         <textarea id="rTxt" rows="2" placeholder="¿Qué está pasando? (sin nombres ni fotos de personas)"></textarea>
         <button class="enviar" id="rEnviar">🚨 Preparar alerta</button>
         <div id="rMsg" style="font-size:.85rem;margin-top:8px" role="status"></div>
-        <a id="rLink" class="btn-wa" href="#" target="_blank" rel="noopener" hidden>💬 Enviar por WhatsApp</a>
+        <div id="rShare" class="rshare" hidden>
+          <a id="rLink" class="sh wa2" href="#" target="_blank" rel="noopener">💬 WhatsApp a la red</a>
+          <button id="rNative" class="sh" type="button">📲 Compartir en grupos (Facebook y otros)</button>
+          <button id="rFb" class="sh" type="button">📘 Copiar y abrir Facebook</button>
+          <a id="rSms" class="sh" href="#">✉️ Enviar por SMS (sin internet)</a>
+          <a class="sh r" href="tel:123">📞 Llamar al 123</a>
+        </div>
         <div class="aviso">Verde360 no reemplaza a la Policía. El ruido excesivo es una contravención del Código Nacional de Seguridad y Convivencia (Ley 1801 de 2016).</div>
       </div>
     </div>
@@ -1473,6 +1486,8 @@ footer{padding:34px 0 90px;color:var(--mute);font-size:.84rem;text-align:center}
   </div>
 </div>
 
+<div class="offline" id="offBar" role="status"></div>
+
 <div class="modal" id="talModal" role="dialog" aria-modal="true"><div class="in" id="talIn"></div></div>
 
 <button class="botbtn" id="botBtn" aria-label="Abrir asistente Vera"><span class="av2">✨</span>Pregúntale a Vera</button>
@@ -1517,7 +1532,11 @@ footer{padding:34px 0 90px;color:var(--mute);font-size:.84rem;text-align:center}
    CONFIGURACIÓN — edita aquí
    ========================================================= */
 const WHATSAPP = "573208303847";        // tu WhatsApp, formato 57XXXXXXXXXX
-const CENTRO   = [4.6060, -74.2205];    // centro aproximado de Ciudad Verde (ajústalo)
+const CENTRO   = [4.6060, -74.2205];
+// Grupos de Facebook de la ciudadela donde se comparten alertas (pega aquí sus enlaces)
+const GRUPOS_FACEBOOK = [
+  // {nombre:"Ciudad Verde Soacha", url:"https://www.facebook.com/groups/XXXXXXXX"}
+];    // centro aproximado de Ciudad Verde (ajústalo)
 
 /* INMUEBLES — reemplaza los EJEMPLOS por avisos reales autorizados.
    tipo: "Arriendo" | "Venta" · precio en pesos · admin: cuota de administración
@@ -1633,7 +1652,9 @@ const CONDUCTORES = [
    ========================================================= */
 const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
 const norm=t=>(t||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
-const wa=(n,m)=>`https://wa.me/${n}?text=${encodeURIComponent(m)}`;
+/* WhatsApp de escritorio muestra «�» con algunos emojis en mensajes prellenados: se quitan del texto enviado */
+const limpiar=m=>m.replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{FE0F}\u{200D}]/gu,"").replace(/[ \t]+\n/g,"\n").replace(/^[ \t]+/gm,"").trim();
+const wa=(n,m)=>`https://wa.me/${n}?text=${encodeURIComponent(limpiar(m))}`;
 const ruta=x=>`https://www.google.com/maps/dir/?api=1&destination=${x.lat},${x.lng}`;
 const pesos=v=>"$"+Math.round(v).toLocaleString("es-CO");
 const corto=v=>v>=1e9?"$"+(v/1e9).toLocaleString("es-CO",{maximumFractionDigits:1})+" mil M":v>=1e6?"$"+(v/1e6).toLocaleString("es-CO",{maximumFractionDigits:v>=1e8?0:1})+" M":"$"+Math.round(v/1e3)+" mil";
@@ -1736,9 +1757,9 @@ function pintarMapa(casas,negs,conjs){
     mJ[i]=L.marker([c.lat,c.lng],{icon:L.divIcon({className:"",html:`<div class="cpin">${c.nombre[0]}</div>`,iconSize:[26,26],iconAnchor:[13,13]})})
       .addTo(capaJ).on("click",()=>enfocar("conjuntos",i,false))
       .bindPopup(`<b>Conjunto ${c.nombre}</b><br>🚪 ${c.porteria}<br><a href="${ruta(c)}" target="_blank">Cómo llegar a la portería</a>`);});
-  ALERTAS.forEach(a=>{const c=CONJUNTOS.find(x=>x.nombre===a.conj);if(!c)return;
+  ALERTAS.forEach(a=>{const c=CONJUNTOS.find(x=>x.nombre===a.conj)||{lat:CENTRO[0],lng:CENTRO[1]};
     L.marker([c.lat+.0006,c.lng+.0006],{icon:L.divIcon({className:"",html:`<div class="apin ${a.menor?"m":""}"></div>`,iconSize:[22,22],iconAnchor:[11,11]}),zIndexOffset:900})
-      .addTo(capaA).bindPopup(`<b>${a.e} ${a.tipo}</b> · hace ${hace(a.hace)}<br>${a.txt}<br><small>Cerca a ${a.conj} · ejemplo</small>`);});
+      .addTo(capaA).bindPopup(`<b>${a.e} ${a.tipo}</b> · hace ${hace(a.hace)}<br>${a.txt}<br><small>Cerca a ${a.conj} · ${a.mia?"tu reporte"+(a.pend?" (pendiente de envío)":""):"ejemplo"}</small>`);});
   casas.forEach(c=>{const i=CASAS.indexOf(c);
     mC[i]=L.marker([c.lat,c.lng],{icon:L.divIcon({className:"",html:`<span class="ppin ${c.tipo==="Venta"?"v":""}" id="pp${i}">${corto(c.precio)}</span>`,iconSize:[0,0]}),zIndexOffset:500})
       .addTo(capaC).on("click",()=>enfocar("casas",i,false))
@@ -1787,7 +1808,7 @@ function tarjetaConj(c){const i=CONJUNTOS.indexOf(c);
       <div class="acc"><a class="wa" href="${ruta(c)}" target="_blank" rel="noopener">Cómo llegar</a>
         <a href="${wa("","Te comparto cómo llegar al Conjunto "+c.nombre+" en Ciudad Verde: "+ruta(c))}" target="_blank" rel="noopener">Compartir ubicación</a></div>
     </div></article>`;}
-const hace=m=>m<60?`${m} min`:`${Math.floor(m/60)} h ${m%60?m%60+" min":""}`.trim();
+const hace=m=>m<1?"un momento":m<60?`${m} min`:`${Math.floor(m/60)} h ${m%60?m%60+" min":""}`.trim();
 
 function pintar(){
   const casas=casasFiltradas(), conjs=conjuntosFiltrados();
@@ -2161,19 +2182,58 @@ $("#mic").onclick=()=>{
 function pintarFeed(){
   $("#feed").innerHTML=ALERTAS.map((a,i)=>`<div class="al" style="animation-delay:${i*60}ms">
     <div class="i ${a.menor?"m":""}">${a.e}</div>
-    <div><b>${a.tipo} · cerca a ${a.conj}</b><div class="meta">${a.txt} <span class="aprox">· ejemplo</span></div></div>
+    <div><b>${a.tipo} · cerca a ${a.conj}</b><div class="meta">${a.txt} <span class="aprox">· ${a.mia?(a.pend?"tu reporte · sin enviar":"tu reporte"):"ejemplo"}</span></div></div>
     <time>hace ${hace(a.hace)}</time></div>`).join("");
   $("#nAlert").textContent=`EN VIVO · ${ALERTAS.length} alertas hoy`;
 }
 let tipoSel="";
 $$("#tipos button").forEach(b=>b.onclick=()=>{tipoSel=b.dataset.t;$$("#tipos button").forEach(x=>x.classList.toggle("on",x===b));});
 $("#rConj").innerHTML='<option value="">¿En qué conjunto o zona?</option>'+[...CONJUNTOS].sort((a,b)=>a.nombre.localeCompare(b.nombre,"es")).map(c=>`<option>${c.nombre}</option>`).join("")+"<option>Vía pública / parque</option>";
+const EMO={Robo:"🦹",Accidente:"🚗",Riña:"👊",Sospechoso:"👀",Ruido:"🔊",Otro:"⚠️"};
+const PAGINA=location.href.split("#")[0];
+function guardarPend(){try{localStorage.setItem("v360-pend",JSON.stringify(ALERTAS.filter(a=>a.pend)))}catch(e){}}
+function textoAlerta(a){return `ALERTA VERDE360 - Ciudad Verde\nTipo: ${a.tipo}\nZona: ${a.conj}\nDetalle: ${a.txt}\nHora: ${a.hora}\nSi hay peligro inmediato llama al 123.\nMapa de alertas: ${PAGINA}#alertas`;}
+let ultima=null;
 $("#rEnviar").onclick=()=>{
   if(!tipoSel){$("#rMsg").textContent="Elige primero el tipo de alerta.";return;}
-  const msg=`🚨 ALERTA VERDE360\nTipo: ${tipoSel}\nZona: ${$("#rConj").value||"sin especificar"}\nDetalle: ${$("#rTxt").value||"—"}`;
-  const a=$("#rLink"); a.href=wa(WHATSAPP,msg); a.hidden=false;
-  $("#rMsg").textContent="Alerta lista. Toca el botón verde para enviarla por WhatsApp a la red.";
+  const a={tipo:tipoSel,e:EMO[tipoSel]||"⚠️",conj:$("#rConj").value||"Vía pública / parque",txt:$("#rTxt").value.trim()||"Sin detalle",
+    hace:0,mia:true,pend:!navigator.onLine,menor:tipoSel==="Ruido",hora:new Date().toLocaleTimeString("es-CO",{hour:"numeric",minute:"2-digit"})};
+  ALERTAS.unshift(a); ultima=a; pintarFeed(); pintar(); guardarPend();
+  // ubicar la alerta en el mapa
+  const c=CONJUNTOS.find(x=>x.nombre===a.conj);
+  if(mapa){$("#capaA").checked=true;capaA.addTo(mapa);mapa.flyTo(c?[c.lat,c.lng]:CENTRO,16,{duration:.6});}
+  const t=textoAlerta(a);
+  $("#rLink").href=wa(WHATSAPP,t);
+  $("#rSms").href=`sms:+${WHATSAPP}?body=${encodeURIComponent(limpiar(t))}`;
+  $("#rShare").hidden=false;
+  $("#rMsg").textContent=navigator.onLine
+    ?"✅ Alerta publicada en el mapa de la ciudadela. Ahora compártela con la red:"
+    :"📵 Estás sin internet. La alerta quedó en el mapa de tu celular y se enviará cuando vuelva la señal. Si es urgente, usa SMS o llama al 123.";
 };
+$("#rNative").onclick=async()=>{
+  if(!ultima)return; const t=limpiar(textoAlerta(ultima));
+  if(navigator.share){try{await navigator.share({title:"Alerta Verde360",text:t,url:PAGINA+"#alertas"});return;}catch(e){if(e.name==="AbortError")return;}}
+  $("#rFb").click();
+};
+$("#rFb").onclick=async()=>{
+  if(!ultima)return; const t=limpiar(textoAlerta(ultima)); let copiado=false;
+  try{await navigator.clipboard.writeText(t);copiado=true;}catch(e){}
+  const g=GRUPOS_FACEBOOK[0];
+  const url=g?g.url:`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(PAGINA+"#alertas")}`;
+  $("#rMsg").textContent=(copiado?"📋 Texto copiado. ":"")+(g?`Abre el grupo «${g.nombre}» y pega la alerta.`:"Se abre Facebook: pega el texto en tu publicación o en el grupo de tu conjunto.");
+  const a=document.createElement("a");a.href=url;a.target="_blank";a.rel="noopener";document.body.appendChild(a);a.click();a.remove();
+};
+/* sin señal: avisos guardados y reenvío al volver la conexión */
+function revisarRed(){
+  const pend=ALERTAS.filter(a=>a.pend), bar=$("#offBar");
+  if(!navigator.onLine){bar.innerHTML="📵 Sin internet. Puedes ver el mapa y reportar; las alertas se envían al volver la señal.";bar.classList.add("on");return;}
+  if(pend.length){bar.innerHTML=`📶 Volvió la señal. Tienes ${pend.length} alerta${pend.length>1?"s":""} sin enviar.<button id="offEnv">Enviar ahora</button>`;bar.classList.add("on");
+    $("#offEnv").onclick=()=>{const p=pend[0];p.pend=false;guardarPend();pintarFeed();pintar();
+      const a=document.createElement("a");a.href=wa(WHATSAPP,textoAlerta(p));a.target="_blank";a.rel="noopener";document.body.appendChild(a);a.click();a.remove();revisarRed();};
+  }else bar.classList.remove("on");
+}
+try{const p=JSON.parse(localStorage.getItem("v360-pend")||"[]");p.forEach(a=>ALERTAS.unshift(a));}catch(e){}
+addEventListener("online",revisarRed); addEventListener("offline",revisarRed);
 
 $("#conductores").innerHTML=CONDUCTORES.map(c=>`<div class="cond">
   <div class="ft">${c.e}</div>
@@ -2248,7 +2308,7 @@ if("serviceWorker"in navigator&&location.protocol.startsWith("http"))navigator.s
 $$(".js-wa").forEach(a=>{a.href=wa(WHATSAPP,a.dataset.msg);a.target="_blank";a.rel="noopener";});
 
 /* inicio */
-iniciarMapa(); precioOpciones(); pintarCats(); cambiarModo("casas"); pintarFeed(); pintarETAs(); pintarAgenda(); pintarPlanes(); pintarTalentos(); pintarPets(); observatorio();
+iniciarMapa(); precioOpciones(); pintarCats(); cambiarModo("casas"); pintarFeed(); revisarRed(); pintarETAs(); pintarAgenda(); pintarPlanes(); pintarTalentos(); pintarPets(); observatorio();
 $$("[data-wa]").forEach(a=>{a.href=wa(WHATSAPP,a.dataset.wa);a.target="_blank";a.rel="noopener";});
 setInterval(pintarETAs,5000);
 setInterval(pintar,60000);

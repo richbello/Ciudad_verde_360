@@ -1,9 +1,12 @@
-// Verde360 — service worker: permite instalar la app y abrirla sin conexión.
-const CACHE = "verde360-v1";
-const BASE = ["./", "./index.html", "./manifest.json", "./icon.svg"];
+// Verde360 — service worker: instala la app y la deja funcionando sin internet.
+// Guarda la página, la librería del mapa, las fuentes y los pedazos de mapa ya vistos.
+const CACHE = "verde360-v2";
+const BASE = ["./", "./index.html", "./manifest.json", "./icon.svg",
+  "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"];
+const EXTERNOS = ["unpkg.com", "fonts.googleapis.com", "fonts.gstatic.com", "tile.openstreetmap.org"];
 
 self.addEventListener("install", e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(BASE)).then(() => self.skipWaiting()));
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(BASE)).catch(() => {}).then(() => self.skipWaiting()));
 });
 
 self.addEventListener("activate", e => {
@@ -11,15 +14,19 @@ self.addEventListener("activate", e => {
     .then(() => self.clients.claim()));
 });
 
-// Red primero (datos frescos); si no hay conexión, usa la copia guardada.
+// Red primero (datos frescos); sin conexión, usa la copia guardada.
 self.addEventListener("fetch", e => {
   if (e.request.method !== "GET") return;
+  const url = new URL(e.request.url);
+  const propio = url.origin === location.origin;
+  const externo = EXTERNOS.some(h => url.hostname.endsWith(h));
+  if (!propio && !externo) return;              // SECOP y demás: siempre en vivo
   e.respondWith(
     fetch(e.request).then(r => {
-      if (r.ok && new URL(e.request.url).origin === location.origin) {
+      if (r.ok || r.type === "opaque") {
         const copia = r.clone(); caches.open(CACHE).then(c => c.put(e.request, copia));
       }
       return r;
-    }).catch(() => caches.match(e.request))
+    }).catch(() => caches.match(e.request).then(m => m || (e.request.mode === "navigate" ? caches.match("./index.html") : undefined)))
   );
 });

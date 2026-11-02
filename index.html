@@ -1166,6 +1166,58 @@ footer{padding:34px 0 90px;color:var(--mute);font-size:.84rem;text-align:center}
 .sbtn.r{background:#dc2626;border-color:#dc2626;color:#fff}
 .sbtn.r small{color:#fee2e2}
 .cerrar{width:100%;margin-top:6px;border:0;background:var(--bg);color:var(--ink);padding:12px;border-radius:12px;font-weight:600;cursor:pointer}
+
+/* ======================= RESPONSIVO: celular vertical y horizontal ======================= */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}            /* evita que iOS agrande el texto al girar */
+img,svg,canvas,video{max-width:100%}
+/* los hijos de grillas y flex pueden encogerse (evita desbordes por textos o selects largos) */
+.feat>*,.tiles>*,.seg>*,.mov>*,.planes>*,.evs>*,.pets>*,.tals>*,.exp>*,.dir>*,.alert-wrap>*,.hu-grid>*,.ganchos>*,.stats>*,.admins>*,.ctas>*,.niveles>*{min-width:0}
+.list>*{flex-shrink:0}   /* las tarjetas no se aplastan dentro de la lista con scroll */
+.portal-row{flex-wrap:wrap}.portal-row select{min-width:0;flex:1 1 160px}
+.card h3,.tal h3,.ev h3,.pet h3,.f h3{overflow-wrap:anywhere}
+/* márgenes seguros (muesca de iPhone en horizontal) */
+.wrap{padding-left:max(18px,env(safe-area-inset-left));padding-right:max(18px,env(safe-area-inset-right))}
+.sos{right:max(16px,env(safe-area-inset-right));bottom:max(18px,env(safe-area-inset-bottom))}
+.botbtn{right:max(16px,env(safe-area-inset-right))}
+/* celulares pequeños */
+@media(max-width:380px){
+  .tiles{grid-template-columns:repeat(2,1fr)}
+  .hero h1{font-size:1.75rem}
+  .stats{gap:8px}.stat{padding:10px}.stat strong{font-size:1.25rem}
+  .modo button{padding:8px 4px}
+  .admins{padding:16px}
+  .tabs button{padding:8px 10px;font-size:.85rem}
+}
+/* ---- celular en HORIZONTAL (pantalla baja) ---- */
+@media (orientation:landscape) and (max-height:520px){
+  .top .wrap{height:50px}
+  .anuncio{padding:5px 44px 5px 12px;font-size:.8rem}.anuncio-d{display:none}
+  .hero{padding:22px 0 22px}
+  .hero h1{font-size:clamp(1.5rem,4.2vw,2.2rem);margin:8px 0 6px}
+  .hero h1.gancho{min-height:1.3em}
+  .hero p.sub{font-size:.92rem;margin-bottom:12px;max-width:none}
+  .ganchos{grid-template-columns:repeat(3,1fr);gap:8px}
+  .ganchos a{padding:10px}.ganchos small{display:none}
+  .admins{grid-template-columns:1.2fr .8fr;padding:16px}
+  .admins-mock{transform:none}
+  .stats{grid-template-columns:repeat(4,1fr);margin-top:16px}
+  section.blk{padding-top:26px}
+  /* el mapa ocupa la pantalla disponible sin pasarse */
+  .exp{grid-template-columns:minmax(260px,38%) 1fr;width:100%;margin-left:0}
+  .mapbox{order:0}
+  #map{height:calc(100vh - 70px);height:calc(100dvh - 70px);min-height:220px}
+  .list{max-height:calc(100vh - 70px);max-height:calc(100dvh - 70px)}
+  .capas{max-height:calc(100% - 24px);overflow:auto}
+  /* botones flotantes más pequeños */
+  .sos{width:50px;height:50px;font-size:.78rem}
+  .botbtn{bottom:76px;height:46px;padding:0;width:46px;justify-content:center;font-size:0}
+  .botbtn .av2{width:36px;height:36px}
+  /* paneles y ventanas caben en la altura */
+  .chat{height:calc(100vh - 16px);height:calc(100dvh - 16px);bottom:8px}
+  .sheet .in{max-height:100vh;max-height:100dvh;overflow:auto;padding-top:14px;padding-bottom:14px}
+  .modal .in{max-height:calc(100dvh - 16px)}
+  .menu .grp div{grid-template-columns:repeat(4,1fr)}
+}
 </style>
 </head>
 <body>

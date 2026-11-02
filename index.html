@@ -710,12 +710,50 @@ button,input,select,textarea{font-family:inherit}
 .menu .grp a{display:flex;align-items:center;gap:8px;text-decoration:none;border:1px solid var(--line);border-radius:12px;padding:10px;font-size:.88rem;color:var(--ink);background:var(--bg)}
 /* accesos rápidos */
 @media(max-width:520px){.sug button:nth-child(n+3){display:none}}
+/* anuncio para administradores */
+.anuncio{position:relative;z-index:61;display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;padding:9px 46px 9px 16px;
+  background:linear-gradient(90deg,#e6a100,#f5c542 45%,#c8f560);color:#1b1400;font-size:.88rem;text-align:center}
+.anuncio-d{opacity:.85}
+.anuncio-btn{background:#1b1400;color:#fff;text-decoration:none;font-weight:700;padding:5px 12px;border-radius:999px;font-size:.82rem;white-space:nowrap}
+.anuncio-x{position:absolute;right:10px;top:50%;transform:translateY(-50%);border:0;background:rgba(0,0,0,.12);width:26px;height:26px;border-radius:50%;cursor:pointer;color:#1b1400}
+@media(max-width:620px){.anuncio-d{display:none}}
+.anuncio.oculto{display:none}
+/* tarjeta para administradores dentro del banner */
+.admins{margin-top:26px;max-width:1080px;display:grid;grid-template-columns:1.15fr .85fr;gap:22px;align-items:center;
+  background:linear-gradient(135deg,rgba(230,161,0,.18),rgba(200,245,96,.10) 60%,rgba(255,255,255,.04));
+  border:1.5px solid rgba(245,197,66,.55);border-radius:22px;padding:22px;position:relative;overflow:hidden;box-shadow:0 0 0 0 rgba(245,197,66,.4);animation:brilla 3.5s ease-in-out infinite}
+@keyframes brilla{50%{box-shadow:0 0 34px -6px rgba(245,197,66,.55)}}
+@media(max-width:860px){.admins{grid-template-columns:1fr}}
+.admins-tag{display:inline-block;font-size:.7rem;font-weight:800;letter-spacing:.08em;color:#1b1400;background:#f5c542;padding:4px 10px;border-radius:999px}
+.admins h2{font-size:clamp(1.3rem,2.6vw,1.8rem);margin:10px 0 8px;color:#fff;line-height:1.15}
+.admins p{opacity:.88;margin:0 0 10px;font-size:.95rem}
+.admins-lista{list-style:none;padding:0;margin:0 0 14px;display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;font-size:.86rem}
+@media(max-width:560px){.admins-lista{grid-template-columns:1fr}}
+.admins-cta{display:flex;gap:10px;flex-wrap:wrap}
+.admins-b1{background:#f5c542;color:#1b1400;font-weight:800;text-decoration:none;padding:11px 16px;border-radius:12px}
+.admins-b2{border:1px solid rgba(255,255,255,.35);color:#fff;font-weight:700;text-decoration:none;padding:11px 16px;border-radius:12px}
+.admins-nota{display:block;margin-top:10px;opacity:.7;font-size:.78rem}
+.admins-mock{background:#fff;color:#0e1a14;border-radius:16px;padding:14px;box-shadow:0 20px 50px -20px #000;transform:rotate(1.2deg)}
+.am-top{display:flex;align-items:center;gap:8px;font-size:.85rem;margin-bottom:10px}
+.am-dot{width:10px;height:10px;border-radius:50%;background:#14b86a}
+.am-live{margin-left:auto;font-size:.65rem;font-weight:800;color:#0f7a4a;background:#dcf7e8;padding:2px 7px;border-radius:999px}
+.am-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.am-kpis div{background:#f2f7f4;border-radius:10px;padding:8px}
+.am-kpis strong{display:block;font:800 1.25rem Sora,Inter,sans-serif}
+.am-kpis small{font-size:.66rem;color:#5b6b63}
+.am-barras{font-size:.72rem;color:#5b6b63;margin-bottom:8px}
+.am-barras>span{display:block;font-weight:700;color:#0e1a14;margin-bottom:4px}
+.am-b{display:grid;grid-template-columns:1fr 70px;align-items:center;gap:6px;margin:3px 0}
+.am-b i{display:block;height:8px;border-radius:999px;background:linear-gradient(90deg,var(--c) var(--w),#e9efeb var(--w))}
+.am-b em{font-style:normal}
+.am-row{display:flex;justify-content:space-between;gap:8px;font-size:.74rem;padding:6px 0;border-top:1px dashed #dde7e1}
+.am-ok{color:#0f7a4a;font-weight:700;white-space:nowrap}
 /* ganchos sociales */
 .hero h1.gancho{min-height:2.2em;display:flex;align-items:flex-end}
 @media(max-width:520px){.hero h1.gancho{min-height:3.3em}}
 #ganQ{background:linear-gradient(90deg,#fff 0%,#c8f560 55%,#14b86a 100%);-webkit-background-clip:text;background-clip:text;color:transparent;transition:opacity .45s,transform .45s;display:inline-block}
 #ganQ.out{opacity:0;transform:translateY(12px)}
-.ganchos{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:22px;max-width:1080px}
+.ganchos{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:22px;max-width:1080px}
 @media(max-width:900px){.ganchos{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:520px){.ganchos{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;margin-right:-18px;padding-right:18px;scrollbar-width:none}.ganchos a{flex:0 0 74%;scroll-snap-align:start}}
 .ganchos a{display:flex;flex-direction:column;gap:6px;text-decoration:none;color:#fff;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:14px;transition:.25s}
@@ -1132,6 +1170,11 @@ footer{padding:34px 0 90px;color:var(--mute);font-size:.84rem;text-align:center}
 </head>
 <body>
 
+<div class="anuncio" id="anuncio">
+  <span class="anuncio-t">🏢 <b>¿Administras un conjunto en Ciudad Verde?</b> <span class="anuncio-d">Cartera, paz y salvos y solicitudes de los propietarios en un solo portal.</span></span>
+  <a href="#admins" class="anuncio-btn">Conócelo →</a>
+  <button class="anuncio-x" id="anuncioX" aria-label="Cerrar anuncio">✕</button>
+</div>
 <div class="top">
   <div class="wrap">
     <a class="brand" href="#"><i>V</i>Verde360</a>
@@ -1171,6 +1214,42 @@ footer{padding:34px 0 90px;color:var(--mute);font-size:.84rem;text-align:center}
     </div>
 
     <div class="ganchos" id="ganchos" aria-label="¿En qué te ayudamos hoy?"></div>
+
+    <section class="admins" id="admins" aria-labelledby="adminsT">
+      <div class="admins-txt">
+        <span class="admins-tag">PARA ADMINISTRADORES DE CONJUNTOS</span>
+        <h2 id="adminsT">Menos llamadas, menos papeles y la cartera al día</h2>
+        <p>El <b>Portal del Conjunto</b> le da a cada propietario su estado de cuenta, paz y salvo y solicitudes en línea, y a la administración el control de todo, con transparencia ante la asamblea.</p>
+        <ul class="admins-lista">
+          <li>📊 Cartera por edades: al día, 30, 60, 90 días</li>
+          <li>🧾 Paz y salvo en PDF con código de verificación</li>
+          <li>📨 Solicitudes con radicado y plazos en días hábiles</li>
+          <li>🚗 Censo, parqueaderos, mascotas y vencimientos de SOAT</li>
+        </ul>
+        <div class="admins-cta">
+          <a href="#" class="admins-b1 js-wa" data-msg="Hola, administro un conjunto en Ciudad Verde y quiero una demostración del Portal del Conjunto de Verde360.">Quiero una demostración gratis</a>
+          <a href="#portal" class="admins-b2">Ya tengo portal: ingresar</a>
+        </div>
+        <small class="admins-nota">Ya funciona en el Conjunto Avellana · Un mes de prueba sin costo · Panel de ejemplo con cifras ilustrativas</small>
+      </div>
+      <div class="admins-mock" aria-hidden="true">
+        <div class="am-top"><span class="am-dot"></span><b>Panel de administración</b><span class="am-live">EN LÍNEA</span></div>
+        <div class="am-kpis">
+          <div><strong data-n2="87">0</strong><small>% unidades al día</small></div>
+          <div><strong data-n2="216">0</strong><small>apartamentos</small></div>
+          <div><strong data-n2="4">0</strong><small>solicitudes abiertas</small></div>
+        </div>
+        <div class="am-barras">
+          <span>Cartera por edades</span>
+          <div class="am-b"><i style="--w:87%;--c:#14b86a"></i><em>Al día</em></div>
+          <div class="am-b"><i style="--w:7%;--c:#e6a100"></i><em>1–30 días</em></div>
+          <div class="am-b"><i style="--w:4%;--c:#f97316"></i><em>31–90 días</em></div>
+          <div class="am-b"><i style="--w:2%;--c:#dc2626"></i><em>Más de 90</em></div>
+        </div>
+        <div class="am-row"><span>📨 Torre 5 · Apto 501 · Daño locativo</span><span class="am-ok">Resuelta</span></div>
+        <div class="am-row"><span>🧾 Paz y salvo · Torre 2 · Apto 304</span><span class="am-ok">Emitido</span></div>
+      </div>
+    </section>
 
     <div class="stats">
       <div class="stat"><strong data-n="200000" data-p="+">0</strong><span>habitantes</span></div>
@@ -2420,6 +2499,7 @@ addEventListener("keydown",e=>{if(e.key==="Escape"&&$(".mapbox").classList.conta
 /* ganchos sociales: preguntas que rotan en el titular */
 const GANCHOS=[
   {e:"🐾",q:"¿Se te perdió tu mascota?",d:"Publícala con foto y avisa a las porterías de toda la ciudadela.",c:"Reportar mascota",h:"#mascotas"},
+  {e:"🏢",q:"¿Administras un conjunto?",d:"Cartera, paz y salvos y solicitudes en un solo portal.",c:"Conocer el portal",h:"#admins"},
   {e:"📍",q:"¿No sabes dónde queda un conjunto?",d:"Encuentra la portería y la ruta a pie o en carro.",c:"Buscar conjunto",h:"#explorar",m:"conjuntos"},
   {e:"🛡️",q:"Colabora con la seguridad de tu conjunto",d:"Reporta robos, riñas o sospechosos y alerta a los vecinos.",c:"Reportar alerta",h:"#alertas"},
   {e:"🏠",q:"¿Buscas arriendo sin recorrer porterías?",d:"Todos los arriendos en un mapa, con precio y filtros.",c:"Ver arriendos",h:"#explorar",m:"casas"},
@@ -2441,6 +2521,11 @@ if(!matchMedia("(prefers-reduced-motion: reduce)").matches)setInterval(rotarGanc
 $("#portalSel").innerHTML=PORTALES.map((p,i)=>`<option value="${i}">${p.nombre}</option>`).join("");
 const irPortal=()=>{const p=PORTALES[+$("#portalSel").value||0];if(p)$("#portalIr").href=urlPortal(p);};
 $("#portalSel").onchange=irPortal; irPortal();
+
+/* anuncio para administradores: se puede cerrar y no vuelve a salir en este navegador */
+try{if(localStorage.getItem("v360-anuncio")==="cerrado")$("#anuncio").classList.add("oculto");}catch(e){}
+$("#anuncioX").onclick=()=>{$("#anuncio").classList.add("oculto");try{localStorage.setItem("v360-anuncio","cerrado")}catch(e){}};
+new IntersectionObserver((es,ob)=>es.forEach(x=>{if(x.isIntersecting){$$("[data-n2]").forEach(el=>contar(el,+el.dataset.n2));ob.disconnect();}}),{threshold:.3}).observe($(".admins-mock"));
 
 /* inicio */
 iniciarMapa(); precioOpciones(); pintarCats(); cambiarModo("casas"); pintarFeed(); revisarRed(); pintarETAs(); pintarAgenda(); cargarEventos(); pintarPlanes(); pintarTalentos(); pintarPets();

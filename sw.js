@@ -20,7 +20,7 @@ self.addEventListener("fetch", e => {
   const url = new URL(e.request.url);
   const propio = url.origin === location.origin;
   const externo = EXTERNOS.some(h => url.hostname.endsWith(h));
-  if (!propio && !externo) return;              // SECOP y demás: siempre en vivo
+  if (!propio && !externo) return;              // backend y demás: siempre en vivo
   e.respondWith(
     fetch(e.request).then(r => {
       if (r.ok || r.type === "opaque") {

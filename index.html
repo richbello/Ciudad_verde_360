@@ -849,7 +849,7 @@ section.blk{padding:42px 0 8px}
 [data-theme="dark"] .leaflet-tile{filter:invert(.92) hue-rotate(180deg) brightness(.9) contrast(.9)}
 .leaflet-popup-content{font-family:Inter,sans-serif}
 
-/* servicios, observatorio, cta */
+/* servicios, cta */
 .feat{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 @media(max-width:860px){.feat{grid-template-columns:1fr}}
 .f{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px}
@@ -1444,25 +1444,6 @@ footer{padding:34px 0 90px;color:var(--mute);font-size:.84rem;text-align:center}
     </div>
   </section>
 
-  <!-- OBSERVATORIO -->
-  <section class="blk" id="observatorio">
-    <div class="head">
-      <div>
-        <div class="kicker">Observatorio Comuna 3 · datos abiertos</div>
-        <h2>¿En qué se invierte la plata pública en Soacha?</h2>
-        <p>Contratos más recientes de entidades de Soacha, consultados en vivo en SECOP II (datos.gov.co).</p>
-      </div>
-    </div>
-    <div class="obs">
-      <div class="obs-top">
-        <div class="kpi"><strong id="kN">—</strong><span>contratos mostrados</span></div>
-        <div class="kpi"><strong id="kV">—</strong><span>valor total mostrado</span></div>
-        <div class="kpi"><strong id="kF">—</strong><span>firma más reciente</span></div>
-      </div>
-      <div id="contratos"><div class="skel"></div><div class="skel"></div><div class="skel"></div></div>
-    </div>
-  </section>
-
   <!-- PLANES Y PRECIOS -->
   <section class="blk" id="planes">
     <div class="head"><div><div class="kicker">Planes y precios</div><h2>Sin comisiones por pedido ni por arriendo</h2><p>Para los vecinos Verde360 es gratis. Estos son los planes para quienes quieren que los encuentren.</p></div></div>
@@ -1507,7 +1488,7 @@ footer{padding:34px 0 90px;color:var(--mute);font-size:.84rem;text-align:center}
       <a href="#talentos">🧵 Talento Verde</a><a href="#planes">💰 Planes</a></div></div>
     <div class="grp"><h4>🛡️ Convivir y cuidarse</h4><div>
       <a href="#alertas">🚨 Red de Alerta</a><a href="#mascotas">🐾 Mascotas</a>
-      <a href="#agenda">🎉 Agenda</a><a href="#observatorio">📊 Observatorio</a></div></div>
+      <a href="#agenda">🎉 Agenda</a><a href="#alertas">📍 Reporta tu barrio</a></div></div>
     <div class="grp"><h4>🚌 Moverse</h4><div>
       <a href="#muevete">🚌 Busetas en vivo</a><a href="#muevete">🚕 Conductores</a></div></div>
     <button class="cerrar" id="menuCerrar">Cerrar</button>
@@ -2377,28 +2358,6 @@ addEventListener("keydown",e=>{if(e.key==="Escape"){cerrarSOS();cerrarBot();$("#
 $("#fTipo").onchange=()=>{precioOpciones();pintar();};
 ["fHab","fPrecio","fMasc","fParq","fVer","fAb","fDom"].forEach(id=>$("#"+id).onchange=pintar);
 
-/* =========================================================
-   OBSERVATORIO — SECOP II en vivo (API pública de datos.gov.co)
-   ========================================================= */
-async function observatorio(){
-  const url="https://www.datos.gov.co/resource/jbjy-vk9h.json?"+new URLSearchParams({
-    "$select":"nombre_entidad,objeto_del_contrato,valor_del_contrato,fecha_de_firma,proveedor_adjudicado,urlproceso",
-    "$where":"upper(nombre_entidad) like '%SOACHA%' AND fecha_de_firma IS NOT NULL",
-    "$order":"fecha_de_firma DESC","$limit":"8"});
-  const box=$("#contratos");
-  try{
-    const ctrl=new AbortController();setTimeout(()=>ctrl.abort(),12000);
-    const r=await fetch(url,{signal:ctrl.signal}); if(!r.ok)throw 0;
-    const d=await r.json(); if(!d.length)throw 0;
-    $("#kN").textContent=d.length;
-    $("#kV").textContent=corto(d.reduce((s,c)=>s+(+c.valor_del_contrato||0),0));
-    $("#kF").textContent=new Date(d[0].fecha_de_firma).toLocaleDateString("es-CO",{day:"numeric",month:"short",year:"numeric"});
-    box.innerHTML=d.map(c=>{const link=c.urlproceso&&(c.urlproceso.url||c.urlproceso);
-      return `<div class="ct"><div class="o">${(c.objeto_del_contrato||"Sin descripción").toLowerCase().replace(/^./,m=>m.toUpperCase())}</div>
-        <div class="v">${corto(+c.valor_del_contrato||0)}</div>
-        <div class="m">${c.nombre_entidad} · ${c.proveedor_adjudicado||"—"}${typeof link==="string"?` · <a href="${link}" target="_blank" rel="noopener">Ver en SECOP</a>`:""}</div></div>`;}).join("");
-  }catch(e){box.innerHTML=`<div class="vacio">No pudimos consultar SECOP II en este momento. <a href="https://www.datos.gov.co" target="_blank" rel="noopener">Consulta datos.gov.co</a>.</div>`;}
-}
 
 /* =========================================================
    EFECTOS: contadores, red animada, tema, instalación
@@ -2457,7 +2416,7 @@ $$("#ganchos a")[0].classList.add("on");
 if(!matchMedia("(prefers-reduced-motion: reduce)").matches)setInterval(rotarGancho,3800);
 
 /* inicio */
-iniciarMapa(); precioOpciones(); pintarCats(); cambiarModo("casas"); pintarFeed(); revisarRed(); pintarETAs(); pintarAgenda(); cargarEventos(); pintarPlanes(); pintarTalentos(); pintarPets(); observatorio();
+iniciarMapa(); precioOpciones(); pintarCats(); cambiarModo("casas"); pintarFeed(); revisarRed(); pintarETAs(); pintarAgenda(); cargarEventos(); pintarPlanes(); pintarTalentos(); pintarPets();
 $$("[data-wa]").forEach(a=>{a.href=wa(WHATSAPP,a.dataset.wa);a.target="_blank";a.rel="noopener";});
 setInterval(pintarETAs,5000);
 setInterval(pintar,60000);

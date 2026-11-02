@@ -1,6 +1,6 @@
 # Ciudad Verde 360 (Verde360)
 
-La app hiperlocal de **Ciudad Verde, Soacha (Cundinamarca)**: arriendos, negocios, talentos de vecinos, alertas entre conjuntos, mascotas, transporte e inversión pública en un solo mapa.
+La app hiperlocal de **Ciudad Verde, Soacha (Cundinamarca)**: arriendos, negocios, talentos de vecinos, alertas entre conjuntos, mascotas, transporte y agenda en un solo mapa.
 
 **Versión 1.0 · prototipo.** Un proyecto de XIRIN Technologies S.A.S.
 
@@ -10,7 +10,7 @@ La app hiperlocal de **Ciudad Verde, Soacha (Cundinamarca)**: arriendos, negocio
 |---|---|
 | 🏠 Vivir | Inmuebles (arriendo y venta), Arrienda seguro, Conjuntos y porterías, Portal del Conjunto |
 | 🛍️ Comprar y contratar | Negocios, Servicios 24 h de confianza, Talento Verde, Vecino Emprendedor |
-| 🛡️ Convivir y cuidarse | Red de Alerta entre porterías, SOS, Huellitas Verde (mascotas), Agenda, Observatorio Comuna 3 |
+| 🛡️ Convivir y cuidarse | Red de Alerta entre porterías, SOS, Huellitas Verde (mascotas), Agenda |
 | 🚌 Moverse | Busetas en vivo (simulación), Conductores certificados |
 
 Además: **Vera**, asistente por texto y voz que funciona en el navegador.
@@ -19,7 +19,6 @@ Además: **Vera**, asistente por texto y voz que funciona en el navegador.
 
 - Un solo `index.html` (HTML, CSS y JavaScript sin frameworks).
 - Mapa: [Leaflet](https://leafletjs.com) + OpenStreetMap.
-- Observatorio: API pública de SECOP II en [datos.gov.co](https://www.datos.gov.co).
 - Voz: Web Speech API del navegador (dictado y lectura en voz alta).
 - PWA instalable (`manifest.json` + `sw.js`).
 - Costo de operación: $0 en GitHub Pages.

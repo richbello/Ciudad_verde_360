@@ -771,14 +771,23 @@ section.blk{padding:42px 0 8px}
 .chips button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .resumen{font-size:.9rem;color:var(--mute);margin:0 0 10px}
 
-.exp{display:grid;grid-template-columns:.95fr 1.05fr;gap:16px}
+.exp{display:grid;grid-template-columns:minmax(330px,400px) 1fr;gap:16px;
+  width:min(1560px,calc(100vw - 32px));margin-left:calc(50% - min(780px,50vw - 16px))}   /* el explorador usa casi todo el ancho */
 @media(max-width:900px){.exp{grid-template-columns:1fr}}
 .mapbox{position:relative}
-#map{background:var(--bg) repeating-linear-gradient(0deg,transparent 0 39px,var(--line) 39px 40px),repeating-linear-gradient(90deg,transparent 0 39px,var(--line) 39px 40px);height:600px;border-radius:var(--r);border:1px solid var(--line);box-shadow:var(--sh);z-index:1}
-@media(max-width:900px){#map{height:360px}.mapbox{order:-1}}
-.capas{position:absolute;top:12px;right:12px;z-index:500;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 10px;display:grid;gap:4px;font-size:.82rem;box-shadow:var(--sh)}
+#map{background:var(--bg) repeating-linear-gradient(0deg,transparent 0 39px,var(--line) 39px 40px),repeating-linear-gradient(90deg,transparent 0 39px,var(--line) 39px 40px);height:clamp(560px,80vh,940px);border-radius:var(--r);border:1px solid var(--line);box-shadow:var(--sh);z-index:1}
+@media(max-width:900px){#map{height:62vh;min-height:420px}.mapbox{order:-1}.exp{width:100%;margin-left:0}}
+.mapbox.full{position:fixed;inset:0;z-index:985;background:var(--bg)}
+.mapbox.full #map{height:100vh;height:100dvh;border-radius:0;border:0}
+.mapfs{position:absolute;left:56px;top:12px;z-index:500;border:1px solid var(--line);background:var(--card);color:var(--ink);font-weight:700;font-size:.82rem;padding:8px 12px;border-radius:12px;cursor:pointer;box-shadow:var(--sh)}
+.mapbox.full .mapfs{background:var(--ink);color:var(--bg)}
+.capas{position:absolute;top:12px;right:10px;z-index:500;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 10px;font-size:.82rem;box-shadow:var(--sh);max-width:170px}
+.capas summary{cursor:pointer;font-weight:700;list-style:none;user-select:none}
+.capas summary::-webkit-details-marker{display:none}
+.capas[open] summary{margin-bottom:6px}
+.capas .capas-in{display:grid;gap:4px}
 .capas label{display:flex;align-items:center;gap:6px;cursor:pointer}
-.list{display:flex;flex-direction:column;gap:10px;max-height:600px;overflow:auto;padding-right:4px}
+.list{display:flex;flex-direction:column;gap:10px;max-height:clamp(560px,80vh,940px);overflow:auto;padding-right:4px}
 @media(max-width:900px){.list{max-height:none}}
 
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;cursor:pointer;transition:transform .15s,box-shadow .15s,border-color .15s;animation:in .35s ease both;overflow:hidden}
@@ -1193,7 +1202,8 @@ footer{padding:34px 0 90px;color:var(--mute);font-size:.84rem;text-align:center}
       <div class="list" id="lista"></div>
       <div class="mapbox">
         <div id="map" role="region" aria-label="Mapa de Ciudad Verde"></div>
-        <div class="capas">
+        <button class="mapfs" id="mapFs" type="button">⛶ Pantalla completa</button>
+        <details class="capas" id="capasBox"><summary>🗂️ Capas del mapa</summary><div class="capas-in">
           <label><input type="checkbox" id="capaC" checked> 🏠 Inmuebles</label>
           <label><input type="checkbox" id="capaN" checked> 🏪 Negocios</label>
           <label><input type="checkbox" id="capaJ" checked> 📍 Porterías</label>
@@ -1201,7 +1211,7 @@ footer{padding:34px 0 90px;color:var(--mute);font-size:.84rem;text-align:center}
           <label><input type="checkbox" id="capaB" checked> 🚌 Busetas</label>
           <label><input type="checkbox" id="capaE" checked> 🎉 Eventos</label>
           <label><input type="checkbox" id="capaH" checked> 🐾 Mascotas</label>
-        </div>
+        </div></details>
       </div>
     </div>
     <p class="nota">Los avisos y negocios marcados «Ejemplo» son de muestra. Mapa © colaboradores de OpenStreetMap.</p>
@@ -2338,6 +2348,14 @@ $("#instalar").onclick=async()=>{if(!evInst)return;evInst.prompt();await evInst.
 if("serviceWorker"in navigator&&location.protocol.startsWith("http"))navigator.serviceWorker.register("sw.js").catch(()=>{});
 
 $$(".js-wa").forEach(a=>{a.href=wa(WHATSAPP,a.dataset.msg);a.target="_blank";a.rel="noopener";});
+
+/* mapa grande: pantalla completa y capas plegables */
+if(innerWidth>900)$("#capasBox").open=true;
+function mapaFull(on){const b=$(".mapbox");b.classList.toggle("full",on);$("#mapFs").textContent=on?"✕ Salir":(innerWidth<560?"⛶ Ampliar":"⛶ Pantalla completa");
+  document.body.style.overflow=on?"hidden":"";if(mapa){on?mapa.scrollWheelZoom.enable():mapa.scrollWheelZoom.disable();}setTimeout(()=>mapa&&mapa.invalidateSize(),60);}
+if(innerWidth<560)$("#mapFs").textContent="⛶ Ampliar";
+$("#mapFs").onclick=()=>mapaFull(!$(".mapbox").classList.contains("full"));
+addEventListener("keydown",e=>{if(e.key==="Escape"&&$(".mapbox").classList.contains("full"))mapaFull(false);});
 
 /* inicio */
 iniciarMapa(); precioOpciones(); pintarCats(); cambiarModo("casas"); pintarFeed(); revisarRed(); pintarETAs(); pintarAgenda(); pintarPlanes(); pintarTalentos(); pintarPets(); observatorio();

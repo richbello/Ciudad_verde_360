@@ -1015,6 +1015,10 @@ footer{padding:34px 0 90px;color:var(--mute);font-size:.84rem;text-align:center}
 .modal{position:fixed;inset:0;z-index:970;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;padding:12px}
 .modal.on{display:flex}
 .modal .in{background:var(--card);color:var(--ink);width:100%;max-width:520px;max-height:90vh;overflow:auto;border-radius:22px;padding:20px;animation:up .25s ease}
+.evform label{display:block;font-size:.8rem;font-weight:600;color:var(--mute);margin-bottom:8px}
+.evform label input,.evform label select,.evform label textarea{display:block;margin-top:4px;margin-bottom:0;width:100%;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:12px;padding:10px;font-size:.9rem}
+.evform .two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ev .nuevo{font-size:.66rem;font-weight:800;background:var(--lime);color:var(--dark);padding:2px 7px;border-radius:999px;margin-left:6px}
 .rv{border-top:1px solid var(--line);padding:10px 0;font-size:.88rem}
 .rv b{font-size:.86rem}
 .rv .resp{margin-top:6px;background:var(--bg);border-radius:10px;padding:8px 10px;font-size:.82rem}
@@ -1390,7 +1394,7 @@ footer{padding:34px 0 90px;color:var(--mute);font-size:.84rem;text-align:center}
   <!-- AGENDA -->
   <section class="blk" id="agenda">
     <div class="head"><div><div class="kicker">Agenda Verde</div><h2>¿Qué hay para hacer en la ciudadela?</h2><p>Eventos de centros comerciales, parques, conjuntos y comercios del barrio.</p></div>
-      <a class="btn-wa" style="margin:0" href="#" data-wa="Hola, quiero publicar un evento en la Agenda Verde360. Lugar: __ · Fecha: __ · Hora: __">📣 Publicar un evento</a></div>
+      <button class="btn-wa" style="margin:0;border:0;cursor:pointer" id="evPub" type="button">📣 Publicar un evento</button></div>
     <div class="agenda-f chips" id="evF"></div>
     <div class="evs" id="evs"></div>
   </section>
@@ -1512,6 +1516,33 @@ footer{padding:34px 0 90px;color:var(--mute);font-size:.84rem;text-align:center}
 
 <div class="offline" id="offBar" role="status"></div>
 
+<div class="modal" id="evModal" role="dialog" aria-modal="true" aria-labelledby="evT">
+  <form class="in evform" id="evForm">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h3 id="evT">📣 Publicar un evento</h3>
+      <button type="button" class="ico" style="background:var(--bg);color:var(--ink)" id="evX" aria-label="Cerrar">✕</button></div>
+    <p class="nota" style="margin:4px 0 12px">Gratis para vecinos, conjuntos y comercios. Lo revisamos y aparece en la Agenda cuando sea aprobado (normalmente en menos de 24 horas).</p>
+    <label>Nombre del evento *<input id="evTit" required maxlength="90" placeholder="Ej.: Bazar navideño del conjunto"></label>
+    <div class="two">
+      <label>Tipo<select id="evCat"><option>Feria o bazar</option><option>Música</option><option>Deporte</option><option>Mascotas</option><option>Niños</option><option>Cultura</option><option>Salud</option><option>Otro</option></select></label>
+      <label>Costo<select id="evCosto"><option value="Gratis">Entrada libre</option><option value="Con costo">Con costo</option></select></label>
+    </div>
+    <div class="two">
+      <label>Fecha *<input id="evFecha" type="date" required></label>
+      <label>Hora *<input id="evHora" required maxlength="30" placeholder="Ej.: 3 p. m."></label>
+    </div>
+    <label>Lugar *<input id="evLugar" required maxlength="90" placeholder="Ej.: Salón comunal, Centro comercial…"></label>
+    <label>Conjunto o zona más cercana<select id="evConj"></select></label>
+    <label>Descripción<textarea id="evDesc" rows="2" maxlength="400" placeholder="¿De qué se trata? ¿Qué deben llevar?"></textarea></label>
+    <div class="two">
+      <label>Organiza<input id="evOrg" maxlength="60" placeholder="Nombre o comercio"></label>
+      <label>Tu WhatsApp (no se publica)<input id="evTel" inputmode="tel" maxlength="20" placeholder="3XX XXX XXXX"></label>
+    </div>
+    <input id="evWeb" name="web" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
+    <div class="row2" style="margin-top:6px"><button class="bprim" type="submit" id="evEnviar">Enviar para aprobación</button></div>
+    <div class="nota" id="evMsg" role="status" style="margin-top:8px"></div>
+  </form>
+</div>
+
 <div class="modal" id="talModal" role="dialog" aria-modal="true"><div class="in" id="talIn"></div></div>
 
 <button class="botbtn" id="botBtn" aria-label="Abrir asistente Vera"><span class="av2">✨</span>Pregúntale a Vera</button>
@@ -1557,6 +1588,9 @@ footer{padding:34px 0 90px;color:var(--mute);font-size:.84rem;text-align:center}
    ========================================================= */
 const WHATSAPP = "573208303847";        // tu WhatsApp, formato 57XXXXXXXXXX
 const CENTRO   = [4.6060, -74.2205];
+// Backend gratuito (Google Sheets + Apps Script). Pega aquí la URL de la app web (ver backend/LEEME.md).
+// Mientras esté vacío, «Publicar un evento» envía la solicitud por WhatsApp.
+const API_URL = "";
 // Grupos de Facebook de la ciudadela donde se comparten alertas (pega aquí sus enlaces)
 const GRUPOS_FACEBOOK = [
   // {nombre:"Ciudad Verde Soacha", url:"https://www.facebook.com/groups/XXXXXXXX"}
@@ -1748,7 +1782,7 @@ function precioOpciones(){
 /* =========================================================
    MAPA
    ========================================================= */
-let capaH;
+let capaH, capaE;
 let mapa,capaC,capaN,capaJ,capaA,capaB,mC={},mN={},mJ={},busMk=[];
 function iniciarMapa(){
   if(!window.L){$("#map").innerHTML='<div class="vacio" style="margin:20px">No se pudo cargar el mapa. Revisa tu conexión.</div>';return;}
@@ -1757,10 +1791,9 @@ function iniciarMapa(){
   capaC=L.layerGroup().addTo(mapa); capaN=L.layerGroup().addTo(mapa); capaJ=L.layerGroup().addTo(mapa); capaA=L.layerGroup().addTo(mapa);
   $("#capaJ").onchange=e=>e.target.checked?capaJ.addTo(mapa):mapa.removeLayer(capaJ);
   $("#capaA").onchange=e=>e.target.checked?capaA.addTo(mapa):mapa.removeLayer(capaA);
-  const capaE=L.layerGroup().addTo(mapa);
+  capaE=L.layerGroup().addTo(mapa);
   $("#capaE").onchange=e=>e.target.checked?capaE.addTo(mapa):mapa.removeLayer(capaE);
-  EVENTOS.forEach(ev=>L.marker([ev.lat,ev.lng],{icon:L.divIcon({className:"",html:`<div class="epin">${ev.e}</div>`,iconSize:[26,26],iconAnchor:[13,13]})})
-    .addTo(capaE).bindPopup(`<b>${ev.titulo}</b><br>${diaTxt(ev.dia)} · ${ev.hora}<br>${ev.lugar}`));
+  pintarEventosMapa();
   capaH=L.layerGroup().addTo(mapa);
   $("#capaH").onchange=e=>e.target.checked?capaH.addTo(mapa):mapa.removeLayer(capaH);
   pintarPetsMapa();
@@ -1937,6 +1970,47 @@ function pintarETAs(){
 }
 function fechaDe(d){const f=new Date();f.setDate(f.getDate()+d);return f;}
 function diaTxt(d){return d===0?"Hoy":d===1?"Mañana":fechaDe(d).toLocaleDateString("es-CO",{weekday:"long"}).replace(/^./,m=>m.toUpperCase());}
+function pintarEventosMapa(){if(!capaE)return;capaE.clearLayers();
+  EVENTOS.forEach(ev=>L.marker([ev.lat,ev.lng],{icon:L.divIcon({className:"",html:`<div class="epin">${ev.e}</div>`,iconSize:[26,26],iconAnchor:[13,13]})})
+    .addTo(capaE).bindPopup(`<b>${ev.titulo}</b><br>${diaTxt(ev.dia)} · ${ev.hora}<br>${ev.lugar}${ev.desc?`<br><small>${ev.desc}</small>`:""}`));}
+/* ---- Publicar evento con aprobación ---- */
+const CAT_EV={"Feria o bazar":["🛍️","linear-gradient(135deg,#f59e0b,#ef4444)"],"Música":["🎤","linear-gradient(135deg,#7c3aed,#2563eb)"],
+  "Deporte":["⚽","linear-gradient(135deg,#0ea5e9,#0f7a4a)"],"Mascotas":["🐾","linear-gradient(135deg,#14b86a,#0f7a4a)"],
+  "Niños":["🎈","linear-gradient(135deg,#f472b6,#f59e0b)"],"Cultura":["🎭","linear-gradient(135deg,#db2777,#7c3aed)"],
+  "Salud":["🩺","linear-gradient(135deg,#06b6d4,#2563eb)"],"Otro":["📌","linear-gradient(135deg,#64748b,#0f172a)"]};
+const esc=t=>String(t==null?"":t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function diasHasta(iso){const h=new Date();h.setHours(0,0,0,0);const f=new Date(iso+"T00:00:00");return Math.round((f-h)/864e5);}
+function eventoDesdeAPI(x){const d=diasHasta(String(x.fecha).slice(0,10)), c=CAT_EV[x.categoria]||CAT_EV.Otro, cj=CONJUNTOS.find(k=>k.nombre===x.conjunto);
+  return {id:x.id,titulo:esc(x.titulo),lugar:esc(x.lugar),dia:d,hora:esc(x.hora),gratis:x.costo!=="Con costo",e:c[0],color:c[1],desc:esc(x.descripcion),org:esc(x.organizador),
+    lat:(cj?cj.lat:CENTRO[0])+(Math.random()-.5)*.0008,lng:(cj?cj.lng:CENTRO[1])+(Math.random()-.5)*.0008,real:true};}
+async function cargarEventos(){
+  if(!API_URL)return;
+  try{const r=await fetch(API_URL+"?tipo=evento");const j=await r.json();
+    if(j.ok){const reales=j.items.map(eventoDesdeAPI).filter(e=>e.dia>=0&&e.dia<=60);
+      // con eventos reales aprobados, se ocultan los de ejemplo
+      if(reales.length){EVENTOS.length=0;reales.forEach(e=>EVENTOS.push(e));}
+      pintarAgenda();pintarEventosMapa();}}catch(e){}
+}
+const evModal=$("#evModal");
+$("#evPub").onclick=()=>{evModal.classList.add("on");$("#evMsg").textContent="";
+  const hoy=new Date();$("#evFecha").min=hoy.toISOString().slice(0,10);setTimeout(()=>$("#evTit").focus(),100);};
+$("#evX").onclick=()=>evModal.classList.remove("on");
+evModal.onclick=e=>{if(e.target===evModal)evModal.classList.remove("on");};
+$("#evConj").innerHTML='<option value="">Otra zona de Ciudad Verde</option>'+[...CONJUNTOS].sort((a,b)=>a.nombre.localeCompare(b.nombre,"es")).map(c=>`<option>${c.nombre}</option>`).join("");
+$("#evForm").onsubmit=async e=>{e.preventDefault();
+  const d={tipo:"evento",titulo:$("#evTit").value,categoria:$("#evCat").value,lugar:$("#evLugar").value,conjunto:$("#evConj").value,
+    fecha:$("#evFecha").value,hora:$("#evHora").value,costo:$("#evCosto").value,descripcion:$("#evDesc").value,organizador:$("#evOrg").value,
+    contacto:$("#evTel").value.replace(/\D/g,""),web:$("#evWeb").value};
+  if(!API_URL){   // sin backend todavía: la solicitud llega por WhatsApp
+    const t=`Hola, quiero publicar un evento en la Agenda Verde360:\nEvento: ${d.titulo}\nTipo: ${d.categoria}\nFecha: ${d.fecha} · ${d.hora}\nLugar: ${d.lugar}${d.conjunto?" ("+d.conjunto+")":""}\nCosto: ${d.costo}\nOrganiza: ${d.organizador||"-"}\n${d.descripcion}`;
+    $("#evMsg").innerHTML=`Tu solicitud está lista. <a href="${wa(WHATSAPP,t)}" target="_blank" rel="noopener"><b>Envíala por WhatsApp para aprobación →</b></a>`;return;}
+  $("#evEnviar").disabled=true;$("#evMsg").textContent="Enviando…";
+  try{const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(d)});const j=await r.json();
+    if(j.ok){$("#evMsg").innerHTML="✅ <b>¡Recibido!</b> Lo revisamos y aparece en la Agenda cuando sea aprobado. Gracias por mover la ciudadela.";$("#evForm").reset();}
+    else $("#evMsg").textContent="No se pudo enviar: "+(j.error||"intenta de nuevo");
+  }catch(err){$("#evMsg").textContent="Sin conexión con el servidor. Intenta de nuevo en un momento.";}
+  $("#evEnviar").disabled=false;
+};
 let evFiltro="Todos";
 function pintarAgenda(){
   const finde=d=>[0,6].includes(fechaDe(d).getDay())||fechaDe(d).getDay()===5;
@@ -1948,7 +2022,7 @@ function pintarAgenda(){
     return `<article class="ev" style="animation-delay:${i*50}ms"><div class="top2" style="background:${e.color}"><span>${e.e}</span>
       <div class="fecha"><small>${f.toLocaleDateString("es-CO",{month:"short"})}</small>${f.getDate()}</div></div>
       <div class="b"><span class="gratis">${e.gratis?"ENTRADA LIBRE":"CON COSTO"}</span><h3>${e.titulo}</h3>
-      <div class="meta">${diaTxt(e.dia)} · ${e.hora}<br>📍 ${e.lugar}</div>
+      <div class="meta">${diaTxt(e.dia)} · ${e.hora}<br>📍 ${e.lugar}</div>${e.desc?`<div class="meta">${e.desc}</div>`:""}${e.org?`<div class="meta">Organiza: ${e.org}</div>`:""}
       <div class="acc"><a href="${ruta(e)}" target="_blank" rel="noopener">Cómo llegar</a>
       <a href="${wa("","Mira este evento en Ciudad Verde: "+e.titulo+" · "+diaTxt(e.dia)+" "+e.hora+" · "+e.lugar)}" target="_blank" rel="noopener">Compartir</a></div></div></article>`;}).join("")
     :`<div class="vacio">No hay eventos con ese filtro. ¿Organizas algo? Publícalo gratis.</div>`;
@@ -2299,7 +2373,7 @@ sheet.onclick=e=>{if(e.target===sheet)cerrarSOS();};
 $$("[data-cerrar]").forEach(a=>a.onclick=cerrarSOS);
 $("#vet24").onclick=e=>{e.preventDefault();cerrarSOS();verServicio("veterinaria");};
 $("#ambPriv").href=wa(WHATSAPP,"Necesito una ambulancia privada en Ciudad Verde. Dirección: ");
-addEventListener("keydown",e=>{if(e.key==="Escape"){cerrarSOS();cerrarBot();$("#menu").classList.remove("on");}});
+addEventListener("keydown",e=>{if(e.key==="Escape"){cerrarSOS();cerrarBot();$("#evModal").classList.remove("on");$("#menu").classList.remove("on");}});
 $("#fTipo").onchange=()=>{precioOpciones();pintar();};
 ["fHab","fPrecio","fMasc","fParq","fVer","fAb","fDom"].forEach(id=>$("#"+id).onchange=pintar);
 
@@ -2383,7 +2457,7 @@ $$("#ganchos a")[0].classList.add("on");
 if(!matchMedia("(prefers-reduced-motion: reduce)").matches)setInterval(rotarGancho,3800);
 
 /* inicio */
-iniciarMapa(); precioOpciones(); pintarCats(); cambiarModo("casas"); pintarFeed(); revisarRed(); pintarETAs(); pintarAgenda(); pintarPlanes(); pintarTalentos(); pintarPets(); observatorio();
+iniciarMapa(); precioOpciones(); pintarCats(); cambiarModo("casas"); pintarFeed(); revisarRed(); pintarETAs(); pintarAgenda(); cargarEventos(); pintarPlanes(); pintarTalentos(); pintarPets(); observatorio();
 $$("[data-wa]").forEach(a=>{a.href=wa(WHATSAPP,a.dataset.wa);a.target="_blank";a.rel="noopener";});
 setInterval(pintarETAs,5000);
 setInterval(pintar,60000);

@@ -39,9 +39,13 @@ Toda la configuración y los datos están al inicio del `<script>` de `index.htm
 
 Los registros marcados **«Ejemplo»** son de muestra y deben reemplazarse por datos reales autorizados. Las ubicaciones de conjuntos son aproximadas y deben verificarse en terreno.
 
+## Publicaciones con aprobación (eventos)
+
+La Agenda ya acepta eventos de cualquier vecino con **aprobación previa**, usando una hoja de Google como base de datos gratuita. Instrucciones en [`backend/LEEME.md`](backend/LEEME.md).
+
 ## Pendiente para la versión 2
 
-- Base de datos (Supabase o Firebase, capa gratuita) para avisos, reseñas, reportes y alertas.
+- Extender el mismo backend a mascotas, alertas, talentos, reseñas y avisos de arriendo.
 - Confirmación de reseñas por código de WhatsApp.
 - Modo conductor: ubicación GPS real de las busetas.
 

@@ -1,0 +1,14 @@
+{
+  "name": "Verde360 · Ciudad Verde",
+  "short_name": "Verde360",
+  "description": "Comercios, mapa, alertas e inversión pública de Ciudad Verde, Soacha.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#06281b",
+  "theme_color": "#06281b",
+  "lang": "es-CO",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

@@ -1,0 +1,2257 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Verde360 · Vive y compra en Ciudad Verde, Soacha</title>
+<meta name="description" content="Arriendos, ventas y negocios de Ciudad Verde en un mapa interactivo. Alertas del barrio e inversión pública. Hecho por vecinos.">
+<meta name="theme-color" content="#06281b">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>/* Leaflet 1.9.4 (BSD-2) */
+/* required styles */
+
+.leaflet-pane,
+.leaflet-tile,
+.leaflet-marker-icon,
+.leaflet-marker-shadow,
+.leaflet-tile-container,
+.leaflet-pane > svg,
+.leaflet-pane > canvas,
+.leaflet-zoom-box,
+.leaflet-image-layer,
+.leaflet-layer {
+	position: absolute;
+	left: 0;
+	top: 0;
+	}
+.leaflet-container {
+	overflow: hidden;
+	}
+.leaflet-tile,
+.leaflet-marker-icon,
+.leaflet-marker-shadow {
+	-webkit-user-select: none;
+	   -moz-user-select: none;
+	        user-select: none;
+	  -webkit-user-drag: none;
+	}
+/* Prevents IE11 from highlighting tiles in blue */
+.leaflet-tile::selection {
+	background: transparent;
+}
+/* Safari renders non-retina tile on retina better with this, but Chrome is worse */
+.leaflet-safari .leaflet-tile {
+	image-rendering: -webkit-optimize-contrast;
+	}
+/* hack that prevents hw layers "stretching" when loading new tiles */
+.leaflet-safari .leaflet-tile-container {
+	width: 1600px;
+	height: 1600px;
+	-webkit-transform-origin: 0 0;
+	}
+.leaflet-marker-icon,
+.leaflet-marker-shadow {
+	display: block;
+	}
+/* .leaflet-container svg: reset svg max-width decleration shipped in Joomla! (joomla.org) 3.x */
+/* .leaflet-container img: map is broken in FF if you have max-width: 100% on tiles */
+.leaflet-container .leaflet-overlay-pane svg {
+	max-width: none !important;
+	max-height: none !important;
+	}
+.leaflet-container .leaflet-marker-pane img,
+.leaflet-container .leaflet-shadow-pane img,
+.leaflet-container .leaflet-tile-pane img,
+.leaflet-container img.leaflet-image-layer,
+.leaflet-container .leaflet-tile {
+	max-width: none !important;
+	max-height: none !important;
+	width: auto;
+	padding: 0;
+	}
+
+.leaflet-container img.leaflet-tile {
+	/* See: https://bugs.chromium.org/p/chromium/issues/detail?id=600120 */
+	mix-blend-mode: plus-lighter;
+}
+
+.leaflet-container.leaflet-touch-zoom {
+	-ms-touch-action: pan-x pan-y;
+	touch-action: pan-x pan-y;
+	}
+.leaflet-container.leaflet-touch-drag {
+	-ms-touch-action: pinch-zoom;
+	/* Fallback for FF which doesn't support pinch-zoom */
+	touch-action: none;
+	touch-action: pinch-zoom;
+}
+.leaflet-container.leaflet-touch-drag.leaflet-touch-zoom {
+	-ms-touch-action: none;
+	touch-action: none;
+}
+.leaflet-container {
+	-webkit-tap-highlight-color: transparent;
+}
+.leaflet-container a {
+	-webkit-tap-highlight-color: rgba(51, 181, 229, 0.4);
+}
+.leaflet-tile {
+	filter: inherit;
+	visibility: hidden;
+	}
+.leaflet-tile-loaded {
+	visibility: inherit;
+	}
+.leaflet-zoom-box {
+	width: 0;
+	height: 0;
+	-moz-box-sizing: border-box;
+	     box-sizing: border-box;
+	z-index: 800;
+	}
+/* workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=888319 */
+.leaflet-overlay-pane svg {
+	-moz-user-select: none;
+	}
+
+.leaflet-pane         { z-index: 400; }
+
+.leaflet-tile-pane    { z-index: 200; }
+.leaflet-overlay-pane { z-index: 400; }
+.leaflet-shadow-pane  { z-index: 500; }
+.leaflet-marker-pane  { z-index: 600; }
+.leaflet-tooltip-pane   { z-index: 650; }
+.leaflet-popup-pane   { z-index: 700; }
+
+.leaflet-map-pane canvas { z-index: 100; }
+.leaflet-map-pane svg    { z-index: 200; }
+
+.leaflet-vml-shape {
+	width: 1px;
+	height: 1px;
+	}
+.lvml {
+	behavior: url(#default#VML);
+	display: inline-block;
+	position: absolute;
+	}
+
+
+/* control positioning */
+
+.leaflet-control {
+	position: relative;
+	z-index: 800;
+	pointer-events: visiblePainted; /* IE 9-10 doesn't have auto */
+	pointer-events: auto;
+	}
+.leaflet-top,
+.leaflet-bottom {
+	position: absolute;
+	z-index: 1000;
+	pointer-events: none;
+	}
+.leaflet-top {
+	top: 0;
+	}
+.leaflet-right {
+	right: 0;
+	}
+.leaflet-bottom {
+	bottom: 0;
+	}
+.leaflet-left {
+	left: 0;
+	}
+.leaflet-control {
+	float: left;
+	clear: both;
+	}
+.leaflet-right .leaflet-control {
+	float: right;
+	}
+.leaflet-top .leaflet-control {
+	margin-top: 10px;
+	}
+.leaflet-bottom .leaflet-control {
+	margin-bottom: 10px;
+	}
+.leaflet-left .leaflet-control {
+	margin-left: 10px;
+	}
+.leaflet-right .leaflet-control {
+	margin-right: 10px;
+	}
+
+
+/* zoom and fade animations */
+
+.leaflet-fade-anim .leaflet-popup {
+	opacity: 0;
+	-webkit-transition: opacity 0.2s linear;
+	   -moz-transition: opacity 0.2s linear;
+	        transition: opacity 0.2s linear;
+	}
+.leaflet-fade-anim .leaflet-map-pane .leaflet-popup {
+	opacity: 1;
+	}
+.leaflet-zoom-animated {
+	-webkit-transform-origin: 0 0;
+	    -ms-transform-origin: 0 0;
+	        transform-origin: 0 0;
+	}
+svg.leaflet-zoom-animated {
+	will-change: transform;
+}
+
+.leaflet-zoom-anim .leaflet-zoom-animated {
+	-webkit-transition: -webkit-transform 0.25s cubic-bezier(0,0,0.25,1);
+	   -moz-transition:    -moz-transform 0.25s cubic-bezier(0,0,0.25,1);
+	        transition:         transform 0.25s cubic-bezier(0,0,0.25,1);
+	}
+.leaflet-zoom-anim .leaflet-tile,
+.leaflet-pan-anim .leaflet-tile {
+	-webkit-transition: none;
+	   -moz-transition: none;
+	        transition: none;
+	}
+
+.leaflet-zoom-anim .leaflet-zoom-hide {
+	visibility: hidden;
+	}
+
+
+/* cursors */
+
+.leaflet-interactive {
+	cursor: pointer;
+	}
+.leaflet-grab {
+	cursor: -webkit-grab;
+	cursor:    -moz-grab;
+	cursor:         grab;
+	}
+.leaflet-crosshair,
+.leaflet-crosshair .leaflet-interactive {
+	cursor: crosshair;
+	}
+.leaflet-popup-pane,
+.leaflet-control {
+	cursor: auto;
+	}
+.leaflet-dragging .leaflet-grab,
+.leaflet-dragging .leaflet-grab .leaflet-interactive,
+.leaflet-dragging .leaflet-marker-draggable {
+	cursor: move;
+	cursor: -webkit-grabbing;
+	cursor:    -moz-grabbing;
+	cursor:         grabbing;
+	}
+
+/* marker & overlays interactivity */
+.leaflet-marker-icon,
+.leaflet-marker-shadow,
+.leaflet-image-layer,
+.leaflet-pane > svg path,
+.leaflet-tile-container {
+	pointer-events: none;
+	}
+
+.leaflet-marker-icon.leaflet-interactive,
+.leaflet-image-layer.leaflet-interactive,
+.leaflet-pane > svg path.leaflet-interactive,
+svg.leaflet-image-layer.leaflet-interactive path {
+	pointer-events: visiblePainted; /* IE 9-10 doesn't have auto */
+	pointer-events: auto;
+	}
+
+/* visual tweaks */
+
+.leaflet-container {
+	background: #ddd;
+	outline-offset: 1px;
+	}
+.leaflet-container a {
+	color: #0078A8;
+	}
+.leaflet-zoom-box {
+	border: 2px dotted #38f;
+	background: rgba(255,255,255,0.5);
+	}
+
+
+/* general typography */
+.leaflet-container {
+	font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-size: 0.75rem;
+	line-height: 1.5;
+	}
+
+
+/* general toolbar styles */
+
+.leaflet-bar {
+	box-shadow: 0 1px 5px rgba(0,0,0,0.65);
+	border-radius: 4px;
+	}
+.leaflet-bar a {
+	background-color: #fff;
+	border-bottom: 1px solid #ccc;
+	width: 26px;
+	height: 26px;
+	line-height: 26px;
+	display: block;
+	text-align: center;
+	text-decoration: none;
+	color: black;
+	}
+.leaflet-bar a,
+.leaflet-control-layers-toggle {
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+	display: block;
+	}
+.leaflet-bar a:hover,
+.leaflet-bar a:focus {
+	background-color: #f4f4f4;
+	}
+.leaflet-bar a:first-child {
+	border-top-left-radius: 4px;
+	border-top-right-radius: 4px;
+	}
+.leaflet-bar a:last-child {
+	border-bottom-left-radius: 4px;
+	border-bottom-right-radius: 4px;
+	border-bottom: none;
+	}
+.leaflet-bar a.leaflet-disabled {
+	cursor: default;
+	background-color: #f4f4f4;
+	color: #bbb;
+	}
+
+.leaflet-touch .leaflet-bar a {
+	width: 30px;
+	height: 30px;
+	line-height: 30px;
+	}
+.leaflet-touch .leaflet-bar a:first-child {
+	border-top-left-radius: 2px;
+	border-top-right-radius: 2px;
+	}
+.leaflet-touch .leaflet-bar a:last-child {
+	border-bottom-left-radius: 2px;
+	border-bottom-right-radius: 2px;
+	}
+
+/* zoom control */
+
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out {
+	font: bold 18px 'Lucida Console', Monaco, monospace;
+	text-indent: 1px;
+	}
+
+.leaflet-touch .leaflet-control-zoom-in, .leaflet-touch .leaflet-control-zoom-out  {
+	font-size: 22px;
+	}
+
+
+/* layers control */
+
+.leaflet-control-layers {
+	box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+	background: #fff;
+	border-radius: 5px;
+	}
+.leaflet-control-layers-toggle {
+	background-image: url(images/layers.png);
+	width: 36px;
+	height: 36px;
+	}
+.leaflet-retina .leaflet-control-layers-toggle {
+	background-image: url(images/layers-2x.png);
+	background-size: 26px 26px;
+	}
+.leaflet-touch .leaflet-control-layers-toggle {
+	width: 44px;
+	height: 44px;
+	}
+.leaflet-control-layers .leaflet-control-layers-list,
+.leaflet-control-layers-expanded .leaflet-control-layers-toggle {
+	display: none;
+	}
+.leaflet-control-layers-expanded .leaflet-control-layers-list {
+	display: block;
+	position: relative;
+	}
+.leaflet-control-layers-expanded {
+	padding: 6px 10px 6px 6px;
+	color: #333;
+	background: #fff;
+	}
+.leaflet-control-layers-scrollbar {
+	overflow-y: scroll;
+	overflow-x: hidden;
+	padding-right: 5px;
+	}
+.leaflet-control-layers-selector {
+	margin-top: 2px;
+	position: relative;
+	top: 1px;
+	}
+.leaflet-control-layers label {
+	display: block;
+	font-size: 13px;
+	font-size: 1.08333em;
+	}
+.leaflet-control-layers-separator {
+	height: 0;
+	border-top: 1px solid #ddd;
+	margin: 5px -10px 5px -6px;
+	}
+
+/* Default icon URLs */
+.leaflet-default-icon-path { /* used only in path-guessing heuristic, see L.Icon.Default */
+	background-image: url(images/marker-icon.png);
+	}
+
+
+/* attribution and scale controls */
+
+.leaflet-container .leaflet-control-attribution {
+	background: #fff;
+	background: rgba(255, 255, 255, 0.8);
+	margin: 0;
+	}
+.leaflet-control-attribution,
+.leaflet-control-scale-line {
+	padding: 0 5px;
+	color: #333;
+	line-height: 1.4;
+	}
+.leaflet-control-attribution a {
+	text-decoration: none;
+	}
+.leaflet-control-attribution a:hover,
+.leaflet-control-attribution a:focus {
+	text-decoration: underline;
+	}
+.leaflet-attribution-flag {
+	display: inline !important;
+	vertical-align: baseline !important;
+	width: 1em;
+	height: 0.6669em;
+	}
+.leaflet-left .leaflet-control-scale {
+	margin-left: 5px;
+	}
+.leaflet-bottom .leaflet-control-scale {
+	margin-bottom: 5px;
+	}
+.leaflet-control-scale-line {
+	border: 2px solid #777;
+	border-top: none;
+	line-height: 1.1;
+	padding: 2px 5px 1px;
+	white-space: nowrap;
+	-moz-box-sizing: border-box;
+	     box-sizing: border-box;
+	background: rgba(255, 255, 255, 0.8);
+	text-shadow: 1px 1px #fff;
+	}
+.leaflet-control-scale-line:not(:first-child) {
+	border-top: 2px solid #777;
+	border-bottom: none;
+	margin-top: -2px;
+	}
+.leaflet-control-scale-line:not(:first-child):not(:last-child) {
+	border-bottom: 2px solid #777;
+	}
+
+.leaflet-touch .leaflet-control-attribution,
+.leaflet-touch .leaflet-control-layers,
+.leaflet-touch .leaflet-bar {
+	box-shadow: none;
+	}
+.leaflet-touch .leaflet-control-layers,
+.leaflet-touch .leaflet-bar {
+	border: 2px solid rgba(0,0,0,0.2);
+	background-clip: padding-box;
+	}
+
+
+/* popup */
+
+.leaflet-popup {
+	position: absolute;
+	text-align: center;
+	margin-bottom: 20px;
+	}
+.leaflet-popup-content-wrapper {
+	padding: 1px;
+	text-align: left;
+	border-radius: 12px;
+	}
+.leaflet-popup-content {
+	margin: 13px 24px 13px 20px;
+	line-height: 1.3;
+	font-size: 13px;
+	font-size: 1.08333em;
+	min-height: 1px;
+	}
+.leaflet-popup-content p {
+	margin: 17px 0;
+	margin: 1.3em 0;
+	}
+.leaflet-popup-tip-container {
+	width: 40px;
+	height: 20px;
+	position: absolute;
+	left: 50%;
+	margin-top: -1px;
+	margin-left: -20px;
+	overflow: hidden;
+	pointer-events: none;
+	}
+.leaflet-popup-tip {
+	width: 17px;
+	height: 17px;
+	padding: 1px;
+
+	margin: -10px auto 0;
+	pointer-events: auto;
+
+	-webkit-transform: rotate(45deg);
+	   -moz-transform: rotate(45deg);
+	    -ms-transform: rotate(45deg);
+	        transform: rotate(45deg);
+	}
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+	background: white;
+	color: #333;
+	box-shadow: 0 3px 14px rgba(0,0,0,0.4);
+	}
+.leaflet-container a.leaflet-popup-close-button {
+	position: absolute;
+	top: 0;
+	right: 0;
+	border: none;
+	text-align: center;
+	width: 24px;
+	height: 24px;
+	font: 16px/24px Tahoma, Verdana, sans-serif;
+	color: #757575;
+	text-decoration: none;
+	background: transparent;
+	}
+.leaflet-container a.leaflet-popup-close-button:hover,
+.leaflet-container a.leaflet-popup-close-button:focus {
+	color: #585858;
+	}
+.leaflet-popup-scrolled {
+	overflow: auto;
+	}
+
+.leaflet-oldie .leaflet-popup-content-wrapper {
+	-ms-zoom: 1;
+	}
+.leaflet-oldie .leaflet-popup-tip {
+	width: 24px;
+	margin: 0 auto;
+
+	-ms-filter: "progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678)";
+	filter: progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678);
+	}
+
+.leaflet-oldie .leaflet-control-zoom,
+.leaflet-oldie .leaflet-control-layers,
+.leaflet-oldie .leaflet-popup-content-wrapper,
+.leaflet-oldie .leaflet-popup-tip {
+	border: 1px solid #999;
+	}
+
+
+/* div icon */
+
+.leaflet-div-icon {
+	background: #fff;
+	border: 1px solid #666;
+	}
+
+
+/* Tooltip */
+/* Base styles for the element that has a tooltip */
+.leaflet-tooltip {
+	position: absolute;
+	padding: 6px;
+	background-color: #fff;
+	border: 1px solid #fff;
+	border-radius: 3px;
+	color: #222;
+	white-space: nowrap;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	pointer-events: none;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+	}
+.leaflet-tooltip.leaflet-interactive {
+	cursor: pointer;
+	pointer-events: auto;
+	}
+.leaflet-tooltip-top:before,
+.leaflet-tooltip-bottom:before,
+.leaflet-tooltip-left:before,
+.leaflet-tooltip-right:before {
+	position: absolute;
+	pointer-events: none;
+	border: 6px solid transparent;
+	background: transparent;
+	content: "";
+	}
+
+/* Directions */
+
+.leaflet-tooltip-bottom {
+	margin-top: 6px;
+}
+.leaflet-tooltip-top {
+	margin-top: -6px;
+}
+.leaflet-tooltip-bottom:before,
+.leaflet-tooltip-top:before {
+	left: 50%;
+	margin-left: -6px;
+	}
+.leaflet-tooltip-top:before {
+	bottom: 0;
+	margin-bottom: -12px;
+	border-top-color: #fff;
+	}
+.leaflet-tooltip-bottom:before {
+	top: 0;
+	margin-top: -12px;
+	margin-left: -6px;
+	border-bottom-color: #fff;
+	}
+.leaflet-tooltip-left {
+	margin-left: -6px;
+}
+.leaflet-tooltip-right {
+	margin-left: 6px;
+}
+.leaflet-tooltip-left:before,
+.leaflet-tooltip-right:before {
+	top: 50%;
+	margin-top: -6px;
+	}
+.leaflet-tooltip-left:before {
+	right: 0;
+	margin-right: -12px;
+	border-left-color: #fff;
+	}
+.leaflet-tooltip-right:before {
+	left: 0;
+	margin-left: -12px;
+	border-right-color: #fff;
+	}
+
+/* Printing */
+
+@media print {
+	/* Prevent printers from removing background-images of controls. */
+	.leaflet-control {
+		-webkit-print-color-adjust: exact;
+		print-color-adjust: exact;
+		}
+	}
+
+</style>
+<style>
+:root{
+  --bg:#f4f8f5; --card:#fff; --ink:#0e1a14; --mute:#5b6b63; --line:#dde7e1;
+  --g1:#0f7a4a; --g2:#14b86a; --lime:#c8f560; --gold:#e6a100; --dark:#06281b;
+  --casa:#2563eb; --casa-claro:#e8efff;
+  --r:18px; --sh:0 10px 30px -12px rgba(6,40,27,.25);
+}
+[data-theme="dark"]{--bg:#07130d;--card:#0d1f16;--ink:#e8f3ec;--mute:#93a89c;--line:#1d3328;--casa-claro:#13223f;--sh:0 10px 30px -12px rgba(0,0,0,.6)}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth}
+section,[id]{scroll-margin-top:72px}
+body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
+h1,h2,h3{font-family:Sora,Inter,sans-serif;letter-spacing:-.02em;margin:0}
+a{color:inherit}
+button,input,select,textarea{font-family:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding:0 18px}
+
+/* barra */
+.top{position:sticky;top:0;z-index:60;backdrop-filter:blur(14px);background:color-mix(in srgb,var(--dark) 84%,transparent);color:#fff}
+.top .wrap{display:flex;align-items:center;gap:12px;height:60px}
+.brand{display:flex;align-items:center;gap:9px;font-family:Sora,Inter,system-ui,sans-serif;font-weight:800;font-size:1.15rem;text-decoration:none}
+.brand i{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--g2),var(--lime));display:grid;place-items:center;color:var(--dark);font-style:normal}
+.top nav{display:flex;gap:4px;margin-left:auto}
+.top nav a{text-decoration:none;font-size:.88rem;padding:7px 11px;border-radius:9px;opacity:.85}
+.top nav a:hover{background:rgba(255,255,255,.1);opacity:1}
+.ico{background:rgba(255,255,255,.1);border:0;color:#fff;width:36px;height:36px;border-radius:10px;cursor:pointer}
+#instalar{display:none;background:var(--lime);color:var(--dark);border:0;font-weight:700;padding:8px 12px;border-radius:10px;cursor:pointer;font-size:.85rem}
+@media(max-width:900px){.top nav{display:none}#menuBtn{margin-left:auto}}
+.menu .grp{margin-bottom:12px}
+.menu .grp h4{margin:0 0 6px;font:700 .75rem Inter,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--g1)}
+.menu .grp div{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.menu .grp a{display:flex;align-items:center;gap:8px;text-decoration:none;border:1px solid var(--line);border-radius:12px;padding:10px;font-size:.88rem;color:var(--ink);background:var(--bg)}
+/* accesos rápidos */
+@media(max-width:520px){.sug button:nth-child(n+3){display:none}}
+.accesos{display:grid;grid-template-columns:repeat(8,1fr);gap:10px;margin-top:26px;max-width:960px}
+@media(max-width:820px){.accesos{grid-template-columns:repeat(4,1fr)}}
+.accesos a{display:flex;flex-direction:column;align-items:center;gap:6px;text-decoration:none;color:#fff;font-size:.78rem;font-weight:600;text-align:center}
+.accesos a span{width:54px;height:54px;border-radius:16px;display:grid;place-items:center;font-size:1.5rem;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);transition:.15s}
+.accesos a:hover span{background:rgba(255,255,255,.2);transform:translateY(-2px)}
+
+/* hero */
+.hero{position:relative;overflow:hidden;background:radial-gradient(1200px 500px at 85% -10%,#1fcf7b55,transparent 60%),radial-gradient(700px 400px at -10% 110%,#2563eb33,transparent 60%),var(--dark);color:#fff;padding:52px 0 40px}
+.hero canvas{position:absolute;inset:0;width:100%;height:100%;opacity:.5;pointer-events:none}
+.hero .wrap{position:relative}
+.pill{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);padding:6px 12px;border-radius:999px;font-size:.8rem}
+.pill b{width:8px;height:8px;border-radius:50%;background:var(--lime);animation:pulse 2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 #c8f560aa}70%{box-shadow:0 0 0 10px transparent}100%{box-shadow:0 0 0 0 transparent}}
+.hero h1{font-size:clamp(2rem,5.4vw,3.4rem);line-height:1.05;margin:16px 0 12px;max-width:820px}
+.hero h1 em{font-style:normal;background:linear-gradient(90deg,var(--g2),var(--lime));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero h1 u{text-decoration:none;background:linear-gradient(90deg,#60a5fa,#a5b4fc);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p.sub{opacity:.85;max-width:620px;margin:0 0 22px;font-size:1.05rem}
+
+/* buscador con pestañas */
+.buscador{max-width:700px}
+.tabs{display:inline-flex;background:rgba(255,255,255,.1);border-radius:14px;padding:4px;gap:4px;margin-bottom:10px}
+.tabs button{border:0;background:transparent;color:#fff;padding:9px 16px;border-radius:11px;font-weight:600;cursor:pointer;font-size:.92rem;opacity:.8}
+.tabs button.on{background:#fff;color:var(--dark);opacity:1}
+.smart{display:flex;align-items:center;gap:8px;background:#fff;border-radius:16px;padding:6px 6px 6px 16px;box-shadow:0 20px 50px -20px #000}
+.smart input{flex:1;min-width:0;border:0;outline:0;font-size:1rem;padding:10px 0;background:transparent;color:#0e1a14}
+.smart button{border:0;background:var(--g1);color:#fff;font-weight:600;padding:11px 16px;border-radius:12px;cursor:pointer}
+.sug{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.sug button{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);color:#fff;font-size:.82rem;padding:6px 11px;border-radius:999px;cursor:pointer}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:30px;max-width:860px}
+.stat{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:14px}
+.stat strong{display:block;font-family:Sora,Inter,system-ui,sans-serif;font-size:1.55rem}
+.stat span{font-size:.78rem;opacity:.75}
+@media(max-width:640px){.stats{grid-template-columns:repeat(2,1fr)}}
+.fuente{font-size:.72rem;opacity:.55;margin-top:8px}
+
+/* secciones */
+section.blk{padding:42px 0 8px}
+.head{display:flex;align-items:end;justify-content:space-between;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.head h2{font-size:1.5rem}
+.head p{margin:4px 0 0;color:var(--mute);font-size:.95rem}
+.kicker{font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--g1)}
+[data-theme="dark"] .kicker{color:var(--g2)}
+
+/* explorador */
+.modo{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.modo button{display:flex;align-items:center;gap:12px;text-align:left;border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:16px;padding:12px 14px;cursor:pointer;transition:.2s}
+.modo button .e{font-size:1.5rem;width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:var(--bg)}
+.modo button b{display:block;font-family:Sora,Inter,system-ui,sans-serif;font-size:1rem}
+.modo button small{color:var(--mute)}
+.modo button[data-m="casas"].on{border-color:var(--casa);background:var(--casa-claro)}
+.modo button[data-m="negocios"].on{border-color:var(--g1);background:color-mix(in srgb,var(--g2) 10%,var(--card))}
+
+.filtros{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.filtros select,.filtros .chk{border:1px solid var(--line);background:var(--card);color:var(--ink);padding:9px 12px;border-radius:12px;font-size:.88rem}
+.chk{display:inline-flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
+.chk input{accent-color:var(--g1)}
+.chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
+.chips button{flex:none;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:8px 14px;border-radius:999px;font-size:.88rem;cursor:pointer}
+.chips button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.resumen{font-size:.9rem;color:var(--mute);margin:0 0 10px}
+
+.exp{display:grid;grid-template-columns:.95fr 1.05fr;gap:16px}
+@media(max-width:900px){.exp{grid-template-columns:1fr}}
+.mapbox{position:relative}
+#map{background:var(--bg) repeating-linear-gradient(0deg,transparent 0 39px,var(--line) 39px 40px),repeating-linear-gradient(90deg,transparent 0 39px,var(--line) 39px 40px);height:600px;border-radius:var(--r);border:1px solid var(--line);box-shadow:var(--sh);z-index:1}
+@media(max-width:900px){#map{height:360px}.mapbox{order:-1}}
+.capas{position:absolute;top:12px;right:12px;z-index:500;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 10px;display:grid;gap:4px;font-size:.82rem;box-shadow:var(--sh)}
+.capas label{display:flex;align-items:center;gap:6px;cursor:pointer}
+.list{display:flex;flex-direction:column;gap:10px;max-height:600px;overflow:auto;padding-right:4px}
+@media(max-width:900px){.list{max-height:none}}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;cursor:pointer;transition:transform .15s,box-shadow .15s,border-color .15s;animation:in .35s ease both;overflow:hidden}
+.card:hover,.card.act{transform:translateY(-2px);box-shadow:var(--sh)}
+.card.neg{display:grid;grid-template-columns:46px 1fr;gap:12px;padding:14px}
+.card.neg:hover,.card.neg.act{border-color:var(--g2)}
+.card.neg.dest{border-color:var(--gold)}
+.card.casa{display:grid;grid-template-columns:120px 1fr}
+.card.casa:hover,.card.casa.act{border-color:var(--casa)}
+@media(max-width:560px){.card.casa{grid-template-columns:1fr}.card.casa .foto{height:84px;min-height:0}}
+@keyframes in{from{opacity:0;transform:translateY(6px)}}
+.av{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;font-size:1.35rem;background:color-mix(in srgb,var(--g2) 14%,var(--card))}
+.foto{position:relative;min-height:100%;background:linear-gradient(135deg,#dbe7ff,#c7f0dc);display:grid;place-items:center;font-size:2.2rem}
+[data-theme="dark"] .foto{background:linear-gradient(135deg,#1c2b4a,#14382a)}
+.foto .tp{position:absolute;top:8px;left:8px;font-size:.68rem;font-weight:800;letter-spacing:.04em;color:#fff;background:var(--casa);padding:3px 7px;border-radius:6px}
+.foto .tp.v{background:#7c3aed}
+.cb{padding:12px 14px}
+.precio{font-family:Sora,Inter,system-ui,sans-serif;font-weight:800;font-size:1.12rem}
+.precio small{font-family:Inter;font-weight:500;font-size:.78rem;color:var(--mute)}
+.card h3{font-size:.98rem;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.meta{font-size:.84rem;color:var(--mute);margin-top:2px}
+.feats{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.feats span{font-size:.74rem;background:var(--bg);border:1px solid var(--line);padding:2px 8px;border-radius:999px}
+.ver{font-size:.72rem;font-weight:800;color:var(--g1)}
+[data-theme="dark"] .ver{color:var(--g2)}
+.st{font-size:.74rem;font-weight:700;padding:2px 8px;border-radius:999px}
+.st.ab{background:#14b86a22;color:#0b8a4c}.st.ce{background:#e5484d1f;color:#d13438}
+[data-theme="dark"] .st.ab{color:#3ee08f}
+.star{font-size:.7rem;font-weight:800;color:var(--gold)}
+.acc{display:flex;gap:8px;margin-top:10px}
+.acc a{flex:1;text-align:center;text-decoration:none;font-size:.84rem;font-weight:600;padding:8px;border-radius:10px;background:var(--bg);border:1px solid var(--line)}
+.acc a.wa{background:var(--g1);color:#fff;border-color:var(--g1)}
+.vacio{color:var(--mute);padding:20px;text-align:center;border:1px dashed var(--line);border-radius:16px}
+.nota{font-size:.78rem;color:var(--mute);margin-top:10px}
+
+/* marcadores */
+.pin{width:30px;height:30px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:var(--g1);border:3px solid #fff;box-shadow:0 4px 10px rgba(0,0,0,.3);display:grid;place-items:center}
+.pin span{transform:rotate(45deg);font-size:13px}
+.pin.d{background:var(--gold)}
+.ppin{display:inline-block;transform:translate(-50%,-50%);background:#fff;color:#0e1a14;font:700 12px Inter,sans-serif;padding:5px 9px;border-radius:999px;box-shadow:0 4px 12px rgba(0,0,0,.25);border:2px solid var(--casa);white-space:nowrap;transition:.15s}
+.ppin.v{border-color:#7c3aed}
+.ppin.on{background:var(--casa);color:#fff;transform:translate(-50%,-50%) scale(1.15)}
+.ppin.v.on{background:#7c3aed}
+.leaflet-div-icon{background:none;border:0}
+[data-theme="dark"] .leaflet-tile{filter:invert(.92) hue-rotate(180deg) brightness(.9) contrast(.9)}
+.leaflet-popup-content{font-family:Inter,sans-serif}
+
+/* servicios, observatorio, cta */
+.feat{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:860px){.feat{grid-template-columns:1fr}}
+.f{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px}
+.f .ic{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:1.3rem;background:linear-gradient(135deg,var(--g2),var(--lime));margin-bottom:12px}
+.f h3{font-size:1.08rem;margin-bottom:6px}
+.f p{color:var(--mute);font-size:.92rem;margin:0 0 14px}
+.f a{font-weight:600;color:var(--g1);text-decoration:none}
+[data-theme="dark"] .f a{color:var(--g2)}
+.mock{border-radius:12px;border:1px solid var(--line);padding:10px;font-size:.8rem;background:var(--bg);margin-bottom:14px}
+.mock .row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed var(--line)}
+.mock .row:last-child{border:0}
+.ok{color:#0b8a4c;font-weight:700}
+
+.obs{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;box-shadow:var(--sh)}
+.obs-top{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+.kpi{flex:1;min-width:150px;background:var(--bg);border-radius:14px;padding:12px 14px}
+.kpi strong{display:block;font-family:Sora,Inter,system-ui,sans-serif;font-size:1.35rem}
+.kpi span{font-size:.78rem;color:var(--mute)}
+.ct{display:grid;grid-template-columns:1fr auto;gap:4px 14px;padding:12px 0;border-top:1px solid var(--line);font-size:.9rem}
+.ct .o{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ct .v{font-family:Sora,Inter,system-ui,sans-serif;font-weight:700;white-space:nowrap}
+.ct .m{grid-column:1/-1;font-size:.78rem;color:var(--mute)}
+.skel{height:52px;border-radius:10px;background:linear-gradient(90deg,var(--line),var(--bg),var(--line));background-size:200% 100%;animation:sk 1.2s infinite;margin:8px 0}
+@keyframes sk{to{background-position:-200% 0}}
+
+.ctas{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:46px}
+@media(max-width:860px){.ctas{grid-template-columns:1fr}}
+.cta{border-radius:24px;padding:28px 24px;color:#fff}
+.cta.c1{background:radial-gradient(500px 260px at 100% 0,#93c5fd44,transparent 60%),linear-gradient(135deg,#1d4ed8,#0b1f4d)}
+.cta.c2{background:radial-gradient(500px 260px at 100% 0,#c8f56044,transparent 60%),linear-gradient(135deg,#0b5a37,var(--dark))}
+.cta h2{font-size:1.45rem;margin-bottom:8px}
+.cta p{opacity:.88;margin:0 0 12px}
+.cta ul{margin:0;padding:0;list-style:none;display:grid;gap:6px;font-size:.9rem}
+.cta li::before{content:"✓ ";color:var(--lime);font-weight:800}
+.btn-wa{display:inline-flex;align-items:center;gap:8px;margin-top:16px;background:#25d366;color:#062b16;font-weight:700;text-decoration:none;padding:12px 18px;border-radius:12px}
+footer{padding:34px 0 90px;color:var(--mute);font-size:.84rem;text-align:center}
+
+/* ---------- v3: conjuntos, alertas, servicios, movilidad, SOS ---------- */
+.modo{grid-template-columns:repeat(3,1fr)}
+@media(max-width:620px){.modo{grid-template-columns:1fr 1fr 1fr}.modo button{flex-direction:column;text-align:center;gap:4px;padding:10px 6px}.modo button small{display:none}.modo button .e{width:36px;height:36px;font-size:1.2rem}}
+.modo button[data-m="conjuntos"].on{border-color:#ea580c;background:color-mix(in srgb,#ea580c 9%,var(--card))}
+.card.conj{display:grid;grid-template-columns:46px 1fr;gap:12px;padding:14px}
+.card.conj:hover,.card.conj.act{border-color:#ea580c}
+.card.conj .av{background:color-mix(in srgb,#ea580c 14%,var(--card))}
+.cpin{width:26px;height:26px;border-radius:8px;background:#ea580c;border:3px solid #fff;box-shadow:0 4px 10px rgba(0,0,0,.3);display:grid;place-items:center;color:#fff;font-size:12px;font-weight:800}
+.apin{width:22px;height:22px;border-radius:50%;background:#dc2626;border:3px solid #fff;box-shadow:0 0 0 0 #dc262699;animation:apulse 1.8s infinite}
+.apin.m{background:#f59e0b;animation:none}
+@keyframes apulse{70%{box-shadow:0 0 0 14px transparent}100%{box-shadow:0 0 0 0 transparent}}
+.aprox{font-size:.72rem;color:#c2410c;font-weight:600}
+
+.tiles{display:grid;grid-template-columns:repeat(9,1fr);gap:10px}
+@media(max-width:1100px){.tiles{grid-template-columns:repeat(5,1fr)}}
+@media(max-width:700px){.tiles{grid-template-columns:repeat(3,1fr)}}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 10px;text-align:center;cursor:pointer;transition:.15s;color:var(--ink)}
+.tile:hover{transform:translateY(-2px);box-shadow:var(--sh);border-color:var(--g2)}
+.tile .e{font-size:1.6rem;display:block;margin-bottom:6px}
+.tile b{font-size:.84rem;display:block;line-height:1.25}
+.tile small{font-size:.72rem;color:var(--mute)}
+.tile.urg{border-color:#fecaca;background:color-mix(in srgb,#dc2626 6%,var(--card))}
+
+.alert-wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:16px}
+@media(max-width:900px){.alert-wrap{grid-template-columns:1fr}}
+.feed{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:6px 16px;box-shadow:var(--sh)}
+.al{display:grid;grid-template-columns:40px 1fr auto;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line);animation:in .35s ease both}
+.al:last-child{border:0}
+.al .i{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:1.15rem;background:#dc26261a}
+.al .i.m{background:#f59e0b22}
+.al b{font-size:.92rem}
+.al .meta{font-size:.8rem}
+.al time{font-size:.75rem;color:var(--mute);white-space:nowrap}
+.live{display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700;color:#dc2626}
+.live::before{content:"";width:8px;height:8px;border-radius:50%;background:#dc2626;animation:apulse 1.8s infinite}
+.reportar{background:linear-gradient(160deg,#7f1d1d,#1c0a0a);color:#fff;border-radius:var(--r);padding:20px}
+.reportar h3{margin-bottom:6px}
+.reportar p{opacity:.85;font-size:.9rem;margin:0 0 14px}
+.tipos{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.tipos button{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);color:#fff;border-radius:12px;padding:10px 4px;font-size:.78rem;cursor:pointer}
+.tipos button.on{background:#fff;color:#7f1d1d;font-weight:700}
+.tipos button span{display:block;font-size:1.25rem}
+.reportar select,.reportar textarea{width:100%;border:0;border-radius:10px;padding:10px;margin-bottom:8px;font-size:.9rem}
+.reportar .enviar{width:100%;border:0;background:#fff;color:#7f1d1d;font-weight:800;padding:12px;border-radius:12px;cursor:pointer}
+.reportar .aviso{font-size:.74rem;opacity:.7;margin-top:10px}
+
+.mov{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:900px){.mov{grid-template-columns:1fr}}
+.cond{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:grid;grid-template-columns:52px 1fr;gap:12px}
+.cond .ft{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;font-size:1.5rem;background:var(--casa-claro)}
+.cert{display:inline-flex;align-items:center;gap:4px;font-size:.7rem;font-weight:800;color:#fff;background:var(--g1);padding:2px 8px;border-radius:999px}
+.checks{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:.76rem;color:var(--mute);margin-top:6px}
+.checks span::before{content:"✓ ";color:var(--g1);font-weight:800}
+.leg{font-size:.8rem;color:var(--mute);background:var(--card);border:1px dashed var(--line);border-radius:14px;padding:12px 14px;margin-top:12px}
+
+.bus{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;font-size:15px;border:2px solid #fff;box-shadow:0 4px 10px rgba(0,0,0,.35)}
+.etas{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-top:14px}
+.eta{display:grid;grid-template-columns:44px 1fr auto;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.eta:last-child{border:0}
+.eta .r{width:44px;height:30px;border-radius:8px;color:#fff;font:800 .8rem Sora,Inter,sans-serif;display:grid;place-items:center}
+.eta strong{font-family:Sora,Inter,sans-serif;font-size:1.1rem}
+.sim{font-size:.72rem;font-weight:700;color:#c2410c;background:#fff7ed;border:1px solid #fed7aa;padding:2px 8px;border-radius:999px}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:860px){.seg{grid-template-columns:1fr}}
+.segc{border-radius:var(--r);padding:20px;border:1px solid var(--line);background:var(--card)}
+.segc.p{background:linear-gradient(160deg,color-mix(in srgb,var(--casa) 10%,var(--card)),var(--card));border-color:color-mix(in srgb,var(--casa) 35%,var(--line))}
+.segc h3{font-size:1.1rem;margin:6px 0}
+.segc p{color:var(--mute);font-size:.9rem;margin:0 0 12px}
+.pasos{list-style:none;margin:0 0 14px;padding:0;display:grid;gap:8px;counter-reset:p}
+.pasos li{display:grid;grid-template-columns:28px 1fr;gap:10px;font-size:.88rem;counter-increment:p}
+.pasos li::before{content:counter(p);width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--casa);color:#fff;font-weight:800;font-size:.8rem}
+.precio-tag{display:inline-block;font-family:Sora,Inter,sans-serif;font-weight:800;font-size:1.2rem;margin-right:8px}
+.pasaporte{margin-top:14px;border-radius:16px;padding:14px;background:linear-gradient(135deg,#0b5a37,#06281b);color:#fff;display:grid;grid-template-columns:48px 1fr auto;gap:12px;align-items:center}
+.pasaporte .f{width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.15);display:grid;place-items:center;font-size:1.4rem}
+.pasaporte small{opacity:.75;font-size:.75rem;display:block}
+.pasaporte .ok2{background:var(--lime);color:var(--dark);font-weight:800;font-size:.72rem;padding:4px 9px;border-radius:999px}
+.ley{font-size:.76rem;color:var(--mute);margin-top:12px}
+
+.agenda-f{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.evs{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.ev{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;animation:in .35s ease both}
+.ev .top2{height:86px;display:flex;align-items:flex-end;justify-content:space-between;padding:10px 12px;color:#fff;font-size:2rem}
+.ev .fecha{background:#fff;color:#0e1a14;border-radius:10px;padding:4px 8px;text-align:center;line-height:1.1;font:800 1rem Sora,Inter,sans-serif}
+.ev .fecha small{display:block;font:700 .62rem Inter,sans-serif;text-transform:uppercase;color:#dc2626}
+.ev .b{padding:12px 14px;display:flex;flex-direction:column;gap:4px;flex:1}
+.ev h3{font-size:.98rem}
+.ev .gratis{font-size:.72rem;font-weight:800;color:var(--g1)}
+.epin{width:26px;height:26px;border-radius:50%;background:#f59e0b;border:3px solid #fff;display:grid;place-items:center;font-size:13px;box-shadow:0 4px 10px rgba(0,0,0,.3)}
+/* talento verde */
+.talbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.talbar select{border:1px solid var(--line);background:var(--card);color:var(--ink);padding:9px 12px;border-radius:12px;font-size:.88rem}
+.seg3{display:inline-flex;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:3px;gap:3px}
+.seg3 button{border:0;background:transparent;color:var(--ink);padding:7px 12px;border-radius:9px;font-size:.84rem;cursor:pointer;font-weight:600}
+.seg3 button.on{background:var(--g1);color:#fff}
+.tals{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-top:12px}
+.tal{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:8px;animation:in .3s ease both}
+.tal .hd{display:grid;grid-template-columns:52px 1fr;gap:12px;align-items:center}
+.ini{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;font:800 1.1rem Sora,Inter,sans-serif;color:#fff}
+.tal h3{font-size:1rem}
+.tal .of{font-size:.86rem;color:var(--mute)}
+.stars{color:#f59e0b;letter-spacing:1px;font-size:.95rem}
+.stars small{color:var(--mute);letter-spacing:0;font-size:.8rem;margin-left:4px}
+.sello{display:inline-flex;align-items:center;gap:5px;font-size:.72rem;font-weight:800;padding:3px 9px;border-radius:999px;width:fit-content}
+.sello.n1{background:var(--bg);color:var(--mute);border:1px solid var(--line)}
+.sello.n2{background:#dbeafe;color:#1d4ed8}
+.sello.n3{background:linear-gradient(90deg,#14b86a,#0f7a4a);color:#fff}
+[data-theme="dark"] .sello.n2{background:#1e3a8a;color:#bfdbfe}
+.tal .tags{display:flex;gap:6px;flex-wrap:wrap}
+.tal .tags span{font-size:.74rem;background:var(--bg);border:1px solid var(--line);padding:2px 8px;border-radius:999px}
+.tal .cita{font-size:.84rem;font-style:italic;color:var(--mute);border-left:3px solid var(--g2);padding-left:10px}
+.niveles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}
+@media(max-width:760px){.niveles{grid-template-columns:1fr}}
+.nivel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;font-size:.86rem;color:var(--mute)}
+.nivel b{color:var(--ink);display:block;margin:6px 0 4px}
+.reglas{margin-top:12px;background:var(--card);border:1px dashed var(--line);border-radius:16px;padding:14px 16px;font-size:.85rem;color:var(--mute)}
+.reglas ul{margin:6px 0 0;padding-left:18px;display:grid;gap:4px}
+.modal{position:fixed;inset:0;z-index:970;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;padding:12px}
+.modal.on{display:flex}
+.modal .in{background:var(--card);color:var(--ink);width:100%;max-width:520px;max-height:90vh;overflow:auto;border-radius:22px;padding:20px;animation:up .25s ease}
+.rv{border-top:1px solid var(--line);padding:10px 0;font-size:.88rem}
+.rv b{font-size:.86rem}
+.rv .resp{margin-top:6px;background:var(--bg);border-radius:10px;padding:8px 10px;font-size:.82rem}
+.calif{display:flex;gap:4px;font-size:1.7rem;cursor:pointer;margin:6px 0}
+.calif span{color:var(--line);transition:.1s}
+.calif span.on{color:#f59e0b}
+.modal textarea,.modal input{width:100%;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:12px;padding:10px;font-size:.9rem;margin-bottom:8px}
+.modal .row2{display:flex;gap:8px}
+.modal .row2 button,.modal .row2 a{flex:1;text-align:center;text-decoration:none;border:0;border-radius:12px;padding:11px;font-weight:700;cursor:pointer;font-size:.9rem}
+.bprim{background:var(--g1);color:#fff}.bsec{background:var(--bg);color:var(--ink);border:1px solid var(--line)!important}
+
+/* huellitas */
+.hu-grid{display:grid;grid-template-columns:1.25fr .75fr;gap:16px}
+@media(max-width:900px){.hu-grid{grid-template-columns:1fr}}
+.pets{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:12px}
+.pet{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;animation:in .3s ease both}
+.pet .ph{height:130px;display:grid;place-items:center;font-size:3.2rem;position:relative;background-size:cover;background-position:center}
+.pet .est{position:absolute;top:8px;left:8px;font-size:.7rem;font-weight:800;color:#fff;padding:3px 8px;border-radius:7px}
+.est.perdida{background:#dc2626}.est.encontrada{background:#2563eb}.est.adopcion{background:#0f7a4a}
+.pet .b{padding:10px 12px;display:flex;flex-direction:column;gap:3px;flex:1}
+.pet h3{font-size:.98rem}
+.pet .acc{margin-top:auto;padding-top:8px}
+.pet .acc a{font-size:.8rem;padding:7px}
+.hu-side{display:flex;flex-direction:column;gap:14px}
+.hu-form{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+.hu-form h3{font-size:1.02rem;margin-bottom:8px}
+.hu-form select,.hu-form input,.hu-form textarea{width:100%;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:12px;padding:10px;font-size:.88rem;margin-bottom:8px}
+.hu-form .two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.hu-form .foto-in{display:flex;align-items:center;gap:10px;border:1px dashed var(--line);border-radius:12px;padding:10px;margin-bottom:8px;cursor:pointer;font-size:.85rem;color:var(--mute)}
+.hu-form .foto-in img{width:46px;height:46px;border-radius:10px;object-fit:cover}
+.hu-form button.pub{width:100%;border:0;background:#dc2626;color:#fff;font-weight:800;padding:12px;border-radius:12px;cursor:pointer}
+.qr{border-radius:var(--r);padding:16px;color:#fff;background:linear-gradient(140deg,#7c3aed,#1e1b4b);display:grid;grid-template-columns:86px 1fr;gap:14px;align-items:center}
+.qr svg{background:#fff;border-radius:12px;padding:6px;width:86px;height:86px}
+.qr h3{font-size:1.02rem;margin-bottom:4px}
+.qr p{font-size:.84rem;opacity:.88;margin:0 0 8px}
+.qr .precio-tag{color:#fff;font-size:1.1rem}
+.hpin{width:26px;height:26px;border-radius:50%;border:3px solid #fff;display:grid;place-items:center;font-size:13px;box-shadow:0 4px 10px rgba(0,0,0,.3)}
+
+/* planes */
+.ptabs{display:flex;gap:8px;overflow-x:auto;margin-bottom:14px;scrollbar-width:none}
+.ptabs button{flex:none;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:9px 14px;border-radius:999px;font-size:.88rem;cursor:pointer;font-weight:600}
+.ptabs button.on{background:var(--ink);color:var(--bg)}
+.planes{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.plan{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;display:flex;flex-direction:column;gap:6px;position:relative;animation:in .3s ease both}
+.plan.dest2{border:2px solid var(--g2);box-shadow:var(--sh)}
+.plan .badge{position:absolute;top:-11px;left:16px;background:var(--g2);color:#fff;font-size:.7rem;font-weight:800;padding:3px 10px;border-radius:999px}
+.plan h3{font-size:1.02rem}
+.plan .pr{font-family:Sora,Inter,sans-serif;font-weight:800;font-size:1.6rem;line-height:1.1}
+.plan .pr small{font:500 .8rem Inter,sans-serif;color:var(--mute)}
+.plan ul{list-style:none;padding:0;margin:6px 0 10px;display:grid;gap:5px;font-size:.86rem;color:var(--mute)}
+.plan li::before{content:"✓ ";color:var(--g1);font-weight:800}
+.plan .acc{margin-top:auto}
+
+/* bot */
+.botbtn{position:fixed;right:16px;bottom:92px;z-index:900;height:54px;border-radius:999px;border:0;padding:0 18px 0 14px;display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--g1),#0b5a37);color:#fff;font:700 .92rem Inter,sans-serif;box-shadow:0 10px 30px -8px rgba(6,40,27,.6);cursor:pointer}
+.botbtn .av2{width:32px;height:32px;border-radius:50%;background:var(--lime);color:var(--dark);display:grid;place-items:center;font-size:1rem}
+@media(max-width:520px){.botbtn{padding:0;width:54px;justify-content:center;font-size:0}.botbtn .av2{width:40px;height:40px;font-size:1.2rem}}
+.chat{position:fixed;right:16px;bottom:16px;z-index:960;width:min(400px,calc(100vw - 24px));height:min(640px,calc(100vh - 90px));background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:22px;box-shadow:0 30px 80px -20px rgba(0,0,0,.5);display:none;flex-direction:column;overflow:hidden}
+.chat.on{display:flex;animation:up .25s ease}
+@media(max-width:520px){.chat{right:0;left:0;bottom:0;width:100%;height:calc(100vh - 56px);border-radius:22px 22px 0 0}}
+.chat header{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--dark);color:#fff}
+.chat header .av2{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--g2),var(--lime));display:grid;place-items:center;color:var(--dark);font-size:1.1rem}
+.chat header b{display:block;font-family:Sora,Inter,sans-serif}
+.chat header small{opacity:.75;font-size:.75rem}
+.chat header button{margin-left:auto;background:rgba(255,255,255,.12);border:0;color:#fff;width:34px;height:34px;border-radius:10px;cursor:pointer;font-size:.95rem}
+.chat header button+button{margin-left:6px}
+.msgs{flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:10px;background:var(--bg)}
+.m{max-width:86%;padding:10px 13px;border-radius:16px;font-size:.9rem;line-height:1.45;animation:in .25s ease both;white-space:pre-line}
+.m.b{background:var(--card);border:1px solid var(--line);border-bottom-left-radius:4px;align-self:flex-start}
+.m.u{background:var(--g1);color:#fff;border-bottom-right-radius:4px;align-self:flex-end}
+.m .res{margin-top:8px;display:grid;gap:6px}
+.m .r1{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:8px 10px;font-size:.84rem;white-space:normal}
+.m .r1 b{display:block}
+.m .lnk{display:inline-block;margin-top:8px;font-weight:700;color:var(--g1);text-decoration:none;cursor:pointer;background:none;border:0;padding:0;font-size:.88rem}
+.m .lnk.r{color:#dc2626}
+.typing{display:inline-flex;gap:4px}
+.typing i{width:7px;height:7px;border-radius:50%;background:var(--mute);animation:bl 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes bl{50%{opacity:.25}}
+.quick{display:flex;gap:6px;overflow-x:auto;padding:8px 12px;border-top:1px solid var(--line);scrollbar-width:none;background:var(--card)}
+.quick button{flex:none;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:6px 11px;font-size:.8rem;cursor:pointer}
+.entrada{display:flex;gap:8px;padding:10px 12px 14px;background:var(--card)}
+.entrada input{flex:1;min-width:0;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:14px;padding:11px 13px;font-size:.95rem;outline:0}
+.entrada button{width:46px;height:46px;border-radius:14px;border:0;cursor:pointer;font-size:1.15rem}
+#mic{background:var(--bg);border:1px solid var(--line)!important;color:var(--ink)}
+#mic.rec{background:#dc2626;color:#fff;animation:apulse 1.4s infinite}
+#enviarB{background:var(--g1);color:#fff}
+.sos{position:fixed;right:16px;bottom:18px;z-index:900;width:62px;height:62px;border-radius:50%;border:0;background:#dc2626;color:#fff;font:800 .9rem Sora,Inter,sans-serif;box-shadow:0 10px 30px -6px #dc2626aa;cursor:pointer;animation:apulse 2.2s infinite}
+.sheet{position:fixed;inset:0;z-index:950;background:rgba(0,0,0,.5);display:none;align-items:flex-end;justify-content:center}
+.sheet.on{display:flex}
+.sheet .in{background:var(--card);color:var(--ink);width:100%;max-width:520px;border-radius:24px 24px 0 0;padding:20px 18px 28px;animation:up .25s ease}
+@keyframes up{from{transform:translateY(40px);opacity:0}}
+.sheet h3{margin-bottom:4px}
+.sheet p{color:var(--mute);font-size:.88rem;margin:0 0 14px}
+.sbtn{display:flex;align-items:center;gap:12px;text-decoration:none;border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:8px;color:var(--ink)}
+.sbtn .e{font-size:1.4rem}
+.sbtn b{display:block}
+.sbtn small{color:var(--mute)}
+.sbtn.r{background:#dc2626;border-color:#dc2626;color:#fff}
+.sbtn.r small{color:#fee2e2}
+.cerrar{width:100%;margin-top:6px;border:0;background:var(--bg);color:var(--ink);padding:12px;border-radius:12px;font-weight:600;cursor:pointer}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="wrap">
+    <a class="brand" href="#"><i>V</i>Verde360</a>
+    <nav>
+      <a href="#explorar" data-ir="casas">🏠 Vivir</a>
+      <a href="#rapidos">🛍️ Comprar y contratar</a>
+      <a href="#alertas">🛡️ Convivir</a>
+      <a href="#muevete">🚌 Moverse</a>
+      <a href="#planes">Planes</a>
+    </nav>
+    <button class="ico" id="menuBtn" aria-label="Menú">☰</button>
+    <button id="instalar">Instalar app</button>
+    <button class="ico" id="tema" aria-label="Cambiar tema">🌙</button>
+  </div>
+</div>
+
+<header class="hero">
+  <canvas id="red"></canvas>
+  <div class="wrap">
+    <span class="pill"><b></b> En vivo · Ciudad Verde, Soacha</span>
+    <h1>Encuentra <u>dónde vivir</u> y <em>todo lo que necesitas</em> en Ciudad Verde.</h1>
+    <p class="sub">Arriendos, ventas y negocios de la ciudadela en un mapa interactivo. Sin recorrer portería por portería.</p>
+
+    <div class="buscador">
+      <div class="tabs" role="tablist">
+        <button class="on" data-m="casas" role="tab">🏠 Inmuebles</button>
+        <button data-m="negocios" role="tab">🏪 Negocios</button>
+        <button data-m="conjuntos" role="tab">📍 Conjuntos</button>
+      </div>
+      <form class="smart" id="f">
+        <span aria-hidden="true">✨</span>
+        <input id="q" autocomplete="off" aria-label="Buscar">
+        <button type="submit">Buscar</button>
+      </form>
+      <div class="sug" id="sug"></div>
+    </div>
+
+    <nav class="accesos" aria-label="Accesos rápidos">
+      <a href="#explorar" data-ir="casas"><span>🏠</span>Inmuebles</a>
+      <a href="#explorar" data-ir="negocios"><span>🏪</span>Negocios</a>
+      <a href="#talentos"><span>🧵</span>Talentos</a>
+      <a href="#rapidos"><span>🛻</span>24 horas</a>
+      <a href="#alertas"><span>🚨</span>Alertas</a>
+      <a href="#mascotas"><span>🐾</span>Mascotas</a>
+      <a href="#muevete"><span>🚌</span>Busetas</a>
+      <a href="#agenda"><span>🎉</span>Agenda</a>
+    </nav>
+
+    <div class="stats">
+      <div class="stat"><strong data-n="200000" data-p="+">0</strong><span>habitantes</span></div>
+      <div class="stat"><strong data-n="49500">0</strong><span>viviendas</span></div>
+      <div class="stat"><strong id="nCasas">0</strong><span>inmuebles publicados</span></div>
+      <div class="stat"><strong id="nNeg">0</strong><span>negocios en el mapa</span></div>
+    </div>
+    <div class="fuente">Habitantes y viviendas del macroproyecto: Banco Interamericano de Desarrollo.</div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- EXPLORADOR -->
+  <section class="blk" id="explorar">
+    <div class="head">
+      <div>
+        <div class="kicker">Explorador</div>
+        <h2>Ciudad Verde en el mapa</h2>
+        <p>Elige qué buscas, filtra y toca cualquier tarjeta para verla en el mapa.</p>
+      </div>
+    </div>
+
+    <div class="modo">
+      <button data-m="casas" class="on"><span class="e">🏠</span><span><b>Inmuebles</b><small id="mC">—</small></span></button>
+      <button data-m="negocios"><span class="e">🏪</span><span><b>Negocios</b><small id="mN">—</small></span></button>
+      <button data-m="conjuntos"><span class="e">📍</span><span><b>Conjuntos</b><small id="mJ">—</small></span></button>
+    </div>
+
+    <div class="filtros" id="fCasas">
+      <select id="fTipo"><option value="">Arriendo y venta</option><option value="Arriendo">Arriendo</option><option value="Venta">Venta</option></select>
+      <select id="fHab"><option value="0">Habitaciones</option><option value="2">2 o más</option><option value="3">3 o más</option></select>
+      <select id="fPrecio"><option value="0">Cualquier precio</option></select>
+      <label class="chk"><input type="checkbox" id="fMasc"> 🐾 Mascotas</label>
+      <label class="chk"><input type="checkbox" id="fParq"> 🚗 Parqueadero</label>
+      <label class="chk"><input type="checkbox" id="fVer"> ✔ Verificados</label>
+    </div>
+    <div class="filtros" id="fNeg" hidden>
+      <div class="chips" id="cats"></div>
+      <label class="chk"><input type="checkbox" id="fAb"> 🟢 Abiertos ahora</label>
+      <label class="chk"><input type="checkbox" id="fDom"> 🛵 Domicilios</label>
+    </div>
+
+    <p class="resumen" id="resumen"></p>
+    <div class="exp">
+      <div class="list" id="lista"></div>
+      <div class="mapbox">
+        <div id="map" role="region" aria-label="Mapa de Ciudad Verde"></div>
+        <div class="capas">
+          <label><input type="checkbox" id="capaC" checked> 🏠 Inmuebles</label>
+          <label><input type="checkbox" id="capaN" checked> 🏪 Negocios</label>
+          <label><input type="checkbox" id="capaJ" checked> 📍 Porterías</label>
+          <label><input type="checkbox" id="capaA" checked> 🚨 Alertas</label>
+          <label><input type="checkbox" id="capaB" checked> 🚌 Busetas</label>
+          <label><input type="checkbox" id="capaE" checked> 🎉 Eventos</label>
+          <label><input type="checkbox" id="capaH" checked> 🐾 Mascotas</label>
+        </div>
+      </div>
+    </div>
+    <p class="nota">Los avisos y negocios marcados «Ejemplo» son de muestra. Mapa © colaboradores de OpenStreetMap.</p>
+  </section>
+
+  <!-- SERVICIOS RÁPIDOS -->
+  <section class="blk" id="rapidos">
+    <div class="head"><div><div class="kicker">Servicios y urgencias</div><h2>Lo que necesitas, a un toque</h2><p>Cada botón filtra el mapa con los servicios verificados de la ciudadela.</p></div></div>
+    <div class="tiles">
+      <button class="tile" data-tag="veterinaria"><span class="e">🐶</span><b>Veterinaria 24 h</b><small>Urgencias</small></button>
+      <button class="tile" data-tag="guarderia"><span class="e">🦮</span><b>Guardería y paseo</b><small>de perros</small></button>
+      <button class="tile" data-tag="vecino"><span class="e">🧺</span><b>Domicilios de vecinos</b><small>Arepas, postres, más</small></button>
+      <button class="tile" data-tag="cerrajero plomero"><span class="e">🔑</span><b>Cerrajero y plomero</b><small>24 horas</small></button>
+      <button class="tile" data-tag="grua"><span class="e">🛻</span><b>Grúa 24 h</b><small>Varado o choque</small></button>
+      <button class="tile" data-tag="mecanico"><span class="e">🔧</span><b>Mecánico de confianza</b><small>Carros y motos</small></button>
+      <button class="tile" data-tag="electricista"><span class="e">💡</span><b>Electricista</b><small>Verificado</small></button>
+      <button class="tile" data-tag="drogueria"><span class="e">💊</span><b>Droguerías</b><small>Abiertas ahora</small></button>
+      <button class="tile urg" data-sos="1"><span class="e">🚑</span><b>Ambulancia</b><small>Emergencias</small></button>
+    </div>
+  </section>
+
+  <!-- ARRIENDA SEGURO -->
+  <section class="blk" id="seguro">
+    <div class="head"><div><div class="kicker">Arrienda seguro</div><h2>Sepa quién llega a vivir y a quién le arrienda</h2><p>Verificación en los dos sentidos, siempre con autorización de la persona.</p></div></div>
+    <div class="seg">
+      <div class="segc p">
+        <span class="sim" style="color:var(--casa);background:var(--casa-claro);border-color:transparent">PARA PROPIETARIOS</span>
+        <h3>🔍 Estudio del arrendatario</h3>
+        <p>Antes de entregar las llaves, recibe un informe del futuro inquilino en menos de 24 horas.</p>
+        <ul class="pasos">
+          <li>El interesado autoriza el estudio por escrito (habeas data) y envía su cédula.</li>
+          <li>Verificamos identidad y consultamos antecedentes en fuentes oficiales: Policía, Procuraduría, Contraloría y Registro de Medidas Correctivas.</li>
+          <li>Confirmamos referencias laborales y de arrendadores anteriores, y la relación entre ingresos y canon.</li>
+          <li>El propietario recibe el informe privado. Nunca se publica.</li>
+        </ul>
+        <span class="precio-tag">$50.000</span><small style="color:var(--mute)">por estudio · valor de referencia</small>
+        <div class="acc"><a class="wa" href="#" data-wa="Hola, quiero un estudio de arrendatario de Verde360 para mi apartamento en el conjunto __">Solicitar estudio</a></div>
+      </div>
+      <div class="segc">
+        <span class="sim" style="color:var(--g1);background:color-mix(in srgb,var(--g2) 12%,var(--card));border-color:transparent">PARA INQUILINOS</span>
+        <h3>🏠 Verifica al propietario</h3>
+        <p>Evita los falsos arriendos: nunca pagues un depósito sin saber que quien arrienda es el dueño.</p>
+        <ul class="pasos">
+          <li>Confirmamos con el certificado de tradición y libertad que el apartamento está a nombre de quien lo ofrece.</li>
+          <li>Si el conjunto usa el Portal, la administración confirma al propietario y el aviso lleva ✔ Verificado.</li>
+          <li>Te entregamos tu <b>Pasaporte Verde</b>: perfil verificado que muestras a cualquier propietario y te ahorra repetir trámites.</li>
+        </ul>
+        <span class="precio-tag">$30.000</span><small style="color:var(--mute)">verificación · valor de referencia</small>
+        <div class="pasaporte"><div class="f">👤</div><div><b>Pasaporte Verde · Ejemplo</b><small>Identidad ✓ · Antecedentes ✓ · Referencias ✓ · Vigente 6 meses</small></div><span class="ok2">VERIFICADO</span></div>
+        <div class="acc"><a class="wa" href="#" data-wa="Hola, quiero verificar a un propietario antes de arrendar en Ciudad Verde.">Verificar propietario</a></div>
+      </div>
+    </div>
+    <p class="ley">Los estudios solo se hacen con autorización previa, expresa e informada del titular, conforme a la Ley 1581 de 2012. Los resultados son confidenciales y se entregan únicamente a quien contrata el estudio. Verde360 no publica antecedentes de nadie.</p>
+  </section>
+
+  <!-- TALENTO VERDE -->
+  <section class="blk" id="talentos">
+    <div class="head">
+      <div><div class="kicker">Talento Verde · oficios de vecinos</div><h2>Lo que saben hacer tus vecinos, calificado por vecinos</h2>
+      <p>Costura, postres, mantenimiento de computadores, clases, arreglos… Busca en tu conjunto, en la ciudadela o en todo Soacha.</p></div>
+      <a class="btn-wa" style="margin:0" href="#" data-wa="Hola, quiero publicar mi talento en Verde360. Oficio: __ · Conjunto: __">🙋 Ofrecer mi talento</a>
+    </div>
+    <div class="talbar">
+      <div class="seg3" id="alc">
+        <button data-a="conjunto">Mi conjunto</button><button data-a="ciudadela" class="on">Ciudad Verde</button><button data-a="soacha">Todo Soacha</button>
+      </div>
+      <select id="miConj" aria-label="Mi conjunto"></select>
+      <select id="talOrden" aria-label="Ordenar"><option value="cal">Mejor calificados</option><option value="res">Más reseñas</option></select>
+      <label class="chk"><input type="checkbox" id="soloSello"> 🏅 Solo con Sello Verde</label>
+    </div>
+    <div class="chips" id="talCats"></div>
+    <div class="tals" id="tals"></div>
+
+    <div class="niveles">
+      <div class="nivel"><span class="sello n1">● Perfil básico</span><b>Gratis para todos</b>Teléfono confirmado. Puede recibir pedidos y calificaciones.</div>
+      <div class="nivel"><span class="sello n2">✔ Identidad verificada</span><b>Sello de verificación · $20.000 al año</b>Cédula verificada, antecedentes oficiales consultados con autorización y una muestra de su trabajo revisada.</div>
+      <div class="nivel"><span class="sello n3">🏅 Sello Verde de Calidad</span><b>Se gana, no se compra</b>Identidad verificada + al menos 5 reseñas con promedio de 4,5 o más y cero quejas sin resolver.</div>
+    </div>
+    <div class="reglas"><b>Así cuidamos la calidad y la seriedad</b>
+      <ul>
+        <li>Solo califica quien contactó el servicio desde Verde360, con su número confirmado. Una reseña por cliente.</li>
+        <li>Las reseñas negativas no se borran. El talento puede responder públicamente.</li>
+        <li>El Sello Verde se retira si el promedio baja de 3,5 o si hay quejas sin solución. Verde360 media cuando hay un problema.</li>
+        <li>Por seguridad, nunca mostramos la dirección del apartamento: solo el conjunto o la zona que atiende.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- RED DE ALERTA -->
+  <section class="blk" id="alertas">
+    <div class="head">
+      <div>
+        <div class="kicker">Red de Alerta entre conjuntos</div>
+        <h2>Porterías conectadas, vecinos más seguros</h2>
+        <p>Las porterías y los vecinos avisan en segundos a los conjuntos cercanos. Las alertas aparecen en el mapa.</p>
+      </div>
+      <span class="live" id="nAlert">EN VIVO</span>
+    </div>
+    <div class="alert-wrap">
+      <div class="feed" id="feed"></div>
+      <div class="reportar">
+        <h3>Reportar una alerta</h3>
+        <p>Si hay peligro inmediato, llama primero al 123. Tu reporte es anónimo.</p>
+        <div class="tipos" id="tipos">
+          <button data-t="Robo"><span>🦹</span>Robo</button>
+          <button data-t="Accidente"><span>🚗</span>Accidente</button>
+          <button data-t="Riña"><span>👊</span>Riña</button>
+          <button data-t="Sospechoso"><span>👀</span>Sospechoso</button>
+          <button data-t="Ruido"><span>🔊</span>Ruido</button>
+          <button data-t="Otro"><span>⚠️</span>Otro</button>
+        </div>
+        <select id="rConj" aria-label="Conjunto o zona"></select>
+        <textarea id="rTxt" rows="2" placeholder="¿Qué está pasando? (sin nombres ni fotos de personas)"></textarea>
+        <button class="enviar" id="rEnviar">🚨 Preparar alerta</button>
+        <div id="rMsg" style="font-size:.85rem;margin-top:8px" role="status"></div>
+        <a id="rLink" class="btn-wa" href="#" target="_blank" rel="noopener" hidden>💬 Enviar por WhatsApp</a>
+        <div class="aviso">Verde360 no reemplaza a la Policía. El ruido excesivo es una contravención del Código Nacional de Seguridad y Convivencia (Ley 1801 de 2016).</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HUELLITAS VERDE -->
+  <section class="blk" id="mascotas">
+    <div class="head">
+      <div><div class="kicker">Huellitas Verde · mascotas</div><h2>Que ninguna mascota se quede perdida en la ciudadela</h2>
+      <p>Mascotas perdidas, encontradas y en adopción. Cada reporte aparece en el mapa y llega a las porterías de la Red de Alerta.</p></div>
+    </div>
+    <div class="hu-grid">
+      <div>
+        <div class="seg3" id="huTab">
+          <button data-h="perdida" class="on">🔴 Perdidas</button><button data-h="encontrada">🔵 Encontradas</button><button data-h="adopcion">💚 En adopción</button>
+        </div>
+        <div class="pets" id="pets"></div>
+      </div>
+      <div class="hu-side">
+        <form class="hu-form" id="huF">
+          <h3>📣 Reportar una mascota</h3>
+          <div class="two">
+            <select id="huTipo"><option value="perdida">Se me perdió</option><option value="encontrada">Encontré una</option><option value="adopcion">Dar en adopción</option></select>
+            <select id="huEsp"><option value="🐶">Perro</option><option value="🐱">Gato</option><option value="🐾">Otra</option></select>
+          </div>
+          <input id="huNom" placeholder="Nombre (si lo sabes)">
+          <textarea id="huDesc" rows="2" placeholder="Color, tamaño, collar, señas particulares"></textarea>
+          <select id="huConj" aria-label="Dónde"></select>
+          <label class="foto-in" id="huFotoL"><span id="huFotoP">📷</span><span>Agregar foto (ayuda muchísimo)</span><input type="file" accept="image/*" id="huFoto" hidden></label>
+          <button class="pub" type="submit">Publicar y alertar a la red</button>
+          <div class="nota" id="huMsg" role="status"></div>
+        </form>
+        <div class="qr">
+          <svg viewBox="0 0 21 21" aria-hidden="true" id="qrSvg"></svg>
+          <div><h3>Placa QR Verde360</h3><p>Si alguien encuentra a tu mascota, escanea la placa y te avisa al instante, sin mostrar tu número.</p>
+          <span class="precio-tag">$20.000</span><a class="btn-wa" style="margin:6px 0 0;padding:8px 12px;font-size:.85rem" href="#" data-wa="Hola, quiero una placa QR Verde360 para mi mascota.">Pedir placa</a></div>
+        </div>
+      </div>
+    </div>
+    <p class="nota">¿Viste maltrato animal? Es delito en Colombia (Ley 1774 de 2016): denúncialo en la línea 123. Fundaciones y rescatistas de la ciudadela publican gratis sus mascotas en adopción.</p>
+  </section>
+
+  <!-- AGENDA -->
+  <section class="blk" id="agenda">
+    <div class="head"><div><div class="kicker">Agenda Verde</div><h2>¿Qué hay para hacer en la ciudadela?</h2><p>Eventos de centros comerciales, parques, conjuntos y comercios del barrio.</p></div>
+      <a class="btn-wa" style="margin:0" href="#" data-wa="Hola, quiero publicar un evento en la Agenda Verde360. Lugar: __ · Fecha: __ · Hora: __">📣 Publicar un evento</a></div>
+    <div class="agenda-f chips" id="evF"></div>
+    <div class="evs" id="evs"></div>
+  </section>
+
+  <!-- MUÉVETE -->
+  <section class="blk" id="muevete">
+    <div class="head"><div><div class="kicker">Muévete</div><h2>Transporte con conductores verificados</h2><p>Taxis y transporte especial habilitado, con documentos revisados por Verde360.</p></div></div>
+    <div class="etas">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+        <h3 style="font-size:1.05rem">🚌 Busetas en vivo · próximas a pasar</h3><span class="sim">SIMULACIÓN DE MUESTRA</span>
+      </div>
+      <div id="etas"></div>
+      <p class="nota" style="margin:8px 0 0">Las busetas se ven moviéndose en el mapa del explorador. Con datos reales, la ubicación la envía el celular del conductor.</p>
+    </div>
+    <div class="mov" id="conductores" style="margin-top:14px"></div>
+    <div class="leg">🤝 <b>Carro compartido entre vecinos:</b> solo para compartir gastos de un trayecto que igual vas a hacer, por ejemplo a Bogotá en hora pico. Ofrecer un carro particular como servicio pagado es transporte ilegal en Colombia.
+      <a href="#" class="js-wa" data-msg="Hola, quiero unirme al grupo de carro compartido de Verde360. Ruta: __ · Horario: __">Unirme al grupo de carro compartido →</a></div>
+  </section>
+
+  <!-- COMUNIDAD -->
+  <section class="blk" id="servicios">
+    <div class="head"><div><div class="kicker">Comunidad</div><h2>Vivir mejor en la ciudadela</h2></div></div>
+    <div class="feat">
+      <div class="f">
+        <div class="ic">🏢</div>
+        <h3>Portal del Conjunto</h3>
+        <p>Cada propietario consulta su estado de cuenta y radica solicitudes. Los conjuntos que lo usan pueden verificar los avisos de sus apartamentos.</p>
+        <div class="mock">
+          <div class="row"><span>Torre 5 · Apto 501</span><span class="ok">Al día</span></div>
+          <div class="row"><span>Solicitud: fuga en zona común</span><span>En trámite</span></div>
+          <div class="row"><span>Comunicado: asamblea</span><span>Nuevo</span></div>
+        </div>
+        <a href="#" class="js-wa" data-msg="Hola, quiero una demo del Portal del Conjunto de Verde360.">Pedir demo para mi conjunto →</a>
+      </div>
+      <div class="f">
+        <div class="ic">🛡️</div>
+        <h3>Escudo Digital</h3>
+        <p>Avisos de estafas que circulan por WhatsApp en la ciudadela: falsos arriendos, cobros falsos de administración y enlaces fraudulentos.</p>
+        <a href="#" class="js-wa" data-msg="Hola, quiero recibir los avisos de estafas de Verde360.">Recibir avisos →</a>
+      </div>
+      <div class="f">
+        <div class="ic">📍</div>
+        <h3>Reporta tu barrio</h3>
+        <p>Seguridad, basuras, transporte en hora pico: reportes anónimos que se vuelven un mapa ciudadano de Ciudad Verde.</p>
+        <a href="#" class="js-wa" data-msg="Hola, quiero reportar algo en mi sector de Ciudad Verde.">Hacer un reporte →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- OBSERVATORIO -->
+  <section class="blk" id="observatorio">
+    <div class="head">
+      <div>
+        <div class="kicker">Observatorio Comuna 3 · datos abiertos</div>
+        <h2>¿En qué se invierte la plata pública en Soacha?</h2>
+        <p>Contratos más recientes de entidades de Soacha, consultados en vivo en SECOP II (datos.gov.co).</p>
+      </div>
+    </div>
+    <div class="obs">
+      <div class="obs-top">
+        <div class="kpi"><strong id="kN">—</strong><span>contratos mostrados</span></div>
+        <div class="kpi"><strong id="kV">—</strong><span>valor total mostrado</span></div>
+        <div class="kpi"><strong id="kF">—</strong><span>firma más reciente</span></div>
+      </div>
+      <div id="contratos"><div class="skel"></div><div class="skel"></div><div class="skel"></div></div>
+    </div>
+  </section>
+
+  <!-- PLANES Y PRECIOS -->
+  <section class="blk" id="planes">
+    <div class="head"><div><div class="kicker">Planes y precios</div><h2>Sin comisiones por pedido ni por arriendo</h2><p>Para los vecinos Verde360 es gratis. Estos son los planes para quienes quieren que los encuentren.</p></div></div>
+    <div class="ptabs" id="ptabs"></div>
+    <div class="planes" id="planesL"></div>
+    <p class="nota">Valores de referencia en pesos colombianos. Pagos por Nequi, Daviplata o link de pago.</p>
+  </section>
+
+  <!-- PUBLICAR -->
+  <section class="ctas" id="publicar">
+    <div class="cta c1">
+      <h2>¿Arriendas o vendes en Ciudad Verde?</h2>
+      <p>Publica tu apartamento y recibe interesados que ya filtraron por precio y conjunto.</p>
+      <ul>
+        <li>Pin con precio en el mapa</li>
+        <li>Sello «Verificado» si tu conjunto usa el Portal</li>
+        <li>Interesados directo a tu WhatsApp</li>
+      </ul>
+      <a class="btn-wa js-wa" href="#" data-msg="Hola, quiero publicar mi apartamento en Verde360. Conjunto: __ · Torre/Apto: __ · Arriendo o venta: __ · Precio: __">🏠 Publicar mi inmueble</a>
+    </div>
+    <div class="cta c2">
+      <h2>¿Tienes un negocio en Ciudad Verde?</h2>
+      <p>Haz que los vecinos te encuentren. Los primeros 20 negocios quedan como <b>fundadores</b> con precio fijo.</p>
+      <ul>
+        <li>Perfil profesional en Google Maps</li>
+        <li>Catálogo de WhatsApp Business</li>
+        <li>Pin y ficha en el mapa de Verde360</li>
+      </ul>
+      <a class="btn-wa js-wa" href="#" data-msg="Hola, quiero registrar mi negocio en Verde360.">🏪 Registrar mi negocio</a>
+    </div>
+  </section>
+</main>
+
+<div class="sheet menu" id="menu" role="dialog" aria-modal="true" aria-label="Menú">
+  <div class="in">
+    <h3 style="margin-bottom:12px">Verde360</h3>
+    <div class="grp"><h4>🏠 Vivir</h4><div>
+      <a href="#explorar" data-ir="casas">🏠 Inmuebles</a><a href="#seguro">🔍 Arrienda seguro</a>
+      <a href="#explorar" data-ir="conjuntos">📍 Conjuntos</a><a href="#servicios">🏢 Portal del Conjunto</a></div></div>
+    <div class="grp"><h4>🛍️ Comprar y contratar</h4><div>
+      <a href="#explorar" data-ir="negocios">🏪 Negocios</a><a href="#rapidos">🛻 Servicios 24 h</a>
+      <a href="#talentos">🧵 Talento Verde</a><a href="#planes">💰 Planes</a></div></div>
+    <div class="grp"><h4>🛡️ Convivir y cuidarse</h4><div>
+      <a href="#alertas">🚨 Red de Alerta</a><a href="#mascotas">🐾 Mascotas</a>
+      <a href="#agenda">🎉 Agenda</a><a href="#observatorio">📊 Observatorio</a></div></div>
+    <div class="grp"><h4>🚌 Moverse</h4><div>
+      <a href="#muevete">🚌 Busetas en vivo</a><a href="#muevete">🚕 Conductores</a></div></div>
+    <button class="cerrar" id="menuCerrar">Cerrar</button>
+  </div>
+</div>
+
+<div class="modal" id="talModal" role="dialog" aria-modal="true"><div class="in" id="talIn"></div></div>
+
+<button class="botbtn" id="botBtn" aria-label="Abrir asistente Vera"><span class="av2">✨</span>Pregúntale a Vera</button>
+<div class="chat" id="chat" role="dialog" aria-label="Asistente Vera">
+  <header>
+    <span class="av2">✨</span>
+    <div><b>Vera · asistente de Verde360</b><small id="botEstado">Escríbeme o háblame 🎙️</small></div>
+    <button id="voz" aria-label="Activar o silenciar voz" title="Leer respuestas en voz alta">🔈</button>
+    <button id="botCerrar" aria-label="Cerrar">✕</button>
+  </header>
+  <div class="msgs" id="msgs" aria-live="polite"></div>
+  <div class="quick" id="quick"></div>
+  <form class="entrada" id="botF">
+    <input id="botIn" autocomplete="off" placeholder="Ej.: arriendo de 3 habitaciones con mascotas">
+    <button type="button" id="mic" aria-label="Hablar">🎙️</button>
+    <button type="submit" id="enviarB" aria-label="Enviar">➤</button>
+  </form>
+</div>
+
+<button class="sos" id="sosBtn" aria-label="Emergencias">SOS</button>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sosT">
+  <div class="in">
+    <h3 id="sosT">Emergencias</h3>
+    <p>Elige qué necesitas. Las llamadas se marcan directo desde tu celular.</p>
+    <a class="sbtn r" href="tel:123"><span class="e">📞</span><span><b>Llama al 123</b><small>Línea única de emergencias: Policía, ambulancia y bomberos</small></span></a>
+    <a class="sbtn" href="#alertas" data-cerrar><span class="e">🚨</span><span><b>Alertar a los conjuntos vecinos</b><small>Red de Alerta Verde360</small></span></a>
+    <a class="sbtn" href="#" id="ambPriv"><span class="e">🚑</span><span><b>Ambulancia privada verificada</b><small>Ejemplo · servicio con costo</small></span></a>
+    <a class="sbtn" href="#" id="vet24"><span class="e">🐶</span><span><b>Veterinaria 24 horas</b><small>Ver en el mapa</small></span></a>
+    <button class="cerrar" id="sosCerrar">Cerrar</button>
+  </div>
+</div>
+
+<footer>
+  <b>Verde360</b> · Vivir · Comprar y contratar · Convivir · Moverse<br>
+  Un proyecto de XIRIN Technologies S.A.S. · Soacha, Cundinamarca · Versión 1.0 (prototipo)<br>
+  Verde360 publica avisos clasificados; no intermedia contratos de arrendamiento. Tus datos se tratan conforme a la Ley 1581 de 2012.
+</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+/* =========================================================
+   CONFIGURACIÓN — edita aquí
+   ========================================================= */
+const WHATSAPP = "573208303847";        // tu WhatsApp, formato 57XXXXXXXXXX
+const CENTRO   = [4.6060, -74.2205];    // centro aproximado de Ciudad Verde (ajústalo)
+
+/* INMUEBLES — reemplaza los EJEMPLOS por avisos reales autorizados.
+   tipo: "Arriendo" | "Venta" · precio en pesos · admin: cuota de administración
+   verificado: true si la administración del conjunto confirmó al propietario   */
+const CASAS = [
+  {titulo:"Ejemplo · Apto en Conjunto Las Flores", tipo:"Arriendo", precio:850000,  admin:115000, hab:3, banos:2, m2:50, piso:4, mascotas:true,  parq:false, verificado:true,  conjunto:"Conjunto Las Flores", whatsapp:"", lat:4.6084, lng:-74.2196},
+  {titulo:"Ejemplo · Apto con balcón",            tipo:"Arriendo", precio:750000,  admin:96000,  hab:2, banos:1, m2:44, piso:3, mascotas:false, parq:false, verificado:false, conjunto:"Conjunto Guadual",    whatsapp:"", lat:4.6041, lng:-74.2229},
+  {titulo:"Ejemplo · Apto remodelado",            tipo:"Venta",    precio:165000000,admin:129000, hab:3, banos:2, m2:50, piso:4, mascotas:true,  parq:true,  verificado:true,  conjunto:"Conjunto Olmo",       whatsapp:"", lat:4.6027, lng:-74.2186},
+  {titulo:"Ejemplo · Apto primer piso",           tipo:"Arriendo", precio:800000,  admin:110000, hab:3, banos:1, m2:48, piso:1, mascotas:true,  parq:true,  verificado:false, conjunto:"Conjunto Azalea",     whatsapp:"", lat:4.6097, lng:-74.2214},
+  {titulo:"Ejemplo · Apto para estrenar remodelación", tipo:"Venta", precio:215000000,admin:116000,hab:3, banos:2, m2:64, piso:5, mascotas:false, parq:true,  verificado:false, conjunto:"Conjunto Almendro",   whatsapp:"", lat:4.6058, lng:-74.2168}
+];
+
+/* NEGOCIOS — horario [abre, cierra] en 24 h; dias 0=domingo … 6=sábado */
+const NEGOCIOS = [
+  {nombre:"Ejemplo · Droguería del Parque", cat:"Droguerías", emoji:"💊", sector:"Cerca al parque principal", horario:[7,22], dias:[0,1,2,3,4,5,6], domicilio:true,  destacado:true,  whatsapp:"", lat:4.6078, lng:-74.2231, tags:"farmacia medicamentos"},
+  {nombre:"Ejemplo · Asaderos El Fogón",    cat:"Comidas",    emoji:"🍗", sector:"Avenida Terreros",          horario:[11,21],dias:[0,1,2,3,4,5,6], domicilio:true,  destacado:true,  whatsapp:"", lat:4.6032, lng:-74.2178, tags:"pollo almuerzo restaurante"},
+  {nombre:"Ejemplo · Panadería La Espiga",  cat:"Panaderías", emoji:"🥖", sector:"Sector Las Flores",         horario:[6,21], dias:[0,1,2,3,4,5,6], domicilio:false, destacado:false, whatsapp:"", lat:4.6091, lng:-74.2189, tags:"pan desayuno café"},
+  {nombre:"Ejemplo · Plomería y Gas 24 h",  cat:"Hogar",      emoji:"🔧", sector:"A domicilio",               horario:[0,24], dias:[0,1,2,3,4,5,6], domicilio:true,  destacado:false, whatsapp:"", lat:4.6049, lng:-74.2242, tags:"plomero gas reparaciones trasteo"},
+  {nombre:"Ejemplo · Peluquería Estilo",    cat:"Belleza",    emoji:"💇", sector:"Transversal 24B",           horario:[9,20], dias:[1,2,3,4,5,6],   domicilio:false, destacado:false, whatsapp:"", lat:4.6020, lng:-74.2210, tags:"barbería corte uñas"},
+  {nombre:"Ejemplo · Mascotas Felices",     cat:"Mascotas",   emoji:"🐾", sector:"Sector El Dorado",          horario:[8,19], dias:[1,2,3,4,5,6],   domicilio:true,  destacado:false, whatsapp:"", lat:4.6067, lng:-74.2160, tags:"veterinaria concentrado"},
+  {nombre:"Ejemplo · Clínica Veterinaria 24 h", cat:"Mascotas", emoji:"🐶", sector:"Avenida Terreros",   horario:[0,24], dias:[0,1,2,3,4,5,6], domicilio:true,  destacado:true,  whatsapp:"", lat:4.6011, lng:-74.2195, tags:"veterinaria urgencias 24 horas"},
+  {nombre:"Ejemplo · Guardería Canina Huellitas", cat:"Mascotas", emoji:"🦮", sector:"Sector El Dorado",  horario:[6,19], dias:[1,2,3,4,5,6],   domicilio:false, destacado:false, whatsapp:"", lat:4.6073, lng:-74.2152, tags:"guarderia paseador perros"},
+  {nombre:"Ejemplo · Arepas de Doña Marta",  cat:"Vecinos",   emoji:"🫓", sector:"Domicilios en Las Flores", horario:[6,11], dias:[0,1,2,3,4,5,6], domicilio:true,  destacado:false, whatsapp:"", lat:4.6088, lng:-74.2207, tags:"vecino arepas desayuno informal"},
+  {nombre:"Ejemplo · Postres Caseros Ana",    cat:"Vecinos",   emoji:"🍰", sector:"Domicilios en la ciudadela", horario:[10,20],dias:[0,1,2,3,4,5,6], domicilio:true,  destacado:false, whatsapp:"", lat:4.6036, lng:-74.2219, tags:"vecino postres tortas informal"},
+  {nombre:"Ejemplo · Grúas Terreros 24 h",    cat:"Vehículos", emoji:"🛻", sector:"Cubre toda la ciudadela",  horario:[0,24], dias:[0,1,2,3,4,5,6], domicilio:true,  destacado:true,  whatsapp:"", lat:4.6003, lng:-74.2238, tags:"grua remolque varado choque 24 horas", confianza:true},
+  {nombre:"Ejemplo · Taller Mecánico El Vecino", cat:"Vehículos", emoji:"🔧", sector:"Avenida Terreros",       horario:[7,18], dias:[1,2,3,4,5,6],   domicilio:false, destacado:false, whatsapp:"", lat:4.6022, lng:-74.2166, tags:"mecanico taller carros motos frenos", confianza:true},
+  {nombre:"Ejemplo · Electricista certificado", cat:"Hogar",     emoji:"💡", sector:"A domicilio",              horario:[7,20], dias:[1,2,3,4,5,6],   domicilio:true,  destacado:false, whatsapp:"", lat:4.6082, lng:-74.2245, tags:"electricista luz corto instalaciones", confianza:true},
+  {nombre:"Ejemplo · Cerrajería Express",     cat:"Hogar",     emoji:"🔑", sector:"A domicilio",              horario:[0,24], dias:[0,1,2,3,4,5,6], domicilio:true,  destacado:false, whatsapp:"", lat:4.6055, lng:-74.2178, tags:"cerrajero llaves 24 horas"}
+];
+
+/* CONJUNTOS — nombres tomados de avisos publicados; las ubicaciones son APROXIMADAS
+   y deben verificarse en terreno. porteria: descripción de la entrada principal.    */
+const CONJUNTOS = [
+  {nombre:"Avellana",            sector:"Ciudad Verde",  porteria:"Portería principal (por verificar)", torres:9,  lat:4.6070, lng:-74.2188},
+  {nombre:"Portal de las Flores",sector:"Las Flores",     porteria:"Portería principal (por verificar)", torres:null, lat:4.6086, lng:-74.2199},
+  {nombre:"Portal del Nogal",    sector:"Las Flores",     porteria:"Portería principal (por verificar)", torres:null, lat:4.6093, lng:-74.2180},
+  {nombre:"Portal de Arrayanes", sector:"Las Flores",     porteria:"Portería principal (por verificar)", torres:null, lat:4.6079, lng:-74.2170},
+  {nombre:"Portal de Alcaparros",sector:"Las Flores",     porteria:"Portería principal (por verificar)", torres:null, lat:4.6101, lng:-74.2193},
+  {nombre:"Guadual",             sector:"Comuna 3",       porteria:"Portería principal (por verificar)", torres:null, lat:4.6043, lng:-74.2231},
+  {nombre:"Azucena",             sector:"Comuna 3",       porteria:"Portería principal (por verificar)", torres:null, lat:4.6030, lng:-74.2244},
+  {nombre:"Álamos",              sector:"Comuna 3",       porteria:"Portería principal (por verificar)", torres:null, lat:4.6052, lng:-74.2252},
+  {nombre:"Azalea",              sector:"Comuna 3",       porteria:"Portería principal (por verificar)", torres:null, lat:4.6097, lng:-74.2216},
+  {nombre:"Sauces III",          sector:"Comuna 3",       porteria:"Portería principal (por verificar)", torres:null, lat:4.6018, lng:-74.2226},
+  {nombre:"Olmo",                sector:"Ciudad Verde",   porteria:"Portería principal (por verificar)", torres:null, lat:4.6026, lng:-74.2183},
+  {nombre:"Almendro",            sector:"Ciudad Verde",   porteria:"Portería principal (por verificar)", torres:null, lat:4.6060, lng:-74.2165},
+  {nombre:"Heliconia",           sector:"Ciudad Verde",   porteria:"Portería principal (por verificar)", torres:null, lat:4.6014, lng:-74.2205},
+  {nombre:"Lunaria",             sector:"Ciudad Verde",   porteria:"Portería principal (por verificar)", torres:null, lat:4.6005, lng:-74.2186},
+  {nombre:"Bosatama",            sector:"Comuna 3",       porteria:"Portería principal (por verificar)", torres:null, lat:4.6066, lng:-74.2239}
+];
+
+/* ALERTAS — EJEMPLOS para mostrar cómo se ve la red. hace = minutos atrás */
+const ALERTAS = [
+  {tipo:"Sospechoso", e:"👀", conj:"Guadual",    txt:"Moto sin placa rondando la portería", hace:6},
+  {tipo:"Ruido",      e:"🔊", conj:"Azalea",     txt:"Música a alto volumen en torre 3",     hace:18, menor:true},
+  {tipo:"Accidente",  e:"🚗", conj:"Olmo",       txt:"Choque leve en la vía de acceso, tránsito lento", hace:35},
+  {tipo:"Robo",       e:"🦹", conj:"Heliconia",  txt:"Hurto de celular cerca al paradero",   hace:52},
+  {tipo:"Riña",       e:"👊", conj:"Bosatama",   txt:"Riña en el parque, ya llegó la Policía", hace:80}
+];
+
+/* TALENTOS — EJEMPLOS. cobertura: "conjunto" | "ciudadela" | "soacha"
+   nivel: 1 perfil básico · 2 identidad verificada · (Sello Verde se calcula solo) */
+const TALENTOS = [
+  {nombre:"Ejemplo · Marta R.",   oficio:"Costura, arreglos y uniformes", cat:"Costura",    conj:"Guadual",   cobertura:"ciudadela", nivel:2, desde:"$8.000",  domicilio:true,  color:"#db2777", tags:["Ruedos","Cremalleras","Uniformes escolares"],
+   resenas:[{n:"Vecina de Azalea",e:5,t:"Me arregló 3 uniformes en un día, impecables."},{n:"Vecino de Guadual",e:5,t:"Muy cumplida y buen precio."},{n:"Vecina de Olmo",e:4,t:"Buen trabajo, se demoró un día más.",r:"Gracias, tuve mucho trabajo esa semana. ¡Ya me puse al día!"},{n:"Vecina de Álamos",e:5,t:"La recomiendo."},{n:"Vecino de Bosatama",e:5,t:"Excelente arreglo de chaqueta."}]},
+  {nombre:"Ejemplo · Postres de Lina", oficio:"Tortas, postres y mesas de dulces", cat:"Repostería", conj:"Azalea", cobertura:"soacha", nivel:2, desde:"$25.000", domicilio:true, color:"#f59e0b", tags:["Cumpleaños","Por encargo","Sin azúcar"],
+   resenas:[{n:"Vecina de Lunaria",e:5,t:"La torta de cumpleaños quedó hermosa y deliciosa."},{n:"Vecino de Avellana",e:5,t:"Puntual con el domicilio."},{n:"Vecina de Olmo",e:5,t:"Los postres sin azúcar son muy buenos."},{n:"Vecina de Guadual",e:4,t:"Rico, un poco caro."},{n:"Vecina de Heliconia",e:5,t:"Siempre le encargo."},{n:"Vecino de Sauces III",e:5,t:"10 de 10."}]},
+  {nombre:"Ejemplo · Andrés T.",  oficio:"Mantenimiento de computadores y celulares", cat:"Tecnología", conj:"Olmo", cobertura:"soacha", nivel:2, desde:"$40.000", domicilio:true, color:"#2563eb", tags:["Formateo","Virus","Cambio de pantalla"],
+   resenas:[{n:"Vecina de Azucena",e:5,t:"Me recuperó las fotos del portátil."},{n:"Vecino de Almendro",e:4,t:"Buen servicio, explicó todo."},{n:"Vecino de Olmo",e:5,t:"Rápido y honesto con el precio."}]},
+  {nombre:"Ejemplo · Don Jairo",  oficio:"Pintura, drywall y arreglos del hogar", cat:"Hogar", conj:"Bosatama", cobertura:"ciudadela", nivel:1, desde:"$50.000", domicilio:true, color:"#0f7a4a", tags:["Pintura","Humedades","Drywall"],
+   resenas:[{n:"Vecina de Bosatama",e:4,t:"Buen trabajo de pintura."},{n:"Vecino de Guadual",e:3,t:"Quedó bien pero tocó recordarle la fecha.",r:"Tiene razón, mil disculpas. Ya tengo agenda para cumplir a tiempo."}]},
+  {nombre:"Ejemplo · Profe Carolina", oficio:"Refuerzo escolar y tareas", cat:"Clases", conj:"Avellana", cobertura:"conjunto", nivel:2, desde:"$15.000 / hora", domicilio:false, color:"#7c3aed", tags:["Primaria","Matemáticas","Inglés"],
+   resenas:[{n:"Mamá de Avellana",e:5,t:"Mi hijo subió las notas en matemáticas."},{n:"Papá de Avellana",e:5,t:"Muy paciente con los niños."},{n:"Mamá de Avellana",e:5,t:"Excelente."},{n:"Mamá de Avellana",e:5,t:"La recomiendo mucho."},{n:"Papá de Avellana",e:4,t:"Muy buena, a veces sin cupo."}]},
+  {nombre:"Ejemplo · Uñas by Yuli", oficio:"Manicure y pedicure a domicilio", cat:"Belleza", conj:"Heliconia", cobertura:"ciudadela", nivel:1, desde:"$20.000", domicilio:true, color:"#e11d48", tags:["Semipermanente","A domicilio"],
+   resenas:[{n:"Vecina de Heliconia",e:5,t:"Muy linda la decoración."}]}
+];
+
+/* MASCOTAS — EJEMPLOS. estado: perdida | encontrada | adopcion · hace en horas */
+const MASCOTAS = [
+  {estado:"perdida",   e:"🐶", nombre:"Ejemplo · Toby",    desc:"Criollo café, collar rojo, muy amigable", conj:"Guadual",   hace:5,  bg:"linear-gradient(135deg,#fde68a,#f59e0b)"},
+  {estado:"perdida",   e:"🐱", nombre:"Ejemplo · Luna",    desc:"Gata gris atigrada, ojos verdes, tímida", conj:"Heliconia", hace:26, bg:"linear-gradient(135deg,#e5e7eb,#9ca3af)"},
+  {estado:"encontrada",e:"🐶", nombre:"Ejemplo · Sin nombre", desc:"Perrito blanco pequeño, sin collar, está en portería", conj:"Olmo", hace:3, bg:"linear-gradient(135deg,#dbeafe,#93c5fd)"},
+  {estado:"adopcion",  e:"🐶", nombre:"Ejemplo · Canela",  desc:"2 años, esterilizada y vacunada. Rescatada", conj:"Bosatama", hace:72, bg:"linear-gradient(135deg,#bbf7d0,#4ade80)"},
+  {estado:"adopcion",  e:"🐱", nombre:"Ejemplo · Michi y Nube", desc:"Gatitos de 3 meses, se entregan juntos", conj:"Azalea", hace:48, bg:"linear-gradient(135deg,#fbcfe8,#f472b6)"}
+];
+
+/* EVENTOS — EJEMPLOS. dia: 0 = hoy, 1 = mañana, … (para la demostración) */
+const EVENTOS = [
+  {titulo:"Ejemplo · Feria de emprendedores del barrio", lugar:"Centro comercial de la ciudadela", dia:0, hora:"10 a. m. – 6 p. m.", gratis:true,  e:"🛍️", color:"linear-gradient(135deg,#f59e0b,#ef4444)", lat:4.6040, lng:-74.2172},
+  {titulo:"Ejemplo · Noche de karaoke",                lugar:"Plazoleta de comidas",              dia:1, hora:"7 p. m.",            gratis:true,  e:"🎤", color:"linear-gradient(135deg,#7c3aed,#2563eb)", lat:4.6035, lng:-74.2176},
+  {titulo:"Ejemplo · Jornada de vacunación de mascotas",lugar:"Parque principal",                  dia:2, hora:"8 a. m. – 1 p. m.",  gratis:true,  e:"🐾", color:"linear-gradient(135deg,#14b86a,#0f7a4a)", lat:4.6062, lng:-74.2210},
+  {titulo:"Ejemplo · Torneo relámpago de microfútbol", lugar:"Cancha sintética del sector",       dia:5, hora:"9 a. m.",            gratis:false, e:"⚽", color:"linear-gradient(135deg,#0ea5e9,#0f7a4a)", lat:4.6091, lng:-74.2232},
+  {titulo:"Ejemplo · Cine al parque para niños",       lugar:"Parque del sector Las Flores",      dia:6, hora:"6 p. m.",            gratis:true,  e:"🎬", color:"linear-gradient(135deg,#db2777,#7c3aed)", lat:4.6084, lng:-74.2187}
+];
+
+/* RUTAS DE BUSETA — SIMULACIÓN. Trazados inventados para la demostración;
+   con datos reales se reemplazan por el recorrido de cada ruta y la posición GPS. */
+const RUTAS = [
+  {id:"R1", nombre:"Ciudad Verde – Portal Sur",   color:"#2563eb", pts:[[4.6000,-74.2250],[4.6030,-74.2215],[4.6060,-74.2200],[4.6090,-74.2175],[4.6115,-74.2150]], buses:[0,.45]},
+  {id:"R2", nombre:"Ciudad Verde – Terreros",     color:"#db2777", pts:[[4.6100,-74.2245],[4.6075,-74.2225],[4.6045,-74.2195],[4.6015,-74.2170],[4.5995,-74.2150]], buses:[.2,.7]},
+  {id:"R3", nombre:"Circular interna",            color:"#7c3aed", pts:[[4.6030,-74.2240],[4.6090,-74.2240],[4.6095,-74.2165],[4.6025,-74.2160],[4.6030,-74.2240]], buses:[.1]}
+];
+const MIN_POR_VUELTA = 30;  // minutos que tarda la simulación en recorrer cada ruta
+
+/* CONDUCTORES — EJEMPLOS. Solo taxis y transporte especial habilitado. */
+const CONDUCTORES = [
+  {nombre:"Ejemplo · Taxi verificado",          vehiculo:"Taxi · placa terminada en 4", servicio:"Ciudad Verde ↔ Bogotá",   e:"🚕"},
+  {nombre:"Ejemplo · Transporte especial",      vehiculo:"Van 12 pasajeros · empresa habilitada", servicio:"Rutas escolares y empresariales", e:"🚐"},
+  {nombre:"Ejemplo · Taxi verificado nocturno", vehiculo:"Taxi · placa terminada en 7", servicio:"Servicio nocturno en la ciudadela", e:"🌙"}
+];
+
+/* =========================================================
+   UTILIDADES
+   ========================================================= */
+const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
+const norm=t=>(t||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
+const wa=(n,m)=>`https://wa.me/${n}?text=${encodeURIComponent(m)}`;
+const ruta=x=>`https://www.google.com/maps/dir/?api=1&destination=${x.lat},${x.lng}`;
+const pesos=v=>"$"+Math.round(v).toLocaleString("es-CO");
+const corto=v=>v>=1e9?"$"+(v/1e9).toLocaleString("es-CO",{maximumFractionDigits:1})+" mil M":v>=1e6?"$"+(v/1e6).toLocaleString("es-CO",{maximumFractionDigits:v>=1e8?0:1})+" M":"$"+Math.round(v/1e3)+" mil";
+const abierto=(n,d=new Date())=>{const h=d.getHours()+d.getMinutes()/60;return n.dias.includes(d.getDay())&&h>=n.horario[0]&&h<n.horario[1]};
+const hTxt=n=>n.horario[0]===0&&n.horario[1]===24?"24 horas":n.horario.map(x=>(x%12||12)+(x<12?" a. m.":" p. m.")).join(" – ");
+
+/* =========================================================
+   ESTADO
+   ========================================================= */
+let modo="casas", cat="Todos", q=null, activo=null, tags=null, jq="";
+const SUG={
+  casas:[["🏠 Arriendo 3 habitaciones","arriendo 3 habitaciones"],["🐾 Que acepten mascotas","arriendo con mascotas"],["💰 Arriendo menos de 800 mil","arriendo menos de 800 mil"],["🔑 Comprar apartamento","venta apartamento"]],
+  conjuntos:[["📍 Avellana","conjunto avellana"],["📍 Portal de las Flores","conjunto portal de las flores"],["🚪 ¿Cómo llego a Guadual?","como llego a guadual"]],
+  negocios:[["💊 Droguería abierta ahora","droguería abierta ahora"],["🍗 Comida a domicilio","comida a domicilio"],["🔧 Plomero 24 horas","plomero 24 horas"],["🥖 Panadería","panadería"]]
+};
+const PH={conjuntos:"Prueba: «¿cómo llego al conjunto Avellana?»",casas:"Prueba: «arriendo 3 habitaciones con mascotas menos de 900 mil»",negocios:"Prueba: «droguería abierta ahora» o «comida a domicilio»"};
+
+/* =========================================================
+   BUSCADOR QUE ENTIENDE FRASES (sin servidor)
+   ========================================================= */
+const SIN_NEG={grua:"Vehículos",remolque:"Vehículos",mecanico:"Vehículos",taller:"Vehículos",varado:"Vehículos",farmacia:"Droguerías",drogueria:"Droguerías",remedio:"Droguerías",comida:"Comidas",almuerzo:"Comidas",restaurante:"Comidas",pollo:"Comidas",pan:"Panaderías",panaderia:"Panaderías",plomero:"Hogar",gas:"Hogar",electricista:"Hogar",trasteo:"Hogar",peluqueria:"Belleza",barberia:"Belleza",veterinaria:"Mascotas",mascota:"Mascotas",perro:"Mascotas"};
+function entender(txt){
+  const t=norm(txt), r={t};
+  // ¿habla de vivienda o de negocios?
+  const cj=CONJUNTOS.find(c=>t.includes(norm(c.nombre)));
+  r.modo=/arriend|venta|vend|compr|apartament|apto|casa|habitacion|alcoba|cuarto|vivir|inmueble/.test(t)?"casas":
+         (cj||/conjunto|porteria|como llego|llegar a|torre/.test(t))?"conjuntos":
+         Object.keys(SIN_NEG).some(k=>t.includes(k))||/abiert|domicilio|negocio|tienda/.test(t)?"negocios":modo;
+  if(r.modo==="conjuntos"){r.conj=cj?cj.nombre:t.replace(/como llego( a(l)?)?|conjunto|porteria|al |a /g,"").trim();}
+  if(r.modo==="casas"){
+    if(/arriend/.test(t))r.tipo="Arriendo"; else if(/venta|vend|compr/.test(t))r.tipo="Venta";
+    const h=t.match(/(\d)\s*(hab|alcob|cuart)/); if(h)r.hab=+h[1];
+    const p=t.match(/(menos de|hasta|max(imo)?|por debajo de)\s*\$?\s*([\d.,]+)\s*(mil(lones)?|m|millon(es)?)?/);
+    if(p){let v=parseFloat(p[3].replace(/\./g,"").replace(",","."));const u=p[4]||"";
+      v=/millon|^m$/.test(u)?v*1e6:/mil/.test(u)?v*1e3:v<1e4?v*1e3:v; r.max=v;}
+    if(/mascota|perro|gato/.test(t))r.masc=true;
+    if(/parqueadero|carro|garaje/.test(t))r.parq=true;
+  }else{
+    r.ab=/abiert|ahora|ya mismo/.test(t); r.dom=/domicilio/.test(t);
+    for(const[k,v]of Object.entries(SIN_NEG)) if(t.includes(k)){r.cat=v;break;}
+  }
+  return r;
+}
+
+/* =========================================================
+   FILTROS
+   ========================================================= */
+function casasFiltradas(){
+  const tipo=$("#fTipo").value,hab=+$("#fHab").value,max=+$("#fPrecio").value;
+  return CASAS.filter(c=>(!tipo||c.tipo===tipo)&&c.hab>=hab&&(!max||c.precio<=max)
+    &&(!$("#fMasc").checked||c.mascotas)&&(!$("#fParq").checked||c.parq)&&(!$("#fVer").checked||c.verificado))
+    .sort((a,b)=>(b.verificado-a.verificado)||(a.precio-b.precio));
+}
+function negociosFiltrados(ignorarHora){
+  return NEGOCIOS.filter(n=>(cat==="Todos"||n.cat===cat)&&(!tags||tags.some(w=>norm(n.tags+" "+n.nombre).includes(w)))&&(ignorarHora||!$("#fAb").checked||abierto(n))&&(!$("#fDom").checked||n.domicilio)
+    &&(!q||q.modo!=="negocios"||q.cat||!q.t||q.t.split(/\s+/).filter(w=>w.length>2&&!/abiert|ahora|domicilio/.test(w)).every(w=>norm(`${n.nombre} ${n.cat} ${n.tags}`).includes(w))))
+    .sort((a,b)=>(b.destacado-a.destacado)||(abierto(b)-abierto(a)));
+}
+function conjuntosFiltrados(){const w=norm(jq);return CONJUNTOS.filter(c=>!w||norm(c.nombre+" "+c.sector).includes(w)).sort((a,b)=>a.nombre.localeCompare(b.nombre,"es"));}
+function precioOpciones(){
+  const tipo=$("#fTipo").value, s=$("#fPrecio"), prev=s.value;
+  const ops=tipo==="Venta"?[150e6,180e6,220e6]:tipo==="Arriendo"?[700e3,800e3,900e3,1e6]:[800e3,1e6,180e6,220e6];
+  s.innerHTML='<option value="0">Cualquier precio</option>'+ops.map(v=>`<option value="${v}">Hasta ${corto(v)}</option>`).join("");
+  if([...s.options].some(o=>o.value===prev))s.value=prev;
+}
+
+/* =========================================================
+   MAPA
+   ========================================================= */
+let capaH;
+let mapa,capaC,capaN,capaJ,capaA,capaB,mC={},mN={},mJ={},busMk=[];
+function iniciarMapa(){
+  if(!window.L){$("#map").innerHTML='<div class="vacio" style="margin:20px">No se pudo cargar el mapa. Revisa tu conexión.</div>';return;}
+  mapa=L.map("map",{scrollWheelZoom:false,zoomControl:true}).setView(CENTRO,15);
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(mapa);
+  capaC=L.layerGroup().addTo(mapa); capaN=L.layerGroup().addTo(mapa); capaJ=L.layerGroup().addTo(mapa); capaA=L.layerGroup().addTo(mapa);
+  $("#capaJ").onchange=e=>e.target.checked?capaJ.addTo(mapa):mapa.removeLayer(capaJ);
+  $("#capaA").onchange=e=>e.target.checked?capaA.addTo(mapa):mapa.removeLayer(capaA);
+  const capaE=L.layerGroup().addTo(mapa);
+  $("#capaE").onchange=e=>e.target.checked?capaE.addTo(mapa):mapa.removeLayer(capaE);
+  EVENTOS.forEach(ev=>L.marker([ev.lat,ev.lng],{icon:L.divIcon({className:"",html:`<div class="epin">${ev.e}</div>`,iconSize:[26,26],iconAnchor:[13,13]})})
+    .addTo(capaE).bindPopup(`<b>${ev.titulo}</b><br>${diaTxt(ev.dia)} · ${ev.hora}<br>${ev.lugar}`));
+  capaH=L.layerGroup().addTo(mapa);
+  $("#capaH").onchange=e=>e.target.checked?capaH.addTo(mapa):mapa.removeLayer(capaH);
+  pintarPetsMapa();
+  capaB=L.layerGroup().addTo(mapa);
+  $("#capaB").onchange=e=>e.target.checked?capaB.addTo(mapa):mapa.removeLayer(capaB);
+  RUTAS.forEach(r=>{
+    L.polyline(r.pts,{color:r.color,weight:4,opacity:.45,dashArray:"6 6"}).addTo(capaB).bindPopup(`<b>${r.id} · ${r.nombre}</b><br>Simulación de muestra`);
+    r.buses.forEach(f=>busMk.push({r,f,m:L.marker(r.pts[0],{icon:L.divIcon({className:"",html:`<div class="bus" style="background:${r.color}">🚌</div>`,iconSize:[28,28],iconAnchor:[14,14]}),zIndexOffset:1000}).addTo(capaB).bindPopup(`<b>${r.id} · ${r.nombre}</b><br>En movimiento · simulación`)}));
+  });
+  animarBuses();
+  $("#capaC").onchange=e=>e.target.checked?capaC.addTo(mapa):mapa.removeLayer(capaC);
+  $("#capaN").onchange=e=>e.target.checked?capaN.addTo(mapa):mapa.removeLayer(capaN);
+}
+function pintarMapa(casas,negs,conjs){
+  if(!mapa)return;
+  capaC.clearLayers(); capaN.clearLayers(); capaJ.clearLayers(); capaA.clearLayers(); mC={}; mN={}; mJ={};
+  conjs.forEach(c=>{const i=CONJUNTOS.indexOf(c);
+    mJ[i]=L.marker([c.lat,c.lng],{icon:L.divIcon({className:"",html:`<div class="cpin">${c.nombre[0]}</div>`,iconSize:[26,26],iconAnchor:[13,13]})})
+      .addTo(capaJ).on("click",()=>enfocar("conjuntos",i,false))
+      .bindPopup(`<b>Conjunto ${c.nombre}</b><br>🚪 ${c.porteria}<br><a href="${ruta(c)}" target="_blank">Cómo llegar a la portería</a>`);});
+  ALERTAS.forEach(a=>{const c=CONJUNTOS.find(x=>x.nombre===a.conj);if(!c)return;
+    L.marker([c.lat+.0006,c.lng+.0006],{icon:L.divIcon({className:"",html:`<div class="apin ${a.menor?"m":""}"></div>`,iconSize:[22,22],iconAnchor:[11,11]}),zIndexOffset:900})
+      .addTo(capaA).bindPopup(`<b>${a.e} ${a.tipo}</b> · hace ${hace(a.hace)}<br>${a.txt}<br><small>Cerca a ${a.conj} · ejemplo</small>`);});
+  casas.forEach(c=>{const i=CASAS.indexOf(c);
+    mC[i]=L.marker([c.lat,c.lng],{icon:L.divIcon({className:"",html:`<span class="ppin ${c.tipo==="Venta"?"v":""}" id="pp${i}">${corto(c.precio)}</span>`,iconSize:[0,0]}),zIndexOffset:500})
+      .addTo(capaC).on("click",()=>enfocar("casas",i,false))
+      .bindPopup(`<b>${c.titulo}</b><br>${c.tipo} · ${pesos(c.precio)}<br>${c.hab} hab · ${c.m2} m² · ${c.conjunto}`);});
+  negs.forEach(n=>{const i=NEGOCIOS.indexOf(n);
+    mN[i]=L.marker([n.lat,n.lng],{icon:L.divIcon({className:"",html:`<div class="pin ${n.destacado?"d":""}"><span>${n.emoji}</span></div>`,iconSize:[30,30],iconAnchor:[15,30],popupAnchor:[0,-28]})})
+      .addTo(capaN).on("click",()=>enfocar("negocios",i,false))
+      .bindPopup(`<b>${n.nombre}</b><br>${n.cat} · ${abierto(n)?"🟢 Abierto":"🔴 Cerrado"}`);});
+  const act=modo==="casas"?casas:modo==="negocios"?negs:conjs;
+  if(act.length)mapa.fitBounds(L.latLngBounds(act.map(x=>[x.lat,x.lng])).pad(.3),{maxZoom:16});
+}
+
+/* =========================================================
+   PINTADO
+   ========================================================= */
+function tarjetaCasa(c){const i=CASAS.indexOf(c);
+  return `<article class="card casa" data-k="casas" data-i="${i}">
+    <div class="foto"><span class="tp ${c.tipo==="Venta"?"v":""}">${c.tipo.toUpperCase()}</span>🏢</div>
+    <div class="cb">
+      <div class="precio">${pesos(c.precio)} <small>${c.tipo==="Arriendo"?"/ mes":""} · admin ${pesos(c.admin)}</small></div>
+      <h3>${c.titulo} ${c.verificado?'<span class="ver">✔ VERIFICADO</span>':""}</h3>
+      <div class="meta">${c.conjunto} · piso ${c.piso}</div>
+      <div class="feats"><span>${c.hab} hab</span><span>${c.banos} baño${c.banos>1?"s":""}</span><span>${c.m2} m²</span>${c.mascotas?"<span>🐾 Mascotas</span>":""}${c.parq?"<span>🚗 Parqueadero</span>":""}</div>
+      <div class="acc">
+        <a class="wa" href="${wa(c.whatsapp||WHATSAPP,`Hola, me interesa el inmueble «${c.titulo}» que vi en Verde360. ¿Puedo agendar una visita?`)}" target="_blank" rel="noopener">Agendar visita</a>
+        <a href="${ruta(c)}" target="_blank" rel="noopener">Cómo llegar</a>
+      </div>
+    </div></article>`;}
+function tarjetaNeg(n){const i=NEGOCIOS.indexOf(n),o=abierto(n);
+  return `<article class="card neg ${n.destacado?"dest":""}" data-k="negocios" data-i="${i}">
+    <div class="av">${n.emoji}</div>
+    <div>${n.destacado?'<div class="star">★ DESTACADO</div>':""}
+      <h3>${n.nombre} <span class="st ${o?"ab":"ce"}">${o?"Abierto":"Cerrado"}</span></h3>
+      ${n.confianza?'<div class="ver">🛡 DE CONFIANZA · recomendado por vecinos, documentos revisados</div>':""}
+      <div class="meta">${n.cat} · ${n.sector}${n.domicilio?" · 🛵 Domicilios":""}<br>${hTxt(n)}</div>
+      <div class="acc">${n.whatsapp?`<a class="wa" href="${wa(n.whatsapp,"Hola, te encontré en Verde360.")}" target="_blank" rel="noopener">WhatsApp</a>`:""}
+        <a href="${ruta(n)}" target="_blank" rel="noopener">Cómo llegar</a></div>
+    </div></article>`;}
+
+function tarjetaConj(c){const i=CONJUNTOS.indexOf(c);
+  return `<article class="card conj" data-k="conjuntos" data-i="${i}">
+    <div class="av">🏘️</div>
+    <div><h3>Conjunto ${c.nombre}</h3>
+      <div class="meta">${c.sector}${c.torres?` · ${c.torres} torres`:""}<br>🚪 ${c.porteria}</div>
+      <div class="aprox">Ubicación aproximada · por verificar en terreno</div>
+      <div class="acc"><a class="wa" href="${ruta(c)}" target="_blank" rel="noopener">Cómo llegar</a>
+        <a href="${wa("","Te comparto cómo llegar al Conjunto "+c.nombre+" en Ciudad Verde: "+ruta(c))}" target="_blank" rel="noopener">Compartir ubicación</a></div>
+    </div></article>`;}
+const hace=m=>m<60?`${m} min`:`${Math.floor(m/60)} h ${m%60?m%60+" min":""}`.trim();
+
+function pintar(){
+  const casas=casasFiltradas(), conjs=conjuntosFiltrados();
+  let negs=negociosFiltrados(false), sinAbiertos=false;
+  if(!negs.length&&$("#fAb").checked){negs=negociosFiltrados(true);sinAbiertos=negs.length>0;}
+  $("#mC").textContent=`${casas.length} disponibles · ${casas.filter(c=>c.tipo==="Arriendo").length} en arriendo`;
+  $("#mN").textContent=`${negs.length} en el mapa · ${negs.filter(n=>abierto(n)).length} abiertos ahora`;
+  $("#mJ").textContent=`${CONJUNTOS.length} conjuntos con portería en el mapa`;
+
+  if(modo==="conjuntos"){
+    $("#resumen").textContent=jq?`${conjs.length} conjunto${conjs.length!==1?"s":""} para «${jq}»`:`${conjs.length} conjuntos · toca uno para ver su portería`;
+    $("#lista").innerHTML=conjs.length?conjs.map(tarjetaConj).join(""):`<div class="vacio">Aún no tenemos ese conjunto en el mapa. <a href="${wa(WHATSAPP,"Hola, quiero agregar mi conjunto a Verde360: ")}" target="_blank">Ayúdanos a agregarlo</a>.</div>`;
+  }else if(modo==="casas"){
+    $("#resumen").textContent=casas.length?`${casas.length} inmueble${casas.length!==1?"s":""} · desde ${pesos(Math.min(...casas.map(c=>c.precio)))}`:"";
+    $("#lista").innerHTML=casas.length?casas.map(tarjetaCasa).join(""):`<div class="vacio">No hay inmuebles con esos filtros. <a href="${wa(WHATSAPP,"Hola, busco inmueble en Ciudad Verde con estas condiciones: ")}" target="_blank">Déjanos tu búsqueda y te avisamos</a>.</div>`;
+  }else{
+    $("#resumen").textContent=sinAbiertos?"Ninguno está abierto en este momento. Estos son los que encontramos, con su horario:":`${negs.length} negocio${negs.length!==1?"s":""} · ${negs.filter(n=>abierto(n)).length} abiertos ahora`;
+    $("#lista").innerHTML=negs.length?negs.map(tarjetaNeg).join(""):`<div class="vacio">No encontramos resultados. <a href="${wa(WHATSAPP,"Hola, quiero sugerir un negocio para Verde360.")}" target="_blank">Sugiere un negocio</a>.</div>`;
+  }
+  $$(".card").forEach(el=>el.onclick=e=>{if(e.target.closest("a"))return;enfocar(el.dataset.k,+el.dataset.i,true);});
+  pintarMapa(casas,negs,conjs);
+}
+
+function enfocar(k,i,desdeLista){
+  if(k!==modo){cambiarModo(k);}
+  $$(".card").forEach(c=>c.classList.toggle("act",c.dataset.k===k&&+c.dataset.i===i));
+  $$(".ppin").forEach(p=>p.classList.toggle("on",k==="casas"&&p.id==="pp"+i));
+  const x=(k==="casas"?CASAS:k==="negocios"?NEGOCIOS:CONJUNTOS)[i], m=(k==="casas"?mC:k==="negocios"?mN:mJ)[i];
+  if(mapa&&m){mapa.flyTo([x.lat,x.lng],17,{duration:.6});m.openPopup();}
+  if(desdeLista&&innerWidth<900)$("#map").scrollIntoView({behavior:"smooth",block:"center"});
+  if(!desdeLista){const el=document.querySelector(`.card[data-k="${k}"][data-i="${i}"]`);el&&el.scrollIntoView({behavior:"smooth",block:"nearest"});}
+}
+
+function cambiarModo(m){
+  modo=m;
+  $$("[data-m]").forEach(b=>b.classList.toggle("on",b.dataset.m===m));
+  $("#fCasas").hidden=m!=="casas"; $("#fNeg").hidden=m!=="negocios";
+  if(m!=="negocios")tags=null;
+  $("#q").placeholder=PH[m];
+  $("#sug").innerHTML=SUG[m].map(([l,v])=>`<button data-q="${v}">${l}</button>`).join("");
+  $$("#sug button").forEach(b=>b.onclick=()=>{$("#q").value=b.dataset.q;buscar(b.dataset.q);});
+  pintar();
+}
+
+function pintarCats(){
+  const cats=["Todos",...new Set(NEGOCIOS.map(n=>n.cat))];
+  $("#cats").innerHTML=cats.map(c=>`<button class="${c===cat?"on":""}" data-c="${c}">${c}</button>`).join("");
+  $$("#cats button").forEach(b=>b.onclick=()=>{cat=b.dataset.c;q=null;pintarCats();pintar();});
+}
+
+function buscar(txt){
+  q=txt.trim()?entender(txt):null;
+  // reinicia filtros y aplica lo que entendió el buscador
+  ["fMasc","fParq","fVer","fAb","fDom"].forEach(id=>$("#"+id).checked=false);
+  $("#fTipo").value="";$("#fHab").value="0";cat="Todos";tags=null;jq="";
+  if(q){
+    if(q.modo==="casas"){
+      if(q.tipo)$("#fTipo").value=q.tipo; precioOpciones();
+      if(q.hab)$("#fHab").value=q.hab>=3?"3":"2";
+      if(q.max){const s=$("#fPrecio");if(![...s.options].some(o=>+o.value===q.max))s.insertAdjacentHTML("beforeend",`<option value="${q.max}">Hasta ${corto(q.max)}</option>`);s.value=q.max;}
+      if(q.masc)$("#fMasc").checked=true; if(q.parq)$("#fParq").checked=true;
+    }else if(q.modo==="conjuntos"){ jq=q.conj||""; }
+    else{ if(q.ab)$("#fAb").checked=true; if(q.dom)$("#fDom").checked=true; if(q.cat)cat=q.cat; }
+  }
+  pintarCats(); cambiarModo(q?q.modo:modo);
+  $("#explorar").scrollIntoView({behavior:"smooth"});
+}
+
+/* eventos */
+$("#f").onsubmit=e=>{e.preventDefault();buscar($("#q").value);};
+$$(".tabs button,.modo button").forEach(b=>b.addEventListener("click",()=>cambiarModo(b.dataset.m)));
+$$("[data-ir]").forEach(a=>a.addEventListener("click",()=>cambiarModo(a.dataset.ir)));
+const menu=$("#menu");
+$("#menuBtn").onclick=()=>menu.classList.add("on");
+$("#menuCerrar").onclick=()=>menu.classList.remove("on");
+menu.onclick=e=>{if(e.target===menu||e.target.closest("a"))menu.classList.remove("on");};
+
+/* =========================================================
+   SERVICIOS RÁPIDOS, RED DE ALERTA, MUÉVETE, SOS
+   ========================================================= */
+function verServicio(tag){
+  ["fAb","fDom"].forEach(id=>$("#"+id).checked=false); cat="Todos"; q=null;
+  tags=tag.split(" "); pintarCats(); modo="";  // fuerza repintado
+  cambiarModo("negocios"); tags=tag.split(" "); pintar();
+  $("#explorar").scrollIntoView({behavior:"smooth"});
+}
+$$(".tile").forEach(t=>t.onclick=()=>t.dataset.sos?abrirSOS():verServicio(t.dataset.tag));
+
+/* posición a lo largo de una ruta (0..1) */
+function largo(p){let d=[0];for(let i=1;i<p.length;i++)d.push(d[i-1]+Math.hypot(p[i][0]-p[i-1][0],p[i][1]-p[i-1][1]));return d;}
+function punto(r,f){const d=r._d||(r._d=largo(r.pts)),L0=d[d.length-1]*f;let i=1;while(i<d.length-1&&d[i]<L0)i++;
+  const k=(L0-d[i-1])/(d[i]-d[i-1]||1);return[r.pts[i-1][0]+(r.pts[i][0]-r.pts[i-1][0])*k,r.pts[i-1][1]+(r.pts[i][1]-r.pts[i-1][1])*k];}
+const t0=performance.now();
+function fase(b){return (b.f+(performance.now()-t0)/(MIN_POR_VUELTA*60000/20))%1;} // 20x más rápido para que se note
+function animarBuses(){busMk.forEach(b=>b.m.setLatLng(punto(b.r,fase(b))));requestAnimationFrame(animarBuses);}
+function pintarETAs(){
+  const filas=RUTAS.map(r=>{const bs=busMk.length?busMk.filter(b=>b.r===r):r.buses.map(f=>({r,f}));
+    const fs=bs.map(b=>busMk.length?fase(b):b.f), prox=Math.min(...fs.map(f=>((1-f)%1)*MIN_POR_VUELTA));
+    return {r,min:Math.max(1,Math.round(prox))};}).sort((a,b)=>a.min-b.min);
+  $("#etas").innerHTML=filas.map(x=>`<div class="eta"><div class="r" style="background:${x.r.color}">${x.r.id}</div>
+    <div><b>${x.r.nombre}</b><div class="meta">Hacia tu paradero más cercano</div></div><strong>${x.min} min</strong></div>`).join("");
+}
+function fechaDe(d){const f=new Date();f.setDate(f.getDate()+d);return f;}
+function diaTxt(d){return d===0?"Hoy":d===1?"Mañana":fechaDe(d).toLocaleDateString("es-CO",{weekday:"long"}).replace(/^./,m=>m.toUpperCase());}
+let evFiltro="Todos";
+function pintarAgenda(){
+  const finde=d=>[0,6].includes(fechaDe(d).getDay())||fechaDe(d).getDay()===5;
+  const F={"Todos":()=>true,"Hoy":e=>e.dia===0,"Esta semana":e=>e.dia<=7,"Fin de semana":e=>finde(e.dia),"Gratis":e=>e.gratis};
+  $("#evF").innerHTML=Object.keys(F).map(k=>`<button class="${k===evFiltro?"on":""}" data-f="${k}">${k}</button>`).join("");
+  $$("#evF button").forEach(b=>b.onclick=()=>{evFiltro=b.dataset.f;pintarAgenda();});
+  const lista=EVENTOS.filter(F[evFiltro]).sort((a,b)=>a.dia-b.dia);
+  $("#evs").innerHTML=lista.length?lista.map((e,i)=>{const f=fechaDe(e.dia);
+    return `<article class="ev" style="animation-delay:${i*50}ms"><div class="top2" style="background:${e.color}"><span>${e.e}</span>
+      <div class="fecha"><small>${f.toLocaleDateString("es-CO",{month:"short"})}</small>${f.getDate()}</div></div>
+      <div class="b"><span class="gratis">${e.gratis?"ENTRADA LIBRE":"CON COSTO"}</span><h3>${e.titulo}</h3>
+      <div class="meta">${diaTxt(e.dia)} · ${e.hora}<br>📍 ${e.lugar}</div>
+      <div class="acc"><a href="${ruta(e)}" target="_blank" rel="noopener">Cómo llegar</a>
+      <a href="${wa("","Mira este evento en Ciudad Verde: "+e.titulo+" · "+diaTxt(e.dia)+" "+e.hora+" · "+e.lugar)}" target="_blank" rel="noopener">Compartir</a></div></div></article>`;}).join("")
+    :`<div class="vacio">No hay eventos con ese filtro. ¿Organizas algo? Publícalo gratis.</div>`;
+}
+/* =========================================================
+   TALENTO VERDE
+   ========================================================= */
+const ok=t=>t.resenas.filter(r=>!r.p);
+const prom=t=>ok(t).length?ok(t).reduce((s,r)=>s+r.e,0)/ok(t).length:0;
+const selloVerde=t=>t.nivel>=2&&ok(t).length>=5&&prom(t)>=4.5;
+const estrellas=v=>"★".repeat(Math.round(v))+"☆".repeat(5-Math.round(v));
+const iniciales=n=>n.replace(/^Ejemplo · /,"").split(/\s+/).map(w=>w[0]).join("").slice(0,2).toUpperCase();
+let alc="ciudadela", tcat="Todos";
+function selloHTML(t){return selloVerde(t)?'<span class="sello n3">🏅 Sello Verde de Calidad</span>':t.nivel>=2?'<span class="sello n2">✔ Identidad verificada</span>':'<span class="sello n1">● Perfil básico</span>';}
+function pintarTalentos(){
+  const mi=$("#miConj").value;
+  const cats=["Todos",...new Set(TALENTOS.map(t=>t.cat))];
+  $("#talCats").innerHTML=cats.map(c=>`<button class="${c===tcat?"on":""}" data-c="${c}">${c}</button>`).join("");
+  $$("#talCats button").forEach(b=>b.onclick=()=>{tcat=b.dataset.c;pintarTalentos();});
+  let r=TALENTOS.filter(t=>(tcat==="Todos"||t.cat===tcat)&&(!$("#soloSello").checked||selloVerde(t))&&
+    (alc==="conjunto"?t.conj===mi:alc==="ciudadela"?(t.cobertura!=="conjunto"||t.conj===mi):t.cobertura==="soacha"));
+  r.sort($("#talOrden").value==="res"?(a,b)=>b.resenas.length-a.resenas.length:(a,b)=>(selloVerde(b)-selloVerde(a))||(prom(b)-prom(a)));
+  $("#tals").innerHTML=r.length?r.map((t,i)=>{const k=TALENTOS.indexOf(t),pv=prom(t),best=t.resenas.slice().sort((a,b)=>b.e-a.e)[0];
+    return `<article class="tal" style="animation-delay:${i*50}ms">
+      <div class="hd"><div class="ini" style="background:${t.color}">${iniciales(t.nombre)}</div>
+        <div><h3>${t.nombre}</h3><div class="of">${t.oficio}</div></div></div>
+      ${selloHTML(t)}
+      <div class="stars">${estrellas(pv)}<small>${pv?pv.toFixed(1).replace(".",","):"Sin calificar"} · ${ok(t).length} reseña${ok(t).length!==1?"s":""}</small></div>
+      <div class="meta">🏘️ Conjunto ${t.conj} · atiende ${t.cobertura==="conjunto"?"solo su conjunto":t.cobertura==="ciudadela"?"toda Ciudad Verde":"todo Soacha"}${t.domicilio?" · 🛵 a domicilio":""}<br>Desde <b>${t.desde}</b></div>
+      <div class="tags">${t.tags.map(x=>`<span>${x}</span>`).join("")}</div>
+      ${best?`<div class="cita">“${best.t}” — ${best.n}</div>`:""}
+      <div class="acc"><a class="wa" href="${wa(WHATSAPP,"Hola, vi en Verde360 el servicio de "+t.nombre.replace(/^Ejemplo · /,"")+" ("+t.oficio+") y quiero cotizar.")}" target="_blank" rel="noopener">Contactar</a>
+        <a href="#" data-tal="${k}">Reseñas y calificar</a></div></article>`;}).join("")
+    :`<div class="vacio">Aún no hay talentos con ese filtro${alc==="conjunto"?" en tu conjunto":""}. ¿Sabes hacer algo? <a href="${wa(WHATSAPP,"Hola, quiero publicar mi talento en Verde360.")}" target="_blank">Publica tu talento gratis</a>.</div>`;
+  $$("[data-tal]").forEach(a=>a.onclick=e=>{e.preventDefault();abrirTal(+a.dataset.tal);});
+}
+let calSel=0;
+function abrirTal(k){
+  const t=TALENTOS[k], pv=prom(t);
+  $("#talIn").innerHTML=`<div class="hd" style="display:grid;grid-template-columns:52px 1fr auto;gap:12px;align-items:center">
+      <div class="ini" style="background:${t.color}">${iniciales(t.nombre)}</div>
+      <div><h3 style="font-size:1.05rem">${t.nombre}</h3><div class="meta">${t.oficio}</div></div>
+      <button class="ico" style="background:var(--bg);color:var(--ink)" id="talX" aria-label="Cerrar">✕</button></div>
+    <div style="margin:10px 0">${selloHTML(t)}</div>
+    <div class="stars" style="font-size:1.2rem">${estrellas(pv)}<small>${pv?pv.toFixed(1).replace(".",","):"—"} de 5 · ${ok(t).length} reseñas</small></div>
+    <div style="margin-top:8px">${t.resenas.slice().reverse().map(r=>`<div class="rv"><b>${r.n}</b> <span class="stars">${estrellas(r.e)}</span><div>${r.t}</div>${r.r?`<div class="resp"><b>Respuesta:</b> ${r.r}</div>`:""}</div>`).join("")}</div>
+    <div class="rv"><b>Califica este servicio</b>
+      <div class="calif" id="calif">${[1,2,3,4,5].map(i=>`<span data-v="${i}">★</span>`).join("")}</div>
+      <textarea id="calTxt" rows="2" placeholder="¿Cómo fue el servicio? Sé concreto y respetuoso."></textarea>
+      <input id="calTel" inputmode="tel" placeholder="Tu celular (para confirmar que fuiste cliente)">
+      <div class="row2"><button class="bprim" id="calOk">Publicar reseña</button><button class="bsec" id="calNo">Cerrar</button></div>
+      <div id="calMsg" class="nota" role="status"></div></div>`;
+  $("#talModal").classList.add("on"); calSel=0;
+  const pintarCal=()=>$$("#calif span").forEach(s=>s.classList.toggle("on",+s.dataset.v<=calSel));
+  $$("#calif span").forEach(s=>{s.onclick=()=>{calSel=+s.dataset.v;pintarCal();};});
+  $("#talX").onclick=$("#calNo").onclick=()=>$("#talModal").classList.remove("on");
+  $("#calOk").onclick=()=>{
+    const tel=$("#calTel").value.replace(/\D/g,"");
+    if(!calSel){$("#calMsg").textContent="Elige de 1 a 5 estrellas.";return;}
+    if(tel.length<10){$("#calMsg").textContent="Escribe tu celular de 10 dígitos para confirmar que fuiste cliente.";return;}
+    t.resenas.push({n:"Tú · pendiente de confirmar",e:calSel,t:$("#calTxt").value.trim()||"Sin comentario.",p:true});
+    pintarTalentos(); abrirTal(k);
+    $("#calMsg").textContent="¡Gracias! En la versión en línea te llega un código por WhatsApp para confirmar la reseña antes de publicarla.";
+  };
+}
+$("#talModal").onclick=e=>{if(e.target.id==="talModal")$("#talModal").classList.remove("on");};
+$$("#alc button").forEach(b=>b.onclick=()=>{alc=b.dataset.a;$$("#alc button").forEach(x=>x.classList.toggle("on",x===b));pintarTalentos();});
+$("#miConj").innerHTML=[...CONJUNTOS].sort((a,b)=>a.nombre.localeCompare(b.nombre,"es")).map(c=>`<option ${c.nombre==="Avellana"?"selected":""}>${c.nombre}</option>`).join("");
+$("#miConj").onchange=$("#talOrden").onchange=$("#soloSello").onchange=pintarTalentos;
+
+/* =========================================================
+   HUELLITAS VERDE
+   ========================================================= */
+let huTab="perdida";
+const huTxt={perdida:"PERDIDA",encontrada:"ENCONTRADA",adopcion:"EN ADOPCIÓN"};
+const haceH=h=>h<1?"hace un momento":h<24?`hace ${h} h`:`hace ${Math.round(h/24)} día${Math.round(h/24)>1?"s":""}`;
+function pintarPets(){
+  const r=MASCOTAS.filter(m=>m.estado===huTab).sort((a,b)=>a.hace-b.hace);
+  $("#pets").innerHTML=r.length?r.map((m,i)=>{const msg=m.estado==="perdida"?`Hola, creo que vi a ${m.nombre.replace(/^Ejemplo · /,"")} (mascota perdida en Verde360) cerca de `:m.estado==="encontrada"?`Hola, creo que la mascota encontrada cerca de ${m.conj} es mía. `:`Hola, quiero adoptar a ${m.nombre.replace(/^Ejemplo · /,"")}. `;
+    return `<article class="pet" style="animation-delay:${i*50}ms"><div class="ph" style="${m.foto?`background-image:url(${m.foto})`:`background:${m.bg}`}">${m.foto?"":m.e}<span class="est ${m.estado}">${huTxt[m.estado]}</span></div>
+      <div class="b"><h3>${m.nombre}</h3><div class="meta">${m.desc}</div><div class="meta">📍 Cerca a ${m.conj} · ${haceH(m.hace)}</div>
+      <div class="acc"><a class="wa" href="${wa(WHATSAPP,msg)}" target="_blank" rel="noopener">${m.estado==="perdida"?"¡La vi!":m.estado==="encontrada"?"Es mía":"Adoptar"}</a>
+      <a href="${wa("",`🐾 ${huTxt[m.estado]} en Ciudad Verde: ${m.nombre.replace(/^Ejemplo · /,"")} · ${m.desc} · cerca a ${m.conj}. Ayuda a compartir.`)}" target="_blank" rel="noopener">Compartir</a></div></div></article>`;}).join("")
+    :`<div class="vacio">No hay reportes en esta categoría. ¡Buena señal! 🐾</div>`;
+}
+function pintarPetsMapa(){if(!capaH)return;capaH.clearLayers();
+  const col={perdida:"#dc2626",encontrada:"#2563eb",adopcion:"#0f7a4a"};
+  MASCOTAS.forEach(m=>{const c=CONJUNTOS.find(x=>x.nombre===m.conj);if(!c)return;
+    L.marker([c.lat-.0005,c.lng+.0004],{icon:L.divIcon({className:"",html:`<div class="hpin" style="background:${col[m.estado]}">${m.e}</div>`,iconSize:[26,26],iconAnchor:[13,13]}),zIndexOffset:800})
+      .addTo(capaH).bindPopup(`<b>${huTxt[m.estado]} · ${m.nombre}</b><br>${m.desc}<br><small>${haceH(m.hace)}</small>`);});}
+$$("#huTab button").forEach(b=>b.onclick=()=>{huTab=b.dataset.h;$$("#huTab button").forEach(x=>x.classList.toggle("on",x===b));pintarPets();});
+$("#huConj").innerHTML='<option value="">¿Dónde? (conjunto o zona)</option>'+[...CONJUNTOS].sort((a,b)=>a.nombre.localeCompare(b.nombre,"es")).map(c=>`<option>${c.nombre}</option>`).join("");
+let huFoto=null;
+$("#huFoto").onchange=e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{huFoto=rd.result;$("#huFotoP").innerHTML=`<img src="${huFoto}" alt="Foto de la mascota">`;};rd.readAsDataURL(f);};
+$("#huF").onsubmit=e=>{e.preventDefault();
+  const conj=$("#huConj").value; if(!conj){$("#huMsg").textContent="Elige el conjunto o la zona.";return;}
+  const tipo=$("#huTipo").value;
+  MASCOTAS.unshift({estado:tipo,e:$("#huEsp").value,nombre:$("#huNom").value.trim()||"Sin nombre",desc:$("#huDesc").value.trim()||"Sin descripción",conj,hace:0,foto:huFoto,bg:"linear-gradient(135deg,#e5e7eb,#9ca3af)"});
+  huTab=tipo; $$("#huTab button").forEach(x=>x.classList.toggle("on",x.dataset.h===tipo));
+  pintarPets(); pintarPetsMapa();
+  const alerta=`🐾 ${huTxt[tipo]} en Ciudad Verde\n${MASCOTAS[0].nombre} · ${MASCOTAS[0].desc}\nCerca a: ${conj}`;
+  $("#huMsg").innerHTML=`¡Publicado! Ahora avísale a la red: <a href="${wa(WHATSAPP,alerta)}" target="_blank" rel="noopener"><b>enviar alerta a las porterías →</b></a>`;
+  $("#huF").reset(); huFoto=null; $("#huFotoP").textContent="📷";
+};
+/* QR decorativo */
+(function(){let r="";const R=(x,y,w,h)=>r+=`<rect x="${x}" y="${y}" width="${w}" height="${h}"/>`;
+  [[0,0],[14,0],[0,14]].forEach(([x,y])=>{R(x,y,7,1);R(x,y+6,7,1);R(x,y,1,7);R(x+6,y,1,7);R(x+2,y+2,3,3);});
+  let s=7;for(let y=0;y<21;y++)for(let x=0;x<21;x++){if((x<8&&y<8)||(x>12&&y<8)||(x<8&&y>12))continue;s=(s*73+19)%101;if(s%3===0)R(x,y,1,1);}
+  $("#qrSvg").innerHTML=`<g fill="#1e1b4b">${r}</g>`;})();
+
+/* =========================================================
+   PLANES Y PRECIOS
+   ========================================================= */
+const PLANES={
+  "Vendedores y negocios":[
+    {n:"Vecino Emprendedor",p:"$15.000",u:"/ mes",top:true,b:"Para vendedores informales",d:["Vende y entrega domicilios en tu sector","Ficha con foto y pin en el mapa","Pedidos directo a tu WhatsApp","0 % de comisión por pedido","Sale en «Domicilios de vecinos»"],w:"Hola, quiero el plan Vecino Emprendedor de Verde360 para vender a domicilio."},
+    {n:"Negocio Destacado",p:"$30.000",u:"/ mes",d:["Primero en la lista y pin dorado","Abierto / cerrado en vivo","Promociones en el canal de la ciudadela"],w:"Hola, quiero destacar mi negocio en Verde360."},
+    {n:"Vitrina Digital",p:"$100.000",u:"pago único",d:["Perfil profesional en Google Maps","Catálogo de WhatsApp Business","Ficha y pin en Verde360"],w:"Hola, quiero la Vitrina Digital de Verde360."},
+    {n:"Servicio de Confianza",p:"$50.000",u:"/ mes",d:["Grúas, mecánicos, electricistas, veterinarias, ambulancias","Documentos revisados y sello 🛡","Aparece en los botones de urgencia y en Vera"],w:"Hola, quiero aparecer como Servicio de Confianza en Verde360."}],
+  "Talentos y oficios":[
+    {n:"Perfil de Talento",p:"Gratis",u:"",top:true,b:"Para quien busca empleo",d:["Publica lo que sabes hacer","Recibe pedidos por WhatsApp","Recibe calificaciones de clientes"],w:"Hola, quiero publicar mi perfil de talento gratis en Verde360."},
+    {n:"Sello de verificación",p:"$20.000",u:"al año",d:["Identidad y antecedentes verificados","Revisión de una muestra de tu trabajo","Sello ✔ y acceso al Sello Verde de Calidad"],w:"Hola, quiero el sello de verificación de Talento Verde."},
+    {n:"Talento Destacado",p:"$15.000",u:"/ mes",d:["Primero en tu conjunto y en la ciudadela","Aparece en las respuestas de Vera","0 % de comisión por trabajo"],w:"Hola, quiero destacar mi talento en Verde360."}],
+  "Mascotas":[
+    {n:"Reportar mascota",p:"Gratis",u:"siempre",d:["Perdidas, encontradas y adopción","Pin en el mapa y alerta a porterías"],w:"Hola, quiero reportar una mascota en Verde360."},
+    {n:"Placa QR Verde360",p:"$20.000",u:"pago único",top:true,b:"Más vendido",d:["Placa resistente con código QR","Quien la escanea te avisa sin ver tu número","Perfil con foto y datos médicos"],w:"Hola, quiero una placa QR Verde360."},
+    {n:"Búsqueda Destacada",p:"$10.000",u:"7 días",d:["Primero en Perdidas y en el mapa","Difusión en el canal de la ciudadela"],w:"Hola, quiero destacar la búsqueda de mi mascota."},
+    {n:"Aliado Huellitas",p:"$80.000",u:"/ mes",d:["Para veterinarias y tiendas de mascotas","Logo en la sección Mascotas","Patrocinio de jornadas de adopción"],w:"Hola, mi negocio quiere ser Aliado Huellitas de Verde360."}],
+  "Propietarios":[
+    {n:"Aviso básico",p:"Gratis",u:"",d:["Pin con precio en el mapa","Interesados a tu WhatsApp"],w:"Hola, quiero publicar mi apartamento gratis en Verde360."},
+    {n:"Aviso Destacado",p:"$50.000",u:"30 días",top:true,b:"Arrienda más rápido",d:["Primero en la lista","Fotos tomadas por Verde360","Difusión en el canal de la ciudadela"],w:"Hola, quiero un aviso destacado en Verde360."},
+    {n:"Estudio del arrendatario",p:"$50.000",u:"por estudio",d:["Identidad y antecedentes oficiales","Referencias y capacidad de pago","Informe privado en 24 horas"],w:"Hola, quiero un estudio de arrendatario."},
+    {n:"Plan Inmobiliaria",p:"$200.000",u:"/ mes",d:["Avisos ilimitados","Logo y perfil de la inmobiliaria"],w:"Hola, quiero el plan inmobiliaria de Verde360."}],
+  "Inquilinos":[
+    {n:"Verificar propietario",p:"$30.000",u:"",top:true,b:"Evita estafas",d:["Certificado de tradición y libertad","Confirmación con la administración"],w:"Hola, quiero verificar a un propietario."},
+    {n:"Alerta de arriendo",p:"$10.000",u:"pago único",d:["Te avisamos por WhatsApp apenas salga lo que buscas"],w:"Hola, quiero una alerta de arriendo en Verde360."}],
+  "Conjuntos":[
+    {n:"Portal del Conjunto",p:"$700",u:"por apto / mes",top:true,b:"Más pedido",d:["Estados de cuenta y solicitudes","Comunicados y asambleas","Avisos ✔ Verificados","Instalación $300.000"],w:"Hola, quiero una demo del Portal del Conjunto."},
+    {n:"Red de Alerta",p:"$60.000",u:"por portería / mes",d:["Alertas entre conjuntos vecinos","Mapa de seguridad del sector"],w:"Hola, quiero conectar mi portería a la Red de Alerta."}],
+  "Transporte y eventos":[
+    {n:"Conductor Certificado",p:"$30.000",u:"/ mes",d:["Taxis y transporte especial habilitado","Sello ✔ Certificado"],w:"Hola, soy conductor y quiero certificarme en Verde360."},
+    {n:"Tablero de flota",p:"Gratis",u:"primer año",top:true,b:"Empresas de busetas",d:["Busetas en vivo en el mapa","Control de vueltas y tiempos","Luego $25.000 por vehículo / mes"],w:"Hola, represento una empresa de busetas y me interesa el tablero de flota."},
+    {n:"Evento Destacado",p:"$70.000",u:"por evento",d:["Primero en la Agenda Verde","Pin en el mapa y difusión"],w:"Hola, quiero destacar un evento en Verde360."},
+    {n:"Pauta en el mapa",p:"$500.000",u:"/ mes",d:["Banner y pin de marca","Para constructoras, colegios, clínicas"],w:"Hola, quiero pautar en Verde360."}]
+};
+let ptab="Vendedores y negocios";
+function pintarPlanes(){
+  $("#ptabs").innerHTML=Object.keys(PLANES).map(k=>`<button class="${k===ptab?"on":""}" data-k="${k}">${k}</button>`).join("");
+  $$("#ptabs button").forEach(b=>b.onclick=()=>{ptab=b.dataset.k;pintarPlanes();});
+  $("#planesL").innerHTML=PLANES[ptab].map((x,i)=>`<div class="plan ${x.top?"dest2":""}" style="animation-delay:${i*50}ms">${x.top?`<span class="badge">${x.b}</span>`:""}
+    <h3>${x.n}</h3><div class="pr">${x.p} <small>${x.u}</small></div><ul>${x.d.map(d=>`<li>${d}</li>`).join("")}</ul>
+    <div class="acc"><a class="wa" href="${wa(WHATSAPP,x.w)}" target="_blank" rel="noopener">Lo quiero</a></div></div>`).join("");
+}
+
+/* =========================================================
+   VERA — asistente por texto y voz (gratis: corre en el navegador)
+   Voz a texto: Web Speech API · Texto a voz: speechSynthesis
+   ========================================================= */
+const chat=$("#chat"), msgs=$("#msgs");
+let vozOn=false, porVoz=false, saludado=false;
+const QUICK=["🐶 Se me perdió mi perro","🏠 Arriendo 3 habitaciones","🧵 Necesito una costurera","💻 Arreglo de computador","🛻 Necesito una grúa","🚌 ¿Cuándo pasa la buseta?","📍 ¿Cómo llego a Avellana?","🧺 Quiero vender a domicilio","🎉 ¿Qué eventos hay?","🚨 Emergencia"];
+function abrirBot(){chat.classList.add("on");$("#botBtn").style.display="none";
+  if(!saludado){saludado=true;decir("¡Hola, vecino! Soy Vera, la asistente de Verde360 💚\nPuedo ayudarte a buscar arriendo, encontrar un servicio de confianza, llegar a un conjunto, ver las busetas o reportar una emergencia.\n¿Qué necesitas?");}
+  $("#quick").innerHTML=QUICK.map(q=>`<button>${q}</button>`).join("");
+  $$("#quick button").forEach(b=>b.onclick=()=>preguntar(b.textContent.replace(/^\S+\s/,"")));
+  setTimeout(()=>$("#botIn").focus(),200);}
+function cerrarBot(){chat.classList.remove("on");$("#botBtn").style.display="";try{speechSynthesis.cancel()}catch(e){}}
+$("#botBtn").onclick=abrirBot; $("#botCerrar").onclick=cerrarBot;
+
+function burbuja(html,quien){const d=document.createElement("div");d.className="m "+quien;d.innerHTML=html;msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;return d;}
+function hablar(txt){if(!(vozOn||porVoz)||!("speechSynthesis"in window))return;
+  try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(txt.replace(/<[^>]+>/g," ").replace(/[\u{1F300}-\u{1FAFF}\u2600-\u27BF]/gu,"").replace(/\$/g," pesos ").slice(0,400));
+    u.lang="es-CO";u.rate=1.02;const v=speechSynthesis.getVoices().find(v=>/es[-_](CO|MX|US|419)/i.test(v.lang))||speechSynthesis.getVoices().find(v=>/^es/i.test(v.lang));if(v)u.voice=v;speechSynthesis.speak(u);}catch(e){}}
+function decir(texto,extra=""){const t=burbuja('<span class="typing"><i></i><i></i><i></i></span>',"b");
+  setTimeout(()=>{t.innerHTML=texto+extra;msgs.scrollTop=msgs.scrollHeight;
+    t.querySelectorAll("[data-ver]").forEach(b=>b.onclick=()=>{cerrarBot();buscar(b.dataset.ver);});
+    t.querySelectorAll("[data-ir2]").forEach(b=>b.onclick=()=>{cerrarBot();document.querySelector(b.dataset.ir2).scrollIntoView({behavior:"smooth"});});
+    t.querySelectorAll("[data-sos2]").forEach(b=>b.onclick=()=>{cerrarBot();abrirSOS();});
+    hablar(texto);},550);}
+const verBtn=(q,txt="Ver en el mapa →")=>`<button class="lnk" data-ver="${q.replace(/"/g,"")}">${txt}</button>`;
+const irBtn=(sel,txt)=>`<button class="lnk" data-ir2="${sel}">${txt}</button>`;
+
+function responder(txt){
+  const t=norm(txt);
+  if(/emergencia|ambulancia|herido|incendio|me roban|atraco|auxilio|ayuda urgente|accidente grave/.test(t))
+    return decir("🚨 Si hay peligro o alguien herido, <b>llama ya a la línea 123</b> (Policía, ambulancia y bomberos).\nDespués puedes alertar a los conjuntos vecinos.",`<br><button class="lnk r" data-sos2="1">Abrir emergencias →</button>`);
+  if(/^(hola|buen|hey|que tal|saludos)/.test(t)&&t.length<25)
+    return decir("¡Hola! 😊 Pregúntame lo que necesites de Ciudad Verde: arriendos, negocios, servicios de confianza, busetas, eventos o cómo llegar a un conjunto.");
+  if(/perd(i|io|ido|ida).*(perro|gato|mascota|perrita|gatita)|(perro|gato|mascota).*(perdid|se (me )?(perdio|escapo))|se me escapo/.test(t))
+    return decir("😟 Lo siento mucho. Haz esto ya:\n1. Publícala en <b>Huellitas Verde</b> con foto: aparece en el mapa y llega a las porterías de la Red de Alerta.\n2. Recorre los conjuntos cercanos y pregunta en las porterías.\n3. Revisa la pestaña <b>Encontradas</b>: tal vez alguien ya la tiene.",`<br>${irBtn("#mascotas","Reportar mi mascota →")}`);
+  if(/encontre (un|una)? ?(perro|gato|mascota|perrito|gatito)|perro (perdido|abandonado)|gato (perdido|abandonado)/.test(t))
+    return decir("💙 ¡Gracias por ayudar! Publícala en <b>Encontradas</b> con una foto y el lugar donde la viste. Si tiene placa QR Verde360, escanéala: el dueño recibe aviso al instante.",`<br>${irBtn("#mascotas","Publicar mascota encontrada →")}`);
+  if(/adopt/.test(t)){const r=MASCOTAS.filter(m=>m.estado==="adopcion").map(m=>`<div class="r1"><b>${m.e} ${m.nombre}</b>${m.desc} · ${m.conj}</div>`).join("");
+    return decir("💚 Estas mascotas buscan hogar en la ciudadela:",`<div class="res">${r}</div>${irBtn("#mascotas","Ver adopciones →")}`);}
+  if(/desemplead|sin empleo|sin trabajo|se hacer|ofrecer mis servicios|ofrecer mi talento|publicar mi (servicio|talento)/.test(t))
+    return decir("💪 En <b>Talento Verde</b> publicas gratis lo que sabes hacer: costura, postres, clases, arreglos, tecnología…\nLos clientes te califican y, con el sello de verificación ($20.000 al año), puedes ganarte el <b>🏅 Sello Verde de Calidad</b>.",`<br><a class="lnk" href="${wa(WHATSAPP,"Hola, quiero publicar mi talento en Verde360.")}" target="_blank" rel="noopener">Publicar mi talento →</a> &nbsp; ${irBtn("#talentos","Ver talentos →")}`);
+  {const TK={costur:"Costura",ruedo:"Costura",modist:"Costura",postre:"Repostería",torta:"Repostería",ponque:"Repostería",dulce:"Repostería",computador:"Tecnología",portatil:"Tecnología",celular:"Tecnología",formate:"Tecnología",pintor:"Hogar",pintura:"Hogar",drywall:"Hogar",humedad:"Hogar",clase:"Clases",tarea:"Clases",refuerzo:"Clases",profe:"Clases",manicure:"Belleza",pedicure:"Belleza",peluquer:"Belleza",arregl:"Costura"};
+   const k=Object.keys(TK).find(k=>t.includes(k));
+   if(k){const r=TALENTOS.filter(x=>x.cat===TK[k]).sort((a,b)=>(selloVerde(b)-selloVerde(a))||(prom(b)-prom(a)));
+     if(r.length){const l=r.slice(0,3).map(x=>`<div class="r1"><b>${x.nombre}</b>${x.oficio} · ${estrellas(prom(x))} ${prom(x).toFixed(1).replace(".",",")} (${x.resenas.length})${selloVerde(x)?" · 🏅 Sello Verde":x.nivel>=2?" · ✔ Verificado":""}</div>`).join("");
+       return decir(`Estos vecinos ofrecen <b>${TK[k].toLowerCase()}</b>, ordenados por calificación:`,`<div class="res">${l}</div>${irBtn("#talentos","Ver en Talento Verde →")}`);}}}
+  if(/vender|vendo|emprend|informal|ofrecer.*domicilio|mis productos|ventas por catalogo/.test(t))
+    return decir("🧺 ¡Claro! Con el plan <b>Vecino Emprendedor</b> vendes a domicilio en tu sector por <b>$15.000 al mes</b>, con <b>0 % de comisión por pedido</b>.\nTe damos ficha con foto, pin en el mapa y los pedidos llegan directo a tu WhatsApp.",`<br><a class="lnk" href="${wa(WHATSAPP,"Hola, quiero el plan Vecino Emprendedor de Verde360.")}" target="_blank" rel="noopener">Quiero el plan →</a>`);
+  if(/precio|cuanto cuesta|cuanto cobran|planes|tarifa|cobran/.test(t))
+    return decir("Para los vecinos Verde360 es <b>gratis</b>. Los planes son para quienes quieren que los encuentren: vendedores desde $15.000/mes, negocios destacados $30.000/mes, avisos destacados $50.000 y estudios de arrendatario $50.000.",`<br>${irBtn("#planes","Ver todos los planes →")}`);
+  if(/antecedente|estudio|quien va a llegar|inquilino seguro|verificar (al )?(propietario|inquilino|arrendatario)|estafa/.test(t))
+    return decir("🔍 Hacemos verificación en los dos sentidos, siempre con autorización:\n• <b>Estudio del arrendatario</b>: $50.000. Identidad, antecedentes oficiales y referencias, en 24 horas.\n• <b>Verificar al propietario</b>: $30.000. Confirmamos que es el dueño antes de que pagues.",`<br>${irBtn("#seguro","Ver Arrienda seguro →")}`);
+  if(/buseta|bus|ruta|transporte|pasa el|cuando pasa|paradero/.test(t)){
+    const filas=[...$$("#etas .eta")].slice(0,3).map(e=>`<div class="r1"><b>${e.querySelector("b").textContent}</b>Llega en ${e.querySelector("strong").textContent}</div>`).join("");
+    return decir("🚌 Estas son las próximas busetas a tu paradero <i>(simulación de muestra)</i>:",`<div class="res">${filas}</div>${irBtn("#muevete","Ver Muévete →")}`);}
+  if(/evento|que hay|planes para hoy|fin de semana|que hacer|actividad/.test(t)){
+    const ev=EVENTOS.slice().sort((a,b)=>a.dia-b.dia).slice(0,3).map(e=>`<div class="r1"><b>${e.e} ${e.titulo}</b>${diaTxt(e.dia)} · ${e.hora} · ${e.lugar}</div>`).join("");
+    return decir("🎉 Esto viene en la ciudadela:",`<div class="res">${ev}</div>${irBtn("#agenda","Ver toda la agenda →")}`);}
+  if(/robo|riña|pelea|ruido|musica|sospechos|alerta/.test(t))
+    return decir("🚨 Puedes reportarlo de forma anónima a la <b>Red de Alerta</b> de los conjuntos vecinos. Si hay peligro inmediato, llama primero al <b>123</b>.\nEl ruido excesivo es una contravención del Código de Policía; también puedes avisarle a la administración de tu conjunto.",`<br>${irBtn("#alertas","Reportar alerta →")}`);
+
+  const q=entender(txt);
+  if(q.modo==="conjuntos"){
+    const c=CONJUNTOS.find(c=>norm(c.nombre)===norm(q.conj))||CONJUNTOS.find(c=>norm(c.nombre).includes(norm(q.conj||"~")));
+    if(c)return decir(`📍 El <b>Conjunto ${c.nombre}</b> queda en el sector ${c.sector}. Entra por: ${c.porteria}.\n<i>Ubicación aproximada, por verificar.</i>`,`<br><a class="lnk" href="${ruta(c)}" target="_blank" rel="noopener">Abrir la ruta →</a> &nbsp; ${verBtn("conjunto "+c.nombre)}`);
+    return decir("Todavía no tengo ese conjunto en el mapa 😕. Dime el nombre exacto o ayúdanos a agregarlo.",`<br>${verBtn("conjunto","Ver todos los conjuntos →")}`);}
+  if(q.modo==="casas"&&/arriend|venta|vend|compr|apartament|apto|casa|habitacion|alcoba|cuarto|vivir|inmueble/.test(t)){
+    let r=CASAS.filter(c=>(!q.tipo||c.tipo===q.tipo)&&(!q.hab||c.hab>=q.hab)&&(!q.max||c.precio<=q.max)&&(!q.masc||c.mascotas)&&(!q.parq||c.parq)).sort((a,b)=>a.precio-b.precio);
+    if(!r.length)return decir("No encontré inmuebles con esas condiciones en este momento. ¿Quieres que te avisemos por WhatsApp cuando salga uno?",`<br><a class="lnk" href="${wa(WHATSAPP,"Hola, quiero una alerta de arriendo: "+txt)}" target="_blank" rel="noopener">Crear alerta →</a>`);
+    const lista=r.slice(0,3).map(c=>`<div class="r1"><b>${pesos(c.precio)}${c.tipo==="Arriendo"?" / mes":""} · ${c.conjunto}</b>${c.hab} hab · ${c.m2} m²${c.mascotas?" · 🐾":""}${c.parq?" · 🚗":""}${c.verificado?" · ✔ Verificado":""}</div>`).join("");
+    return decir(`🏠 Encontré <b>${r.length}</b> inmueble${r.length>1?"s":""} para ti:`,`<div class="res">${lista}</div>${verBtn(txt)}`);}
+  if(q.modo==="negocios"||/necesito|donde (hay|consigo|compro)|servicio|domicilio|abierto/.test(t)){
+    const tg=t.split(/\s+/).filter(w=>w.length>3&&!/necesito|donde|tengo|quiero|ahora|abiert|domicilio|para|cerca|urgente/.test(w));
+    let r=NEGOCIOS.filter(n=>(q.cat?n.cat===q.cat:tg.some(w=>norm(n.nombre+" "+n.cat+" "+n.tags).includes(w.slice(0,5))))&&(!q.dom||n.domicilio));
+    if(q.ab){const ab=r.filter(n=>abierto(n));if(ab.length)r=ab;}
+    r.sort((a,b)=>(abierto(b)-abierto(a))||(b.destacado-a.destacado));
+    if(r.length){const lista=r.slice(0,3).map(n=>`<div class="r1"><b>${n.emoji} ${n.nombre}</b>${abierto(n)?"🟢 Abierto":"🔴 Cerrado"} · ${hTxt(n)}${n.confianza?" · 🛡 De confianza":""}</div>`).join("");
+      return decir(`Esto es lo que encontré:`,`<div class="res">${lista}</div>${verBtn(txt)}`);}
+  }
+  decir("Mmm, no estoy segura de haber entendido 🤔. Prueba con algo como: «arriendo con parqueadero», «necesito un electricista», «¿cómo llego a Guadual?» o «¿qué eventos hay?».\nTambién puedes hablar con una persona del equipo.",`<br><a class="lnk" href="${wa(WHATSAPP,"Hola, tengo una consulta sobre Ciudad Verde: "+txt)}" target="_blank" rel="noopener">Escribir al equipo →</a>`);
+}
+function preguntar(txt){if(!txt.trim())return;burbuja(txt.replace(/</g,"&lt;"),"u");$("#botIn").value="";responder(txt);}
+$("#botF").onsubmit=e=>{e.preventDefault();porVoz=false;preguntar($("#botIn").value);};
+$("#voz").onclick=()=>{vozOn=!vozOn;$("#voz").textContent=vozOn?"🔊":"🔈";if(!vozOn)try{speechSynthesis.cancel()}catch(e){}};
+
+/* voz a texto */
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition; let rec=null;
+$("#mic").onclick=()=>{
+  if(!SR){decir("Tu navegador no permite dictar por voz aquí 🎙️. En Chrome de Android funciona; mientras tanto, escríbeme.");return;}
+  if(rec){rec.stop();return;}
+  try{rec=new SR();rec.lang="es-CO";rec.interimResults=true;rec.maxAlternatives=1;
+    rec.onstart=()=>{$("#mic").classList.add("rec");$("#botEstado").textContent="Te escucho…";};
+    rec.onresult=e=>{const r=[...e.results].map(x=>x[0].transcript).join("");$("#botIn").value=r;
+      if(e.results[e.results.length-1].isFinal){porVoz=true;preguntar(r);}};
+    rec.onerror=e=>{decir(e.error==="not-allowed"?"Necesito permiso para usar el micrófono. Revisa los permisos del navegador o escríbeme.":"No te escuché bien, ¿lo intentamos otra vez?");};
+    rec.onend=()=>{$("#mic").classList.remove("rec");$("#botEstado").textContent="Escríbeme o háblame 🎙️";rec=null;};
+    rec.start();}catch(e){rec=null;decir("No pude activar el micrófono aquí. Escríbeme y te ayudo.");}
+};
+
+function pintarFeed(){
+  $("#feed").innerHTML=ALERTAS.map((a,i)=>`<div class="al" style="animation-delay:${i*60}ms">
+    <div class="i ${a.menor?"m":""}">${a.e}</div>
+    <div><b>${a.tipo} · cerca a ${a.conj}</b><div class="meta">${a.txt} <span class="aprox">· ejemplo</span></div></div>
+    <time>hace ${hace(a.hace)}</time></div>`).join("");
+  $("#nAlert").textContent=`EN VIVO · ${ALERTAS.length} alertas hoy`;
+}
+let tipoSel="";
+$$("#tipos button").forEach(b=>b.onclick=()=>{tipoSel=b.dataset.t;$$("#tipos button").forEach(x=>x.classList.toggle("on",x===b));});
+$("#rConj").innerHTML='<option value="">¿En qué conjunto o zona?</option>'+[...CONJUNTOS].sort((a,b)=>a.nombre.localeCompare(b.nombre,"es")).map(c=>`<option>${c.nombre}</option>`).join("")+"<option>Vía pública / parque</option>";
+$("#rEnviar").onclick=()=>{
+  if(!tipoSel){$("#rMsg").textContent="Elige primero el tipo de alerta.";return;}
+  const msg=`🚨 ALERTA VERDE360\nTipo: ${tipoSel}\nZona: ${$("#rConj").value||"sin especificar"}\nDetalle: ${$("#rTxt").value||"—"}`;
+  const a=$("#rLink"); a.href=wa(WHATSAPP,msg); a.hidden=false;
+  $("#rMsg").textContent="Alerta lista. Toca el botón verde para enviarla por WhatsApp a la red.";
+};
+
+$("#conductores").innerHTML=CONDUCTORES.map(c=>`<div class="cond">
+  <div class="ft">${c.e}</div>
+  <div><span class="cert">✔ CERTIFICADO</span>
+    <h3 style="font-size:1rem;margin-top:6px">${c.nombre}</h3>
+    <div class="meta">${c.vehiculo}<br>${c.servicio}</div>
+    <div class="checks"><span>Licencia</span><span>SOAT</span><span>Técnico-mecánica</span><span>Antecedentes</span></div>
+    <div class="acc"><a class="wa" href="${wa(WHATSAPP,"Hola, necesito transporte con "+c.nombre)}" target="_blank" rel="noopener">Pedir servicio</a></div>
+  </div></div>`).join("");
+
+const sheet=$("#sheet");
+function abrirSOS(){sheet.classList.add("on");}
+function cerrarSOS(){sheet.classList.remove("on");}
+$("#sosBtn").onclick=abrirSOS; $("#sosCerrar").onclick=cerrarSOS;
+sheet.onclick=e=>{if(e.target===sheet)cerrarSOS();};
+$$("[data-cerrar]").forEach(a=>a.onclick=cerrarSOS);
+$("#vet24").onclick=e=>{e.preventDefault();cerrarSOS();verServicio("veterinaria");};
+$("#ambPriv").href=wa(WHATSAPP,"Necesito una ambulancia privada en Ciudad Verde. Dirección: ");
+addEventListener("keydown",e=>{if(e.key==="Escape"){cerrarSOS();cerrarBot();$("#menu").classList.remove("on");}});
+$("#fTipo").onchange=()=>{precioOpciones();pintar();};
+["fHab","fPrecio","fMasc","fParq","fVer","fAb","fDom"].forEach(id=>$("#"+id).onchange=pintar);
+
+/* =========================================================
+   OBSERVATORIO — SECOP II en vivo (API pública de datos.gov.co)
+   ========================================================= */
+async function observatorio(){
+  const url="https://www.datos.gov.co/resource/jbjy-vk9h.json?"+new URLSearchParams({
+    "$select":"nombre_entidad,objeto_del_contrato,valor_del_contrato,fecha_de_firma,proveedor_adjudicado,urlproceso",
+    "$where":"upper(nombre_entidad) like '%SOACHA%' AND fecha_de_firma IS NOT NULL",
+    "$order":"fecha_de_firma DESC","$limit":"8"});
+  const box=$("#contratos");
+  try{
+    const ctrl=new AbortController();setTimeout(()=>ctrl.abort(),12000);
+    const r=await fetch(url,{signal:ctrl.signal}); if(!r.ok)throw 0;
+    const d=await r.json(); if(!d.length)throw 0;
+    $("#kN").textContent=d.length;
+    $("#kV").textContent=corto(d.reduce((s,c)=>s+(+c.valor_del_contrato||0),0));
+    $("#kF").textContent=new Date(d[0].fecha_de_firma).toLocaleDateString("es-CO",{day:"numeric",month:"short",year:"numeric"});
+    box.innerHTML=d.map(c=>{const link=c.urlproceso&&(c.urlproceso.url||c.urlproceso);
+      return `<div class="ct"><div class="o">${(c.objeto_del_contrato||"Sin descripción").toLowerCase().replace(/^./,m=>m.toUpperCase())}</div>
+        <div class="v">${corto(+c.valor_del_contrato||0)}</div>
+        <div class="m">${c.nombre_entidad} · ${c.proveedor_adjudicado||"—"}${typeof link==="string"?` · <a href="${link}" target="_blank" rel="noopener">Ver en SECOP</a>`:""}</div></div>`;}).join("");
+  }catch(e){box.innerHTML=`<div class="vacio">No pudimos consultar SECOP II en este momento. <a href="https://www.datos.gov.co" target="_blank" rel="noopener">Consulta datos.gov.co</a>.</div>`;}
+}
+
+/* =========================================================
+   EFECTOS: contadores, red animada, tema, instalación
+   ========================================================= */
+function contar(el,fin){const pre=el.dataset.p||"",t0=performance.now();
+  const f=t=>{const k=Math.min(1,(t-t0)/1400),e=1-Math.pow(1-k,3);el.textContent=pre+Math.round(fin*e).toLocaleString("es-CO");if(k<1)requestAnimationFrame(f);};requestAnimationFrame(f);}
+new IntersectionObserver((es,ob)=>es.forEach(x=>{if(x.isIntersecting){$$("[data-n]").forEach(el=>contar(el,+el.dataset.n));contar($("#nCasas"),CASAS.length);contar($("#nNeg"),NEGOCIOS.length);ob.disconnect();}}),{threshold:.3}).observe($(".stats"));
+
+(function red(){const c=$("#red"),x=c.getContext("2d");let W,H,P=[];
+  const rs=()=>{W=c.width=c.offsetWidth*devicePixelRatio;H=c.height=c.offsetHeight*devicePixelRatio;
+    P=Array.from({length:Math.min(70,Math.round(W/22))},()=>({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.35,vy:(Math.random()-.5)*.35}));};
+  rs();addEventListener("resize",rs);
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+  (function f(){x.clearRect(0,0,W,H);const m=140*devicePixelRatio;
+    for(const p of P){p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1;x.fillStyle="rgba(200,245,96,.8)";x.beginPath();x.arc(p.x,p.y,1.6*devicePixelRatio,0,7);x.fill();}
+    for(let i=0;i<P.length;i++)for(let j=i+1;j<P.length;j++){const a=P[i],b=P[j],d=Math.hypot(a.x-b.x,a.y-b.y);
+      if(d<m){x.strokeStyle=`rgba(31,207,123,${.35*(1-d/m)})`;x.lineWidth=devicePixelRatio;x.beginPath();x.moveTo(a.x,a.y);x.lineTo(b.x,b.y);x.stroke();}}
+    requestAnimationFrame(f);})();})();
+
+const guardado=(()=>{try{return localStorage.getItem("v360-tema")}catch(e){return null}})();
+if(guardado==="dark"||(!guardado&&matchMedia("(prefers-color-scheme: dark)").matches))document.documentElement.dataset.theme="dark";
+$("#tema").onclick=()=>{const d=document.documentElement.dataset.theme==="dark"?"":"dark";document.documentElement.dataset.theme=d;try{localStorage.setItem("v360-tema",d||"light")}catch(e){}};
+
+let evInst;addEventListener("beforeinstallprompt",e=>{e.preventDefault();evInst=e;$("#instalar").style.display="inline-block";});
+$("#instalar").onclick=async()=>{if(!evInst)return;evInst.prompt();await evInst.userChoice;evInst=null;$("#instalar").style.display="none";};
+if("serviceWorker"in navigator&&location.protocol.startsWith("http"))navigator.serviceWorker.register("sw.js").catch(()=>{});
+
+$$(".js-wa").forEach(a=>{a.href=wa(WHATSAPP,a.dataset.msg);a.target="_blank";a.rel="noopener";});
+
+/* inicio */
+iniciarMapa(); precioOpciones(); pintarCats(); cambiarModo("casas"); pintarFeed(); pintarETAs(); pintarAgenda(); pintarPlanes(); pintarTalentos(); pintarPets(); observatorio();
+$$("[data-wa]").forEach(a=>{a.href=wa(WHATSAPP,a.dataset.wa);a.target="_blank";a.rel="noopener";});
+setInterval(pintarETAs,5000);
+setInterval(pintar,60000);
+</script>
+</body>
+</html>

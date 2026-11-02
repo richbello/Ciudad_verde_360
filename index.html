@@ -1652,7 +1652,7 @@ const CONDUCTORES = [
    ========================================================= */
 const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
 const norm=t=>(t||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
-/* WhatsApp de escritorio muestra «�» con algunos emojis en mensajes prellenados: se quitan del texto enviado */
+/* WhatsApp de escritorio muestra un símbolo raro con algunos emojis en mensajes prellenados: se quitan del texto enviado */
 const limpiar=m=>m.replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{FE0F}\u{200D}]/gu,"").replace(/[ \t]+\n/g,"\n").replace(/^[ \t]+/gm,"").trim();
 const wa=(n,m)=>`https://wa.me/${n}?text=${encodeURIComponent(limpiar(m))}`;
 const ruta=x=>`https://www.google.com/maps/dir/?api=1&destination=${x.lat},${x.lng}`;

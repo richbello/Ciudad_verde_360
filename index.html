@@ -712,17 +712,28 @@ button,input,select,textarea{font-family:inherit}
 @media(max-width:520px){.sug button:nth-child(n+3){display:none}}
 /* anuncio para administradores */
 .anuncio{position:relative;z-index:61;display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;padding:9px 46px 9px 16px;
-  background:linear-gradient(90deg,#0f2f3a,#0f4b4b 55%,#125e57);color:#e6f6f3;border-bottom:1px solid rgba(127,224,207,.25);font-size:.88rem;text-align:center}
+  background:linear-gradient(90deg,#f59e0b,#fbbf24 30%,#fde047 50%,#fbbf24 70%,#f59e0b);background-size:200% 100%;color:#1b1400;overflow:hidden;animation:respira 2.6s ease-in-out infinite,fluye 8s linear infinite;font-size:.88rem;text-align:center}
 .anuncio-d{opacity:.85}
-.anuncio-btn{background:#7fe0cf;color:#0b1d26;text-decoration:none;font-weight:700;padding:5px 12px;border-radius:999px;font-size:.82rem;white-space:nowrap}
-.anuncio-x{position:absolute;right:10px;top:50%;transform:translateY(-50%);border:0;background:rgba(255,255,255,.12);width:26px;height:26px;border-radius:50%;cursor:pointer;color:#e6f6f3}
+.anuncio-t{position:relative;z-index:1}
+/* se ilumina y se apaga suavemente */
+@keyframes respira{0%,100%{filter:brightness(.93) saturate(1);box-shadow:0 0 0 rgba(251,191,36,0)}
+  50%{filter:brightness(1.12) saturate(1.15);box-shadow:0 6px 28px rgba(251,191,36,.75)}}
+@keyframes fluye{to{background-position:200% 0}}
+@keyframes late{50%{transform:scale(1.06);box-shadow:0 0 0 6px rgba(27,20,0,.12)}}
+/* destello de luz que recorre la franja */
+.anuncio::after{content:"";position:absolute;top:0;bottom:0;left:-30%;width:25%;pointer-events:none;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.75),transparent);transform:skewX(-20deg);animation:destello 3.2s ease-in-out infinite}
+@keyframes destello{0%{left:-30%}60%,100%{left:130%}}
+@media (prefers-reduced-motion:reduce){.anuncio,.anuncio::after,.anuncio-btn,.admins{animation:none}}
+.anuncio-btn{position:relative;z-index:1;background:#1b1400;color:#fde047;box-shadow:0 0 0 0 rgba(27,20,0,.4);animation:late 2.6s ease-in-out infinite;text-decoration:none;font-weight:700;padding:5px 12px;border-radius:999px;font-size:.82rem;white-space:nowrap}
+.anuncio-x{position:absolute;right:10px;top:50%;transform:translateY(-50%);border:0;background:rgba(0,0,0,.12);width:26px;height:26px;border-radius:50%;cursor:pointer;color:#1b1400;z-index:1}
 @media(max-width:620px){.anuncio-d{display:none}}
 .anuncio.oculto{display:none}
 /* tarjeta para administradores dentro del banner */
 .admins{margin-top:26px;max-width:1080px;display:grid;grid-template-columns:1.15fr .85fr;gap:22px;align-items:center;
   background:linear-gradient(135deg,rgba(20,160,144,.18),rgba(59,130,246,.08) 60%,rgba(255,255,255,.03));
-  border:1.5px solid rgba(127,224,207,.40);border-radius:22px;padding:22px;position:relative;overflow:hidden;box-shadow:0 0 0 0 rgba(127,224,207,.3);animation:brilla 3.5s ease-in-out infinite}
-@keyframes brilla{50%{box-shadow:0 0 34px -8px rgba(127,224,207,.45)}}
+  border:1.5px solid rgba(127,224,207,.40);border-radius:22px;padding:22px;position:relative;overflow:hidden;box-shadow:0 0 0 0 rgba(127,224,207,.3);animation:brilla 2.6s ease-in-out infinite}
+@keyframes brilla{0%,100%{box-shadow:0 0 0 0 rgba(127,224,207,0);border-color:rgba(127,224,207,.30)}50%{box-shadow:0 0 46px -4px rgba(127,224,207,.55);border-color:rgba(127,224,207,.85)}}
 @media(max-width:860px){.admins{grid-template-columns:1fr}}
 .admins-tag{display:inline-block;font-size:.7rem;font-weight:800;letter-spacing:.08em;color:#0b1d26;background:#7fe0cf;padding:4px 10px;border-radius:999px}
 .admins h2{font-size:clamp(1.3rem,2.6vw,1.8rem);margin:10px 0 8px;color:#fff;line-height:1.15}

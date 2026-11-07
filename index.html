@@ -1783,7 +1783,7 @@ const CONJUNTOS = [
   {nombre:"Azucena",             sector:"Comuna 3",       porteria:"Portería principal (por verificar)", torres:null, lat:4.6030, lng:-74.2244},
   {nombre:"Álamos",              sector:"Comuna 3",       porteria:"Portería principal (por verificar)", torres:null, lat:4.6052, lng:-74.2252},
   {nombre:"Azalea",              sector:"Comuna 3",       porteria:"Portería principal (por verificar)", torres:null, lat:4.6097, lng:-74.2216},
-  {nombre:"Sauces III",          sector:"Comuna 3",       porteria:"Portería principal (por verificar)", torres:null, lat:4.6018, lng:-74.2226},
+  {nombre:"Sauces III",          sector:"Comuna 3",       porteria:"Portería principal (por verificar)", torres:null, q:"Conjunto Residencial Sauce 3", lat:4.6018, lng:-74.2226},
   {nombre:"Olmo",                sector:"Ciudad Verde",   porteria:"Portería principal (por verificar)", torres:null, lat:4.6026, lng:-74.2183},
   {nombre:"Almendro",            sector:"Ciudad Verde",   porteria:"Portería principal (por verificar)", torres:null, lat:4.6060, lng:-74.2165},
   {nombre:"Heliconia",           sector:"Ciudad Verde",   porteria:"Portería principal (por verificar)", torres:null, lat:4.6014, lng:-74.2205},
@@ -1859,7 +1859,11 @@ const norm=t=>(t||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
 /* WhatsApp de escritorio muestra un símbolo raro con algunos emojis en mensajes prellenados: se quitan del texto enviado */
 const limpiar=m=>m.replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{FE0F}\u{200D}]/gu,"").replace(/[ \t]+\n/g,"\n").replace(/^[ \t]+/gm,"").trim();
 const wa=(n,m)=>`https://wa.me/${n}?text=${encodeURIComponent(limpiar(m))}`;
-const ruta=x=>`https://www.google.com/maps/dir/?api=1&destination=${x.lat},${x.lng}`;
+/* Conjuntos: la ruta se pide por NOMBRE (Google ubica el conjunto real); las coordenadas son aproximadas
+   y Google las pegaba al negocio más cercano, por eso varios conjuntos daban el mismo destino.
+   Campo opcional q: nombre exacto como aparece en Google Maps. */
+const destinoConj=c=>(c.q||"Conjunto Residencial "+c.nombre)+", Ciudad Verde, Soacha, Cundinamarca";
+const ruta=x=>"https://www.google.com/maps/dir/?api=1&destination="+(x.porteria?encodeURIComponent(destinoConj(x)):`${x.lat},${x.lng}`);
 const pesos=v=>"$"+Math.round(v).toLocaleString("es-CO");
 const corto=v=>v>=1e9?"$"+(v/1e9).toLocaleString("es-CO",{maximumFractionDigits:1})+" mil M":v>=1e6?"$"+(v/1e6).toLocaleString("es-CO",{maximumFractionDigits:v>=1e8?0:1})+" M":"$"+Math.round(v/1e3)+" mil";
 const abierto=(n,d=new Date())=>{const h=d.getHours()+d.getMinutes()/60;return n.dias.includes(d.getDay())&&h>=n.horario[0]&&h<n.horario[1]};

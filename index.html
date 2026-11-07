@@ -1088,6 +1088,16 @@ footer{padding:34px 0 90px;color:var(--mute);font-size:.84rem;text-align:center}
 .modal textarea,.modal input{width:100%;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:12px;padding:10px;font-size:.9rem;margin-bottom:8px}
 .modal .row2{display:flex;gap:8px}
 .modal .row2 button,.modal .row2 a{flex:1;text-align:center;text-decoration:none;border:0;border-radius:12px;padding:11px;font-weight:700;cursor:pointer;font-size:.9rem}
+/* ruta A → B */
+.ruta-ley{display:flex;align-items:center;gap:10px;margin:10px 0 12px}
+.ruta-ley>div:not(.fl){flex:1;display:flex;gap:8px;align-items:center;background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:8px 10px;min-width:0}
+.ruta-ley b{display:block;font-size:.8rem}.ruta-ley small{display:block;font-size:.74rem;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ruta-ley .fl{font-size:1.3rem;color:var(--mute)}
+.pin-a,.pin-b{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800;font-size:.85rem}
+.pin-a{background:#16a34a}.pin-b{background:#dc2626}
+.ruta-map{position:relative;border-radius:16px;overflow:hidden;border:1px solid var(--line);height:min(52vh,380px);background:var(--bg)}
+.ruta-map iframe{width:100%;height:100%;border:0}
+.ruta-nota{font-size:.8rem;color:var(--mute);margin:8px 0 12px}
 .bprim{background:var(--g1);color:#fff}.bsec{background:var(--bg);color:var(--ink);border:1px solid var(--line)!important}
 
 /* huellitas */
@@ -1686,6 +1696,18 @@ img,svg,canvas,video{max-width:100%}
 
 <div class="modal" id="talModal" role="dialog" aria-modal="true"><div class="in" id="talIn"></div></div>
 
+<div class="modal" id="rutaModal" role="dialog" aria-modal="true" aria-labelledby="rutaT"><div class="in" style="max-width:640px">
+  <h3 id="rutaT" style="margin:0">Cómo llegar</h3>
+  <div class="ruta-ley">
+    <div><span class="pin-a">A</span><span style="min-width:0"><b>Sales de aquí</b><small id="rutaDe">Tu ubicación</small></span></div>
+    <div class="fl">→</div>
+    <div><span class="pin-b">B</span><span style="min-width:0"><b>Llegas aquí</b><small id="rutaA">Portería del conjunto</small></span></div>
+  </div>
+  <div class="ruta-map"><iframe id="rutaF" title="Mapa de la ruta" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe></div>
+  <p class="ruta-nota" id="rutaN"></p>
+  <div class="row2"><a class="bprim" id="rutaGo" target="_blank" rel="noopener">▶ Iniciar navegación</a><a class="bsec" id="rutaSh" target="_blank" rel="noopener">Compartir</a><button class="bsec" id="rutaX" type="button">Cerrar</button></div>
+</div></div>
+
 <button class="botbtn" id="botBtn" aria-label="Abrir asistente Vera"><span class="av2">✨</span>Pregúntale a Vera</button>
 <div class="chat" id="chat" role="dialog" aria-label="Asistente Vera">
   <header>
@@ -1963,7 +1985,7 @@ function pintarMapa(casas,negs,conjs){
   conjs.forEach(c=>{const i=CONJUNTOS.indexOf(c);
     mJ[i]=L.marker([c.lat,c.lng],{icon:L.divIcon({className:"",html:`<div class="cpin">${c.nombre[0]}</div>`,iconSize:[26,26],iconAnchor:[13,13]})})
       .addTo(capaJ).on("click",()=>enfocar("conjuntos",i,false))
-      .bindPopup(`<b>Conjunto ${c.nombre}</b><br>🚪 ${c.porteria}<br><a href="${ruta(c)}" target="_blank">Cómo llegar a la portería</a>`);});
+      .bindPopup(`<b>Conjunto ${c.nombre}</b><br>🚪 ${c.porteria}<br><a href="${ruta(c)}" data-ruta="${i}" target="_blank">Cómo llegar a la portería</a>`);});
   ALERTAS.forEach(a=>{const c=CONJUNTOS.find(x=>x.nombre===a.conj)||{lat:CENTRO[0],lng:CENTRO[1]};
     L.marker([c.lat+.0006,c.lng+.0006],{icon:L.divIcon({className:"",html:`<div class="apin ${a.menor?"m":""}"></div>`,iconSize:[22,22],iconAnchor:[11,11]}),zIndexOffset:900})
       .addTo(capaA).bindPopup(`<b>${a.e} ${a.tipo}</b> · hace ${hace(a.hace)}<br>${a.txt}<br><small>Cerca a ${a.conj} · ${a.mia?"tu reporte"+(a.pend?" (pendiente de envío)":""):"ejemplo"}</small>`);});
@@ -2012,7 +2034,7 @@ function tarjetaConj(c){const i=CONJUNTOS.indexOf(c);
     <div><h3>Conjunto ${c.nombre}${PORTALES.some(p=>p.conjunto===c.nombre)?'<span class="tportal">🏢 Portal</span>':""}</h3>
       <div class="meta">${c.sector}${c.torres?` · ${c.torres} torres`:""}<br>🚪 ${c.porteria}</div>
       <div class="aprox">Ubicación aproximada · por verificar en terreno</div>
-      <div class="acc"><a class="wa" href="${ruta(c)}" target="_blank" rel="noopener">Cómo llegar</a>
+      <div class="acc"><a class="wa" href="${ruta(c)}" data-ruta="${i}" target="_blank" rel="noopener">Cómo llegar</a>
         <a href="${wa("","Te comparto cómo llegar al Conjunto "+c.nombre+" en Ciudad Verde: "+ruta(c))}" target="_blank" rel="noopener">Compartir ubicación</a>
         ${(p=>p?`<a href="${urlPortal(p)}" target="_blank" rel="noopener">🏢 Portal</a>`:"")(PORTALES.find(p=>p.conjunto===c.nombre))}</div>
     </div></article>`;}
@@ -2240,6 +2262,39 @@ function abrirTal(k){
   };
 }
 $("#talModal").onclick=e=>{if(e.target.id==="talModal")$("#talModal").classList.remove("on");};
+
+/* Cómo llegar a un conjunto: ventana con UNA ruta, inicio A (tú) en verde y llegada B (portería) en rojo */
+const distM=(a,b,c,d)=>{const r=Math.PI/180,x=(d-b)*r*Math.cos((a+c)/2*r),y=(c-a)*r;return Math.sqrt(x*x+y*y)*6371e3;};
+let rutaPid=0;
+function abrirRuta(c){
+  const dest=destinoConj(c), enc=encodeURIComponent(dest), pid=++rutaPid;
+  $("#rutaT").textContent="Cómo llegar al Conjunto "+c.nombre;
+  $("#rutaA").textContent="Portería · Conjunto "+c.nombre;
+  $("#rutaDe").textContent="Tu ubicación";
+  $("#rutaGo").href=ruta(c);
+  $("#rutaSh").href=wa("","Te comparto cómo llegar al Conjunto "+c.nombre+" en Ciudad Verde: "+ruta(c));
+  $("#rutaF").src=`https://maps.google.com/maps?q=${enc}&hl=es&z=16&output=embed`;
+  $("#rutaN").textContent="📍 Buscando tu ubicación para trazar la ruta…";
+  $("#rutaModal").classList.add("on");
+  if(!navigator.geolocation){$("#rutaN").textContent="Tu navegador no comparte la ubicación. En el mapa ves el punto de llegada; toca «Iniciar navegación» para que Google te guíe.";return;}
+  navigator.geolocation.getCurrentPosition(p=>{
+    if(pid!==rutaPid)return;
+    const la=p.coords.latitude, ln=p.coords.longitude, cerca=distM(la,ln,c.lat,c.lng)<3000;
+    $("#rutaF").src=`https://maps.google.com/maps?saddr=${la},${ln}&daddr=${enc}&hl=es${cerca?"&dirflg=w":""}&output=embed`;
+    $("#rutaGo").href=ruta(c)+(cerca?"&travelmode=walking":"");
+    $("#rutaN").textContent=`La línea azul es el camino: sale de A (tú) y termina en B (la portería del Conjunto ${c.nombre})${cerca?", a pie":""}. Toca «Iniciar navegación» para que Google te guíe paso a paso.`;
+  },()=>{
+    if(pid!==rutaPid)return;
+    $("#rutaDe").textContent="Ubicación no activada";
+    $("#rutaN").textContent="No pudimos ver tu ubicación, así que el mapa muestra solo la llegada. Activa la ubicación y vuelve a tocar «Cómo llegar», o toca «Iniciar navegación».";
+  },{enableHighAccuracy:true,timeout:10000,maximumAge:60000});
+}
+const cerrarRuta=()=>{rutaPid++;$("#rutaModal").classList.remove("on");$("#rutaF").src="about:blank";};
+$("#rutaX").onclick=cerrarRuta;
+$("#rutaModal").onclick=e=>{if(e.target.id==="rutaModal")cerrarRuta();};
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&$("#rutaModal").classList.contains("on"))cerrarRuta();});
+document.addEventListener("click",e=>{const a=e.target.closest&&e.target.closest("a[data-ruta]");if(!a)return;
+  const c=CONJUNTOS[+a.dataset.ruta];if(!c)return;e.preventDefault();abrirRuta(c);});
 $$("#alc button").forEach(b=>b.onclick=()=>{alc=b.dataset.a;$$("#alc button").forEach(x=>x.classList.toggle("on",x===b));pintarTalentos();});
 $("#miConj").innerHTML=[...CONJUNTOS].sort((a,b)=>a.nombre.localeCompare(b.nombre,"es")).map(c=>`<option ${c.nombre==="Avellana"?"selected":""}>${c.nombre}</option>`).join("");
 $("#miConj").onchange=$("#talOrden").onchange=$("#soloSello").onchange=pintarTalentos;
@@ -2419,7 +2474,7 @@ function responder(txt){
   const q=entender(txt);
   if(q.modo==="conjuntos"){
     const c=CONJUNTOS.find(c=>norm(c.nombre)===norm(q.conj))||CONJUNTOS.find(c=>norm(c.nombre).includes(norm(q.conj||"~")));
-    if(c)return decir(`📍 El <b>Conjunto ${c.nombre}</b> queda en el sector ${c.sector}. Entra por: ${c.porteria}.\n<i>Ubicación aproximada, por verificar.</i>`,`<br><a class="lnk" href="${ruta(c)}" target="_blank" rel="noopener">Abrir la ruta →</a> &nbsp; ${verBtn("conjunto "+c.nombre)}`);
+    if(c)return decir(`📍 El <b>Conjunto ${c.nombre}</b> queda en el sector ${c.sector}. Entra por: ${c.porteria}.\n<i>Ubicación aproximada, por verificar.</i>`,`<br><a class="lnk" href="${ruta(c)}" data-ruta="${CONJUNTOS.indexOf(c)}" target="_blank" rel="noopener">Ver la ruta →</a> &nbsp; ${verBtn("conjunto "+c.nombre)}`);
     return decir("Todavía no tengo ese conjunto en el mapa 😕. Dime el nombre exacto o ayúdanos a agregarlo.",`<br>${verBtn("conjunto","Ver todos los conjuntos →")}`);}
   if(q.modo==="casas"&&/arriend|venta|vend|compr|apartament|apto|casa|habitacion|alcoba|cuarto|vivir|inmueble/.test(t)){
     let r=CASAS.filter(c=>(!q.tipo||c.tipo===q.tipo)&&(!q.hab||c.hab>=q.hab)&&(!q.max||c.precio<=q.max)&&(!q.masc||c.mascotas)&&(!q.parq||c.parq)).sort((a,b)=>a.precio-b.precio);
